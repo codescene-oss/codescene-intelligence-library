@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "codescene://skills/architectural-hotspots/report-data.schema.json",
+  "title": "ReportData",
+  "type": "object",
+  "required": ["project", "components", "outcomes"],
+  "additionalProperties": false,
+  "properties": {
+    "project": {
+      "type": "object",
+      "required": ["name", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "source": { "type": "string", "description": "For example: CodeScene analysis, project <id>" }
+      }
+    },
+    "components": { "type": "array", "items": { "$ref": "#/$defs/component" } },
+    "outcomes": { "type": "array", "items": { "$ref": "#/$defs/outcome" }, "description": "Whole codebase first." },
+    "team": {
+      "type": "object",
+      "required": ["developers", "hoursPerWeek", "weeksPerYear"],
+      "additionalProperties": false,
+      "properties": {
+        "developers": { "type": "number", "minimum": 1 },
+        "hoursPerWeek": { "type": "number", "minimum": 1 },
+        "weeksPerYear": { "type": "number", "minimum": 1 }
+      }
+    }
+  },
+  "$defs": {
+    "range": {
+      "type": "object",
+      "required": ["lower", "upper"],
+      "additionalProperties": false,
+      "properties": { "lower": { "type": "number" }, "upper": { "type": "number" } }
+    },
+    "component": {
+      "type": "object",
+      "required": ["name", "health", "hotspotHealth", "changes", "linesOfCode", "files", "hotspots", "upliftTargets"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "health": { "type": "number", "minimum": 1, "maximum": 10 },
+        "hotspotHealth": { "type": ["number", "null"], "minimum": 1, "maximum": 10 },
+        "trend": {
+          "type": "object",
+          "required": ["direction", "pace"],
+          "additionalProperties": false,
+          "properties": {
+            "direction": { "enum": ["improving", "declining", "steady"] },
+            "pace": { "enum": ["slow", "fast", null] }
+          }
+        },
+        "changes": { "type": "integer", "minimum": 0 },
+        "linesOfCode": { "type": "integer", "minimum": 0 },
+        "files": { "type": "integer", "minimum": 0 },
+        "hotspots": { "type": "integer", "minimum": 0 },
+        "upliftTargets": { "type": "integer", "minimum": 0 },
+        "worstFile": {
+          "type": "object",
+          "required": ["path", "health"],
+          "additionalProperties": false,
+          "properties": { "path": { "type": "string" }, "health": { "type": "number" } }
+        }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "required": ["scope", "baseline", "target", "defects", "developmentTime", "productivity"],
+      "additionalProperties": false,
+      "properties": {
+        "scope": { "type": "string" },
+        "baseline": { "type": "number" },
+        "target": { "type": "number" },
+        "defects": { "$ref": "#/$defs/range" },
+        "developmentTime": { "$ref": "#/$defs/range" },
+        "productivity": { "$ref": "#/$defs/range" }
+      }
+    }
+  }
+}
