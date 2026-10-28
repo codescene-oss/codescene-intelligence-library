@@ -27,7 +27,8 @@ Collect these before starting. Use the project notes if they exist; otherwise as
 
 ## Data rules
 
-- Leave out components whose `averageCodeHealth` is null; they have no files with Code Health.
+- Leave out components whose `averageCodeHealth` is null, or whose value is 0 with a null `classification`; they have no files with Code Health.
+- A `hotspotCodeHealth` of 0 with a null `classification` means the component has no hotspot data. Map it to `null`, not 0.
 - Files that match no component (the unmapped-files summary) are not a component. Don't plot them. Mention them to the user only if they hold a large share of the files.
 
 ## Workflow
@@ -60,7 +61,7 @@ Collect these before starting. Use the project notes if they exist; otherwise as
 
 Keep `knowledge` (main author, `isActive`, `formerContributorShare`) for the conversation; the report doesn't show it yet.
 
-**3. Worst file (optional).** For each plotted component, call `explore_project_files` with `component` set to its name and `sort: "codeHealth:asc"`, `page_size: 1`. Use the file name and its `codeHealth.value` as `worstFile`. If a component returns `pending_reanalysis`, omit `worstFile`; the renderer shows a dash.
+**3. Worst file (optional).** For each plotted component, call `explore_project_files` with `component` set to its name and `sort: "codeHealth.value:asc"`, `page_size: 1`. Use the file name (the last segment of `path`) and its `codeHealth.value`, rounded to two decimals, as `worstFile`. The calls are independent; run them in parallel. If a component returns `pending_reanalysis`, omit `worstFile`; the renderer shows a dash.
 
 **4. Classify.** The renderer does this; know the rules to explain them. Healthy means `health >= 9.0`. Active means `changes >=` the median commits across the plotted components. Address = active and unhealthy, Plan = active and healthy, Delay = quiet and unhealthy, Ignore = quiet and healthy.
 
@@ -89,7 +90,7 @@ The `{{REPORT_DATA}}` block is a `<script type="application/json">` element. Put
 
 - SVG `<title>` tooltips don't show in every viewer. The renderer uses an absolutely positioned card; keep `pointer-events="none"` on labels and overlays so they don't steal the hover.
 - Address components are orange diamonds with a soft ring; everything else is a circle coloured by Code Health. Don't go back to plain dots for Address.
-- Label placement avoids bubbles and trend lines. When you add marks to the chart, add them to the obstacles in `placeLabels`.
+- Label placement avoids bubbles and trend lines. When you add marks to the chart, add them to the obstacles in `placeLabels`. In a dense cluster, a label that fits nowhere is left off (Address components are always labelled); the hover card still names it.
 - Keep narrow side columns out of tables: put tables full width, and let long names wrap instead of truncating.
 - Use CodeScene colours (the CSS variables in `:root`): orange for below 9.0, green for 9.0 or above, azure for 10.0, navy as the primary. Dark mode follows the viewer's system setting.
 
