@@ -13,7 +13,7 @@ skills/<id>/
   SKILL.md                       the workflow: which MCP tools to call and how to read their results
   skill.json                     metadata: version, MCP tools used, inputs, renderers
   report-data.schema.json        the report's data contract, independent of any renderer
-  renderers/                     layouts with a {{REPORT_DATA}} block, one per client type
+  renderers/                     self-contained HTML + SVG reports with a {{REPORT_DATA}} block
   templates/                     placeholder files for project-specific notes
 ```
 

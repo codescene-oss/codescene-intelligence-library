@@ -76,9 +76,9 @@ Put the whole codebase first in `outcomes`; renderers highlight the first entry 
 
 ## Renderers
 
-| Renderer | Use in | Check after writing |
-|---|---|---|
-| [renderers/cursor-canvas.tsx](renderers/cursor-canvas.tsx) | Cursor canvases | Read the canvas skill first; the Canvas TypeScript check reports no errors |
+[renderers/report.html](renderers/report.html) is a single self-contained HTML file: inline SVG, plain JavaScript, no libraries and no network access. It works in any client that can write a file, and opens in any browser. Print it to PDF for email.
+
+The `{{REPORT_DATA}}` block is a `<script type="application/json">` element. Put only JSON there: no comments, no trailing commas. Names are escaped by the renderer, so paste them as they are. After writing, open the file in a browser, or a preview the client offers, and check that the chart appears instead of an error box.
 
 ## How the renderer reads the data
 
@@ -87,12 +87,11 @@ Put the whole codebase first in `outcomes`; renderers highlight the first entry 
 
 ## Chart rules learned the hard way
 
-- SVG `<title>` tooltips don't show in canvases. The renderer uses React state and an absolutely positioned card; keep `pointerEvents="none"` on labels and overlays so they don't steal the hover.
+- SVG `<title>` tooltips don't show in every viewer. The renderer uses an absolutely positioned card; keep `pointer-events="none"` on labels and overlays so they don't steal the hover.
 - Address components are orange diamonds with a soft ring; everything else is a circle coloured by Code Health. Don't go back to plain dots for Address.
 - Label placement avoids bubbles and trend lines. When you add marks to the chart, add them to the obstacles in `placeLabels`.
 - Keep narrow side columns out of tables: put tables full width, and let long names wrap instead of truncating.
-- Use CodeScene colours (the `codescene` object): orange for below 9.0, green for 9.0 or above, azure for 10.0, navy as the primary. Don't use `theme.category.*` for Code Health.
-- Canvas SDK layout components (`Stack`, `Row`, `Grid`) don't accept `key`. In mapped lists, use a plain `div`.
+- Use CodeScene colours (the CSS variables in `:root`): orange for below 9.0, green for 9.0 or above, azure for 10.0, navy as the primary. Dark mode follows the viewer's system setting.
 
 ## Troubleshooting
 

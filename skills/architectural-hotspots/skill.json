@@ -13,7 +13,7 @@
   ],
   "skill": "SKILL.md",
   "data_schema": "report-data.schema.json",
-  "renderers": [{ "id": "cursor-canvas", "file": "renderers/cursor-canvas.tsx", "client": "cursor" }],
+  "renderers": [{ "id": "html", "file": "renderers/report.html", "format": "text/html" }],
   "templates": ["templates/project-notes.md"],
   "shared": ["../../shared/ground-rules.md"]
 }

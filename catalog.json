@@ -5,7 +5,7 @@
       "version": "1.0.0",
       "path": "skills/architectural-hotspots",
       "summary": "Places each architectural component in a PAID quadrant by change activity and Code Health, and estimates the outcomes and team ROI of uplifting the components to address first.",
-      "renderers": ["cursor-canvas"]
+      "renderers": ["html"]
     }
   ]
 }

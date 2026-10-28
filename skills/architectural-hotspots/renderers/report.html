@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Architectural hotspots</title>
+<style>
+  /* CodeScene design system colours. Alpha suffixes keep tints readable in light and dark mode. */
+  :root {
+    --bad: #ff0004;
+    --warn: #ff9300;
+    --good: #26a65b;
+    --optimal: #0074e0;
+    --primary: #003d7a;
+    --warn-tint: #ff930024;
+    --good-tint: #26a65b14;
+    --brand-tint: #1f53e014;
+    --bg: #ffffff;
+    --text: #1a1d21;
+    --text-2: #4a5059;
+    --text-3: #7a818c;
+    --stroke-2: #d5d9de;
+    --stroke-3: #eceef1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --primary: #5cb0ff;
+      --bg: #17191c;
+      --text: #eceef1;
+      --text-2: #b4bac2;
+      --text-3: #848b95;
+      --stroke-2: #3a3f46;
+      --stroke-3: #2a2e33;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; }
+  section { display: flex; flex-direction: column; gap: 8px; }
+  h1 { font-size: 24px; margin: 0; line-height: 1.25; }
+  h2 { font-size: 17px; margin: 0; }
+  p { margin: 0; }
+  .eyebrow { color: var(--primary); font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; }
+  .small { font-size: 12px; }
+  .secondary { color: var(--text-2); }
+  .tertiary { color: var(--text-3); }
+  .intro { background: var(--brand-tint); border-left: 3px solid var(--primary); border-radius: 4px; padding: 12px 16px; }
+  .intro strong { color: var(--primary); display: block; margin-bottom: 4px; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; font-size: 12px; color: var(--text-2); }
+  .legend span { display: inline-flex; gap: 6px; align-items: center; }
+  .legend .dot { width: 10px; height: 10px; border-radius: 5px; display: inline-block; }
+  .legend .key { color: var(--text); font-weight: 600; }
+  .chart { position: relative; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart svg text { font-family: inherit; }
+  .bubble { cursor: pointer; }
+  .tooltip { position: absolute; pointer-events: none; background: var(--bg); border: 1px solid var(--stroke-2); border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); padding: 8px 12px; min-width: 240px; z-index: 1; font-size: 11px; line-height: 17px; display: none; }
+  .tooltip .name { font-size: 12px; font-weight: 700; }
+  .tooltip .quadrant { font-weight: 600; margin-bottom: 6px; color: var(--text-3); }
+  .tooltip .row { display: flex; justify-content: space-between; gap: 16px; }
+  .tooltip .row span:first-child { color: var(--text-2); }
+  .tooltip .row span:last-child { text-align: right; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--stroke-2); border-radius: 6px; overflow: hidden; font-size: 12px; }
+  th { background: var(--warn-tint); color: var(--text-2); font-size: 11px; font-weight: 600; text-align: left; padding: 6px 12px; }
+  td { padding: 8px 12px; border-top: 1px solid var(--stroke-3); color: var(--text-2); overflow-wrap: anywhere; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.name { color: var(--text); font-weight: 600; }
+  .strong { font-weight: 600; }
+  .cards { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+  .card { border: 1px solid var(--stroke-2); border-radius: 6px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+  .card.featured { border-color: var(--primary); background: var(--brand-tint); }
+  .card .scope { font-size: 13px; font-weight: 700; }
+  .card.featured .scope { color: var(--primary); }
+  .metric { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .metric span:first-child { font-size: 12px; color: var(--text-2); }
+  .metric span:last-child { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .quadrants { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; font-size: 12px; }
+  .quadrants strong { display: block; }
+  .error { border: 1px solid var(--bad); border-radius: 6px; padding: 12px 16px; color: var(--bad); }
+  @media (max-width: 720px) {
+    .cards, .quadrants { grid-template-columns: minmax(0, 1fr); }
+    .table-wrap { overflow-x: auto; }
+  }
+  @media print {
+    main { max-width: none; padding: 0; }
+    section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<main id="report"></main>
+
+<!-- {{REPORT_DATA}}: replace the placeholder object with ReportData JSON that validates against report-data.schema.json.
+     Keep everything outside this block unchanged. -->
+<script type="application/json" id="report-data">
+{
+  "project": { "name": "{{project-name}}", "source": "{{source}}" },
+  "components": [],
+  "outcomes": []
+}
+</script>
+<!-- {{/REPORT_DATA}} -->
+
+<script>
+// ---------------------------------------------------------------------------
+// Generic layout below: no project-specific values.
+// ---------------------------------------------------------------------------
+(function () {
+  const root = document.getElementById("report");
+  let report;
+  try {
+    report = JSON.parse(document.getElementById("report-data").textContent);
+  } catch (e) {
+    root.innerHTML = `<p class="error">The report data is not valid JSON: ${escapeHtml(e.message)}</p>`;
+    return;
+  }
+  if (!report.components || report.components.length === 0) {
+    root.innerHTML = `<p class="error">The report has no components. Fill the {{REPORT_DATA}} block with data from CodeScene.</p>`;
+    return;
+  }
+
+  const { project, components } = report;
+  const outcomes = report.outcomes || [];
+  const healthyThreshold = 9;
+  const optimal = 10;
+  const css = { bad: "var(--bad)", warn: "var(--warn)", good: "var(--good)", optimal: "var(--optimal)", primary: "var(--primary)" };
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+  }
+
+  const dotColour = (health) => (health >= optimal ? css.optimal : health >= healthyThreshold ? css.good : css.warn);
+  const formatInt = (n) => Math.round(n).toLocaleString("en-US");
+
+  // -------------------------------------------------------------------------
+  // Trend: the component's averageCodeHealth.trend (direction and pace)
+  // -------------------------------------------------------------------------
+
+  const trendOf = (c) => (c.trend && c.trend.direction) || "steady";
+  const trendColour = { improving: css.good, declining: css.bad, steady: "" };
+  const trendText = (c) => {
+    const trend = trendOf(c);
+    if (trend === "steady") return c.trend ? "Steady" : "Not enough history";
+    return `${trend === "improving" ? "▲ Improving" : "▼ Declining"}${c.trend && c.trend.pace ? `, ${c.trend.pace}` : ""}`;
+  };
+  const trendGlyph = { length: 24, gap: 5, maxRise: 14 };
+
+  function trendSegment(cx, cy, r, c) {
+    const magnitude = c.trend && c.trend.pace === "fast" ? trendGlyph.maxRise : trendGlyph.maxRise / 2;
+    const rise = trendOf(c) === "improving" ? magnitude : -magnitude;
+    const x2 = cx - r - trendGlyph.gap;
+    return { x1: x2 - trendGlyph.length, y1: cy + rise / 2, x2, y2: cy - rise / 2 };
+  }
+
+  // -------------------------------------------------------------------------
+  // Quadrant model (Gartner PAID: impact = change activity, risk = low Code Health)
+  // -------------------------------------------------------------------------
+
+  const quadrants = {
+    address: { name: "Address", action: "Prioritized uplift",
+      description: "Unhealthy components where much of the development happens. The debt taxes most delivery work, so plan architectural refactoring here first." },
+    plan: { name: "Plan", action: "Maintain",
+      description: "Healthy, busy components. Guard them with Code Health quality gates so debt doesn't creep in." },
+    delay: { name: "Delay", action: "Monitor", description: "Unhealthy but stable components. Revisit if development shifts there." },
+    ignore: { name: "Ignore", action: "No action", description: "Healthy and quiet components. Leave them as they are." },
+  };
+
+  const median = (values) => {
+    const sorted = [...values].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+  };
+
+  const activityThreshold = Math.round(median(components.map((c) => c.changes)));
+
+  function quadrantOf({ changes, health }) {
+    const active = changes >= activityThreshold;
+    const healthy = health >= healthyThreshold;
+    if (active) return healthy ? "plan" : "address";
+    return healthy ? "ignore" : "delay";
+  }
+
+  // -------------------------------------------------------------------------
+  // Chart geometry
+  // -------------------------------------------------------------------------
+
+  const width = 900;
+  const height = 520;
+  const margin = { left: 60, right: 24, top: 20, bottom: 56 };
+  const plotWidth = width - margin.left - margin.right;
+  const plotHeight = height - margin.top - margin.bottom;
+
+  const minChanges = Math.max(1, Math.min(...components.map((c) => c.changes)));
+  const xMin = Math.pow(10, Math.floor(Math.log10(minChanges / 1.5)));
+  const xMax = Math.pow(10, Math.ceil(Math.log10(Math.max(...components.map((c) => c.changes), 1) * 1.5)));
+  const yMin = Math.floor(Math.min(...components.map((c) => c.health)) - 0.5);
+  const yMax = optimal;
+
+  const xTicks = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000].filter((t) => t >= xMin && t <= xMax);
+  const yTicks = Array.from({ length: Math.round((yMax - yMin) * 2) + 1 }, (_, i) => yMin + i * 0.5);
+
+  const xScale = (changes) =>
+    margin.left + ((Math.log10(Math.max(changes, xMin)) - Math.log10(xMin)) / (Math.log10(xMax) - Math.log10(xMin))) * plotWidth;
+  const yScale = (health) => margin.top + ((yMax - health) / (yMax - yMin)) * plotHeight;
+
+  const largestComponent = Math.max(...components.map((c) => c.linesOfCode), 1);
+  const bubbleRadius = (linesOfCode) => 6 + Math.sqrt(linesOfCode / largestComponent) * 14;
+
+  const diamondPath = (cx, cy, r) => `M ${cx} ${cy - r} L ${cx + r} ${cy} L ${cx} ${cy + r} L ${cx - r} ${cy} Z`;
+
+  const overlaps = (a, b) => a.x1 < b.x2 && b.x1 < a.x2 && a.y1 < b.y2 && b.y1 < a.y2;
+
+  function placeLabels(points) {
+    const obstacles = points.map((p) => {
+      const trendWidth = trendOf(p) === "steady" ? 0 : trendGlyph.gap + trendGlyph.length;
+      const halfHeight = trendOf(p) === "steady" ? p.r : Math.max(p.r, trendGlyph.maxRise / 2);
+      return { x1: p.cx - p.r - trendWidth, y1: p.cy - halfHeight, x2: p.cx + p.r, y2: p.cy + halfHeight };
+    });
+    const placed = [];
+    return points.map((p, index) => {
+      const w = p.name.length * 6.4;
+      const h = 13;
+      const candidates = [
+        { x: p.cx + p.r + 5, y: p.cy + 4, anchor: "start" },
+        { x: p.cx - p.r - 5, y: p.cy + 4, anchor: "end" },
+        { x: p.cx, y: p.cy - p.r - 6, anchor: "middle" },
+        { x: p.cx, y: p.cy + p.r + 14, anchor: "middle" },
+      ];
+      const boxOf = (c) => {
+        const x1 = c.anchor === "start" ? c.x : c.anchor === "end" ? c.x - w : c.x - w / 2;
+        return { x1, y1: c.y - h + 3, x2: x1 + w, y2: c.y + 3 };
+      };
+      const inside = (b) => b.x1 >= margin.left && b.x2 <= width - margin.right && b.y1 >= margin.top;
+      const own = obstacles[index];
+      const choice =
+        candidates.find((c) => {
+          const b = boxOf(c);
+          return inside(b) && !placed.some((o) => overlaps(o, b)) && !obstacles.some((o) => o !== own && overlaps(o, b));
+        }) || candidates[0];
+      placed.push(boxOf(choice));
+      return { ...p, label: choice };
+    });
+  }
+
+  // -------------------------------------------------------------------------
+  // Sections
+  // -------------------------------------------------------------------------
+
+  function quadrantChart() {
+    const splitX = xScale(activityThreshold);
+    const splitY = yScale(healthyThreshold);
+    const left = margin.left;
+    const right = margin.left + plotWidth;
+    const top = margin.top;
+    const bottom = margin.top + plotHeight;
+
+    const regions = [
+      { id: "ignore", x: left, y: top, w: splitX - left, h: splitY - top, anchor: "start" },
+      { id: "plan", x: splitX, y: top, w: right - splitX, h: splitY - top, anchor: "end" },
+      { id: "delay", x: left, y: splitY, w: splitX - left, h: bottom - splitY, anchor: "start" },
+      { id: "address", x: splitX, y: splitY, w: right - splitX, h: bottom - splitY, anchor: "end" },
+    ];
+
+    const points = [...components]
+      .sort((a, b) => b.linesOfCode - a.linesOfCode)
+      .map((c) => ({ ...c, cx: xScale(c.changes), cy: yScale(c.health), r: bubbleRadius(c.linesOfCode) }));
+    const labelled = placeLabels(points);
+
+    const regionSvg = regions.map((r) => {
+      const fill = r.id === "address" ? "var(--warn-tint)" : r.id === "plan" ? "var(--good-tint)" : "transparent";
+      const nameColour = r.id === "address" ? css.warn : r.id === "plan" ? css.good : "var(--text-2)";
+      const tx = r.anchor === "start" ? r.x + 10 : r.x + r.w - 10;
+      const lower = r.id === "delay" || r.id === "address";
+      return `<rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" fill="${fill}"/>
+        <text x="${tx}" y="${lower ? r.y + r.h - 26 : r.y + 20}" text-anchor="${r.anchor}" font-size="14" font-weight="700" letter-spacing="0.5" fill="${nameColour}">${quadrants[r.id].name.toUpperCase()}</text>
+        <text x="${tx}" y="${lower ? r.y + r.h - 10 : r.y + 36}" text-anchor="${r.anchor}" font-size="12" fill="var(--text-3)">${quadrants[r.id].action}</text>`;
+    }).join("");
+
+    const gridSvg =
+      yTicks.map((t) => `<line x1="${left}" x2="${right}" y1="${yScale(t)}" y2="${yScale(t)}" stroke="var(--stroke-3)"/>
+        <text x="${left - 8}" y="${yScale(t) + 4}" text-anchor="end" font-size="11" fill="var(--text-3)">${t.toFixed(1)}</text>`).join("") +
+      xTicks.map((t) => `<line x1="${xScale(t)}" x2="${xScale(t)}" y1="${top}" y2="${bottom}" stroke="var(--stroke-3)"/>
+        <text x="${xScale(t)}" y="${bottom + 16}" text-anchor="middle" font-size="11" fill="var(--text-3)">${t}</text>`).join("");
+
+    const splitsSvg = `<line x1="${splitX}" x2="${splitX}" y1="${top}" y2="${bottom}" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <line x1="${left}" x2="${right}" y1="${splitY}" y2="${splitY}" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <rect x="${left}" y="${top}" width="${plotWidth}" height="${plotHeight}" fill="none" stroke="var(--stroke-2)"/>`;
+
+    const trendsSvg = labelled.map((c) => {
+      if (trendOf(c) === "steady") return "";
+      const s = trendSegment(c.cx, c.cy, c.r, c);
+      const colour = trendColour[trendOf(c)];
+      return `<g pointer-events="none">
+        <line x1="${s.x1}" y1="${s.y1}" x2="${s.x2}" y2="${s.y2}" stroke="var(--bg)" stroke-width="6" stroke-linecap="round"/>
+        <line x1="${s.x1}" y1="${s.y1}" x2="${s.x2}" y2="${s.y2}" stroke="${colour}" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="${s.x1}" cy="${s.y1}" r="2.5" fill="var(--bg)" stroke="${colour}" stroke-width="1.5"/></g>`;
+    }).join("");
+
+    const bubblesSvg = labelled.map((c, i) => {
+      if (quadrantOf(c) === "address") {
+        return `<g class="bubble" data-index="${i}">
+          <circle class="ring" cx="${c.cx}" cy="${c.cy}" r="${c.r + 7}" fill="var(--warn-tint)" stroke="var(--warn)" stroke-opacity="0.5"/>
+          <path class="mark" d="${diamondPath(c.cx, c.cy, c.r)}" fill="var(--warn)" stroke="var(--bg)" stroke-width="1.5"/></g>`;
+      }
+      return `<g class="bubble" data-index="${i}">
+        <circle class="mark" cx="${c.cx}" cy="${c.cy}" r="${c.r}" fill="${dotColour(c.health)}" fill-opacity="0.85" stroke="var(--bg)" stroke-width="1.5"/></g>`;
+    }).join("");
+
+    const labelsSvg = labelled.map((c) => {
+      const address = quadrantOf(c) === "address";
+      return `<text pointer-events="none" x="${c.label.x}" y="${c.label.y}" text-anchor="${c.label.anchor}" font-size="11"
+        font-weight="${address ? 600 : 400}" fill="${address ? "var(--text)" : "var(--text-2)"}">${escapeHtml(c.name)}</text>`;
+    }).join("");
+
+    const axesSvg = `<text x="${left + plotWidth / 2}" y="${height - 12}" text-anchor="middle" font-size="12" fill="var(--text-2)">Change activity: commits to the component's files (log scale) → more relevant</text>
+      <text x="16" y="${top + plotHeight / 2}" text-anchor="middle" font-size="12" fill="var(--text-2)" transform="rotate(-90 16 ${top + plotHeight / 2})">Average Code Health (1–10) → healthier</text>`;
+
+    const html = `<div class="chart">
+      <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Components by change activity and Code Health">
+        ${regionSvg}${gridSvg}${splitsSvg}${trendsSvg}${bubblesSvg}${labelsSvg}${axesSvg}
+      </svg>
+      <div class="tooltip" role="tooltip"></div></div>`;
+    return { html, labelled };
+  }
+
+  function bindTooltip(chart, labelled) {
+    const tooltip = chart.querySelector(".tooltip");
+    chart.querySelectorAll(".bubble").forEach((bubble) => {
+      const c = labelled[Number(bubble.dataset.index)];
+      const mark = bubble.querySelector(".mark");
+      const ring = bubble.querySelector(".ring");
+      bubble.addEventListener("mouseenter", () => {
+        mark.setAttribute("stroke", "var(--text)");
+        mark.setAttribute("fill-opacity", "1");
+        if (ring) ring.setAttribute("stroke-opacity", "1");
+        tooltip.innerHTML = tooltipHtml(c);
+        const below = c.cy - c.r < 140;
+        tooltip.style.left = `${(c.cx / width) * 100}%`;
+        tooltip.style.top = `${(c.cy / height) * 100}%`;
+        tooltip.style.transform = below ? `translate(-50%, ${c.r + 14}px)` : `translate(-50%, calc(-100% - ${c.r + 14}px))`;
+        tooltip.style.display = "block";
+      });
+      bubble.addEventListener("mouseleave", () => {
+        mark.setAttribute("stroke", "var(--bg)");
+        mark.setAttribute("fill-opacity", "0.85");
+        if (ring) ring.setAttribute("stroke-opacity", "0.5");
+        tooltip.style.display = "none";
+      });
+    });
+  }
+
+  function tooltipHtml(c) {
+    const rows = [
+      ["Code Health", c.health.toFixed(2), dotColour(c.health)],
+      ["12-month trend", trendText(c), trendColour[trendOf(c)] || undefined],
+      ["Hotspot Code Health", c.hotspotHealth === null ? "—" : c.hotspotHealth.toFixed(2), c.hotspotHealth === null ? undefined : dotColour(c.hotspotHealth)],
+      ["Commits", String(c.changes)],
+      ["Size", `${formatInt(c.linesOfCode)} lines in ${c.files} files`],
+      ["Hotspots", String(c.hotspots)],
+    ];
+    if (c.worstFile) rows.push(["Worst file", `${c.worstFile.path} (${c.worstFile.health.toFixed(2)})`, dotColour(c.worstFile.health)]);
+    const q = quadrants[quadrantOf(c)];
+    return `<div class="name">${escapeHtml(c.name)}</div>
+      <div class="quadrant" style="${quadrantOf(c) === "address" ? `color:${css.warn}` : ""}">${q.name} · ${q.action}</div>
+      ${rows.map(([label, value, colour]) => `<div class="row"><span>${label}</span>
+        <span style="color:${colour || "var(--text)"};font-weight:${colour ? 600 : 400}">${escapeHtml(value)}</span></div>`).join("")}`;
+  }
+
+  function legend() {
+    const items = [
+      [`Unhealthy (below ${healthyThreshold.toFixed(1)})`, dotColour(healthyThreshold - 1)],
+      [`Healthy (${healthyThreshold.toFixed(1)} or higher)`, dotColour(healthyThreshold)],
+      [`Optimal (${optimal.toFixed(1)})`, dotColour(optimal)],
+    ];
+    const trendLine = (colour, rise) =>
+      `<svg width="22" height="14" viewBox="0 0 22 14"><line x1="3" y1="${7 + rise / 2}" x2="19" y2="${7 - rise / 2}" stroke="${colour}" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+    return `<div class="legend">
+      <span class="key"><svg width="16" height="16" viewBox="0 0 16 16"><path d="${diamondPath(8, 8, 6)}" fill="var(--warn)"/></svg>Architectural hotspot to address</span>
+      ${items.map(([label, colour]) => `<span><i class="dot" style="background:${colour}"></i>${label}</span>`).join("")}
+      <span>12-month trend: ${trendLine(css.good, 8)} Improving ${trendLine(css.bad, -8)} Declining</span>
+      <span class="tertiary">Bubble size: lines of code</span></div>`;
+  }
+
+  function addressTable(items) {
+    const diamond = `<svg width="12" height="12" viewBox="0 0 12 12"><path d="${diamondPath(6, 6, 5)}" fill="var(--warn)"/></svg>`;
+    const rows = items.map((c) => `<tr>
+      <td>${diamond}</td>
+      <td class="name">${escapeHtml(c.name)}</td>
+      <td class="num strong" style="color:${dotColour(c.health)}">${c.health.toFixed(2)}</td>
+      <td class="num strong" style="color:${trendColour[trendOf(c)] || "var(--text-3)"}">${trendText(c)}</td>
+      <td class="num" style="color:${c.hotspotHealth === null ? "var(--text-3)" : dotColour(c.hotspotHealth)}">${c.hotspotHealth === null ? "—" : c.hotspotHealth.toFixed(2)}</td>
+      <td class="num">${c.changes}</td>
+      <td class="num">${c.hotspots}</td>
+      <td>${c.worstFile ? `${escapeHtml(c.worstFile.path)} <span class="strong" style="color:${dotColour(c.worstFile.health)}">${c.worstFile.health.toFixed(2)}</span>` : "—"}</td>
+    </tr>`).join("");
+    return `<div class="table-wrap"><table>
+      <thead><tr><th></th><th>Component</th><th class="num">Code Health</th><th class="num">12-mo trend</th><th class="num">Hotspot CH</th><th class="num">Commits</th><th class="num">Hotspots</th><th>Worst file</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
+  }
+
+  const signedPercent = (value) => `${value > 0 ? "+" : "−"}${Math.abs(value).toFixed(0)}`;
+  const midpointPercent = ({ lower, upper }) => `${signedPercent((lower + upper) / 2)}%`;
+
+  function card(scope, subtitle, metrics, featured, valueColour) {
+    return `<div class="card${featured ? " featured" : ""}">
+      <div><div class="scope">${escapeHtml(scope)}</div><div class="small secondary">${subtitle}</div></div>
+      ${metrics.map(([label, value]) => `<div class="metric"><span>${label}</span><span style="color:${valueColour}">${value}</span></div>`).join("")}
+    </div>`;
+  }
+
+  function outcomesSection(addressNames) {
+    const target = outcomes[0].target;
+    const cards = outcomes.map((o, i) => card(
+      o.scope,
+      `Code Health <span class="strong" style="color:${dotColour(o.baseline)}">${o.baseline.toFixed(2)}</span> → <span class="strong" style="color:${dotColour(o.target)}">${o.target.toFixed(2)}</span>`,
+      [["Defects", midpointPercent(o.defects)], ["Development time", midpointPercent(o.developmentTime)], ["Productivity", midpointPercent(o.productivity)]],
+      i === 0,
+      css.good,
+    )).join("");
+    const componentTarget = (outcomes.find((o, i) => i > 0) || outcomes[0]).target;
+    return `<section>
+      <h2>What uplifting ${addressNames.map(escapeHtml).join(" and ")} to ${componentTarget.toFixed(1)} buys</h2>
+      <div class="cards">${cards}</div>
+      <p class="small tertiary">Estimated change: the midpoint of the CodeScene outcome model's 90% interval. Component cards: development inside that component.
+        Whole codebase: the lines-of-code-weighted average across all components shown (${outcomes[0].baseline.toFixed(2)} → ${target.toFixed(2)}),
+        with the Address components at ${componentTarget.toFixed(1)} and everything else unchanged.</p>
+    </section>`;
+  }
+
+  const team = report.team || { developers: 10, hoursPerWeek: 40, weeksPerYear: 46 };
+  const hoursPerDeveloper = team.hoursPerWeek * team.weeksPerYear;
+  const teamHours = team.developers * hoursPerDeveloper;
+  const totalChanges = components.reduce((sum, c) => sum + c.changes, 0);
+
+  function workShare(scope) {
+    const component = components.find((c) => c.name === scope);
+    return component ? component.changes / totalChanges : 1;
+  }
+
+  function hoursSaved(outcome) {
+    const productivityGain = (outcome.productivity.lower + outcome.productivity.upper) / 2 / 100;
+    return teamHours * workShare(outcome.scope) * (productivityGain / (1 + productivityGain));
+  }
+
+  function roiSection() {
+    const cards = outcomes.map((o, i) => {
+      const saved = hoursSaved(o);
+      const share = workShare(o.scope);
+      return card(
+        o.scope,
+        share === 1 ? "All of the team's development time" : `${Math.round(share * 100)}% of the team's commits`,
+        [
+          ["Hours saved per year", formatInt(Math.round(saved / 10) * 10)],
+          ["Full-time developers freed", (saved / hoursPerDeveloper).toFixed(1)],
+          ["Per developer per week", `${(saved / team.developers / team.weeksPerYear).toFixed(1)} h`],
+        ],
+        i === 0,
+        css.primary,
+      );
+    }).join("");
+    return `<section>
+      <h2>ROI for a team of ${team.developers} developers</h2>
+      <div class="cards">${cards}</div>
+      <p class="small tertiary">Assumes ${team.developers} developers at ${team.hoursPerWeek} hours a week for ${team.weeksPerYear} weeks a year
+        (${formatInt(teamHours)} team hours). A productivity gain p means the same work takes 1/(1 + p) of the time, using the midpoint
+        estimates above. Component cards count only the time spent in that component, approximated by its share of commits.
+        The component cards add up to roughly the whole-codebase figure.</p>
+    </section>`;
+  }
+
+  // -------------------------------------------------------------------------
+  // Page
+  // -------------------------------------------------------------------------
+
+  const byQuadrant = (id) => components.filter((c) => quadrantOf(c) === id);
+  const address = byQuadrant("address").sort((a, b) => b.changes - a.changes);
+  const order = ["address", "plan", "delay", "ignore"];
+  const addressShare = totalChanges ? Math.round((address.reduce((sum, c) => sum + c.changes, 0) / totalChanges) * 100) : 0;
+  const chart = quadrantChart();
+
+  document.title = `Architectural hotspots · ${project.name}`;
+  root.innerHTML = `
+    <section>
+      <div class="eyebrow">CodeScene · Architectural debt</div>
+      <h1>Architectural hotspots: where to pay down technical debt</h1>
+      <div class="intro"><strong>The idea</strong>Code Health per architectural component shows where the technical debt sits.
+        Change activity across a component's files shows how much of the team's work runs through it. Together they show which parts
+        of the architecture are worth uplifting, and which debt can safely wait.</div>
+    </section>
+
+    <section>
+      ${legend()}
+      ${chart.html}
+      <p class="small tertiary">One bubble per architectural component in ${escapeHtml(project.name)}. Vertical split: median change activity across
+        components (${activityThreshold} commits). Horizontal split: Healthy (${healthyThreshold.toFixed(1)}). The line left of a bubble shows
+        the direction of the component's Code Health trend, steeper when the pace is fast; steady components have no line. Hover a bubble
+        for details. Quadrants follow Gartner's PAID model, with change activity as impact and low Code Health as risk.
+        Source: ${escapeHtml(project.source)}.</p>
+    </section>
+
+    <section>
+      <h2>Address first</h2>
+      ${address.length
+        ? `<p class="small secondary">${address.length} ${address.length === 1 ? "component carries" : "components carry"} ${addressShare}% of all commits while scoring below ${healthyThreshold.toFixed(1)}.</p>${addressTable(address)}`
+        : `<p class="small secondary">No component is both busy and below ${healthyThreshold.toFixed(1)}.</p>`}
+    </section>
+
+    ${outcomes.length ? outcomesSection(address.map((c) => c.name)) : ""}
+    ${outcomes.length ? roiSection() : ""}
+
+    <section>
+      <h2>The four quadrants</h2>
+      <div class="quadrants">${order.map((id) => `<div><strong>${quadrants[id].name} · ${quadrants[id].action} (${byQuadrant(id).length})</strong>
+        <span class="secondary">${quadrants[id].description}</span></div>`).join("")}</div>
+    </section>`;
+
+  bindTooltip(root.querySelector(".chart"), chart.labelled);
+})();
+</script>
+</body>
+</html>
