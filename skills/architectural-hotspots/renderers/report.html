@@ -169,16 +169,14 @@
     ignore: { name: "Ignore", action: "No action", description: "Healthy and quiet components. Leave them as they are." },
   };
 
-  const median = (values) => {
-    const sorted = [...values].sort((a, b) => a - b);
-    const mid = Math.floor(sorted.length / 2);
-    return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-  };
-
-  const activityThreshold = Math.round(median(components.map((c) => c.changes)));
+  // Head/tail breaks (Jiang): change activity is heavy-tailed, so split at the mean. The components above it,
+  // the head, carry most of the development; the long tail below it is quiet.
+  const activityThreshold = components.reduce((sum, c) => sum + c.changes, 0) / components.length;
+  const head = components.filter((c) => c.changes > activityThreshold);
+  const headShare = head.reduce((sum, c) => sum + c.changes, 0) / (components.reduce((sum, c) => sum + c.changes, 0) || 1);
 
   function quadrantOf({ changes, health }) {
-    const active = changes >= activityThreshold;
+    const active = changes > activityThreshold;
     const healthy = health >= healthyThreshold;
     if (active) return healthy ? "plan" : "address";
     return healthy ? "ignore" : "delay";
@@ -691,8 +689,9 @@
       <p class="small tertiary">One bubble per architectural component in ${escapeHtml(project.name)}.${groupCount
         ? ` Components that would overlap within the same quadrant are grouped into one bubble; the number is how many it holds.
           Hover a group to list them, click it to spread them out, and click again or press Escape to collapse it.`
-        : ""} Vertical split: median change activity across
-        components (${activityThreshold} commits). Horizontal split: Healthy (${healthyThreshold.toFixed(1)}). The line left of a bubble shows
+        : ""} Vertical split: head/tail breaks at the
+        mean change activity (${Math.round(activityThreshold)} commits); the ${head.length} of ${components.length} components above it carry
+        ${Math.round(headShare * 100)}% of all commits. Horizontal split: Healthy (${healthyThreshold.toFixed(1)}). The line left of a bubble shows
         the direction of the component's Code Health trend, steeper when the pace is fast; steady components have no line. Hover a bubble
         for details. Quadrants follow Gartner's PAID model, with change activity as impact and low Code Health as risk.
         Source: ${escapeHtml(project.source)}.</p>

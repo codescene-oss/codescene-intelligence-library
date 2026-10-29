@@ -63,7 +63,7 @@ Keep `knowledge` (main author, `isActive`, `formerContributorShare`) for the con
 
 **3. Worst file (optional).** For each plotted component, call `explore_project_files` with `component` set to its name and `sort: "codeHealth.value:asc"`, `page_size: 1`. Use the file name (the last segment of `path`) and its `codeHealth.value`, rounded to two decimals, as `worstFile`. The calls are independent; run them in parallel. If a component returns `pending_reanalysis`, omit `worstFile`; the renderer shows a dash.
 
-**4. Classify.** The renderer does this; know the rules to explain them. Healthy means `health >= 9.0`. Active means `changes >=` the median commits across the plotted components. Address = active and unhealthy, Plan = active and healthy, Delay = quiet and unhealthy, Ignore = quiet and healthy.
+**4. Classify.** The renderer does this; know the rules to explain them. Healthy means `health >= 9.0`. Active means `changes >` the mean commits across the plotted components: the first split of the head/tail breaks algorithm. Change activity follows a power law, so the median would mark half the components as active however little most of them change; the mean separates the busy head, which carries most commits, from the long quiet tail. Address = active and unhealthy, Plan = active and healthy, Delay = quiet and unhealthy, Ignore = quiet and healthy.
 
 **5. `estimate_engineering_outcomes`.** Call it for:
 - each Address component, with `baseline` = its `health` and `target` = the target;
