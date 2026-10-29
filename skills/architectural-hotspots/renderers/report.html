@@ -54,6 +54,7 @@
   .chart svg { width: 100%; height: auto; display: block; }
   .chart svg text { font-family: inherit; }
   .bubble { cursor: pointer; }
+  .chart:focus { outline: none; }
   .tooltip { position: absolute; pointer-events: none; background: var(--bg); border: 1px solid var(--stroke-2); border-radius: 6px;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); padding: 8px 12px; min-width: 240px; z-index: 1; font-size: 11px; line-height: 17px; display: none; }
   .tooltip .name { font-size: 12px; font-weight: 700; }
@@ -68,6 +69,8 @@
   td.name { color: var(--text); font-weight: 600; }
   .strong { font-weight: 600; }
   .cards { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+  .cards.pair { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  table.outcomes th { background: var(--brand-tint); }
   .card { border: 1px solid var(--stroke-2); border-radius: 6px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
   .card.featured { border-color: var(--primary); background: var(--brand-tint); }
   .card .scope { font-size: 13px; font-weight: 700; }
@@ -79,7 +82,7 @@
   .quadrants strong { display: block; }
   .error { border: 1px solid var(--bad); border-radius: 6px; padding: 12px 16px; color: var(--bad); }
   @media (max-width: 720px) {
-    .cards, .quadrants { grid-template-columns: minmax(0, 1fr); }
+    .cards, .cards.pair, .quadrants { grid-template-columns: minmax(0, 1fr); }
     .table-wrap { overflow-x: auto; }
   }
   @media print {
@@ -211,6 +214,68 @@
 
   const overlaps = (a, b) => a.x1 < b.x2 && b.x1 < a.x2 && a.y1 < b.y2 && b.y1 < a.y2;
 
+  // -------------------------------------------------------------------------
+  // Grouping: bubbles that would overlap are merged into one numbered group, within a quadrant only,
+  // so a group never mixes quadrants. Outliers stay single.
+  // -------------------------------------------------------------------------
+
+  const clusterGap = 3;
+  const maxGroupRadius = 30;
+
+  function clusterPoints(points) {
+    let clusters = points.map((p) => ({ ...p, members: [p], quadrant: quadrantOf(p) }));
+    for (;;) {
+      let pair = null;
+      for (let i = 0; i < clusters.length && !pair; i++) {
+        for (let j = i + 1; j < clusters.length && !pair; j++) {
+          const a = clusters[i];
+          const b = clusters[j];
+          if (a.quadrant === b.quadrant && Math.hypot(a.cx - b.cx, a.cy - b.cy) < a.r + b.r + clusterGap) pair = [i, j];
+        }
+      }
+      if (!pair) return clusters;
+      const [a, b] = pair.map((i) => clusters[i]);
+      clusters = clusters.filter((_, i) => !pair.includes(i));
+      clusters.push(groupOf([...a.members, ...b.members], a.quadrant));
+    }
+  }
+
+  function groupOf(members, quadrant) {
+    const linesOfCode = members.reduce((sum, m) => sum + m.linesOfCode, 0);
+    const weighted = (key) => members.reduce((sum, m) => sum + m[key] * m.linesOfCode, 0) / (linesOfCode || 1);
+    return {
+      members: [...members].sort((x, y) => x.health - y.health),
+      quadrant,
+      name: `${members.length} components`,
+      health: weighted("health"),
+      linesOfCode,
+      cx: weighted("cx"),
+      cy: weighted("cy"),
+      r: Math.min(maxGroupRadius, bubbleRadius(linesOfCode)),
+    };
+  }
+
+  const isGroup = (c) => c.members.length > 1;
+
+  // The members of an expanded group, spread on a ring around it and kept inside the plot.
+  function fanOut(group) {
+    const maxR = Math.max(...group.members.map((m) => m.r));
+    const n = group.members.length;
+    const ring = Math.max(group.r + maxR + 18, (n * (2 * maxR + 8)) / (2 * Math.PI));
+    return group.members.map((m, i) => {
+      const angle = -Math.PI / 2 + (2 * Math.PI * i) / n;
+      const cx = Math.min(width - margin.right - m.r, Math.max(margin.left + m.r, group.cx + ring * Math.cos(angle)));
+      const cy = Math.min(height - margin.bottom - m.r, Math.max(margin.top + m.r, group.cy + ring * Math.sin(angle)));
+      const cos = Math.cos(angle);
+      const label = {
+        x: cx + Math.cos(angle) * (m.r + 4),
+        y: cy + Math.sin(angle) * (m.r + 4) + 4,
+        anchor: cos > 0.3 ? "start" : cos < -0.3 ? "end" : "middle",
+      };
+      return { ...m, cx, cy, label };
+    });
+  }
+
   function placeLabels(points) {
     const obstacles = points.map((p) => {
       const trendWidth = trendOf(p) === "steady" ? 0 : trendGlyph.gap + trendGlyph.length;
@@ -229,6 +294,8 @@
     ];
     const placed = [...titleBoxes];
     return points.map((p, index) => {
+      // Groups carry their count; only groups that need action get a text label too.
+      if (isGroup(p) && p.quadrant !== "address") return { ...p, label: null };
       const w = p.name.length * 6.4;
       const h = 13;
       const d = p.r * 0.7 + 4;
@@ -252,9 +319,9 @@
         const b = boxOf(c);
         return inside(b) && !placed.some((o) => overlaps(o, b)) && !obstacles.some((o) => o !== own && overlaps(o, b));
       });
-      // In a dense cluster, leave the label off rather than overprint; the hover card still names the component.
-      // Address components are always labelled.
-      if (!fits && quadrantOf(p) !== "address") return { ...p, label: null };
+      // When nothing fits, leave the label off rather than overprint; the hover card still names it.
+      // Address components and groups are always labelled.
+      if (!fits && p.quadrant !== "address") return { ...p, label: null };
       const choice = fits || candidates[0];
       placed.push(boxOf(choice));
       return { ...p, label: choice };
@@ -265,7 +332,48 @@
   // Sections
   // -------------------------------------------------------------------------
 
-  function quadrantChart() {
+  const clusters = placeLabels(
+    clusterPoints(
+      [...components]
+        .sort((a, b) => b.linesOfCode - a.linesOfCode)
+        .map((c) => ({ ...c, cx: xScale(c.changes), cy: yScale(c.health), r: bubbleRadius(c.linesOfCode) })),
+    ).sort((a, b) => b.linesOfCode - a.linesOfCode),
+  );
+  const groupCount = clusters.filter(isGroup).length;
+
+  function markSvg(c, key, dimmed) {
+    const opacity = dimmed ? 0.2 : 1;
+    const address = c.quadrant === "address";
+    const shape = address
+      ? `<circle class="ring" cx="${c.cx}" cy="${c.cy}" r="${c.r + 7}" fill="var(--warn-tint)" stroke="var(--warn)" stroke-opacity="0.5"/>
+         <path class="mark" d="${diamondPath(c.cx, c.cy, c.r)}" fill="var(--warn)" stroke="var(--bg)" stroke-width="1.5"/>`
+      : `<circle class="mark" cx="${c.cx}" cy="${c.cy}" r="${c.r}" fill="${dotColour(c.health)}" fill-opacity="0.85" stroke="var(--bg)" stroke-width="1.5"/>`;
+    const count = isGroup(c)
+      ? `<text pointer-events="none" x="${c.cx}" y="${c.cy + 4.5}" text-anchor="middle" font-size="${Math.min(14, Math.max(10, c.r * 0.8))}"
+           font-weight="700" fill="#ffffff">${c.members.length}</text>`
+      : "";
+    return `<g class="bubble${isGroup(c) ? " group" : ""}" data-key="${key}" opacity="${opacity}">${shape}${count}</g>`;
+  }
+
+  function labelSvg(c, dimmed) {
+    if (!c.label) return "";
+    const address = c.quadrant === "address";
+    return `<text pointer-events="none" x="${c.label.x}" y="${c.label.y}" text-anchor="${c.label.anchor}" font-size="11" opacity="${dimmed ? 0.2 : 1}"
+      font-weight="${address ? 600 : 400}" fill="${address ? "var(--text)" : "var(--text-2)"}">${escapeHtml(c.name)}</text>`;
+  }
+
+  function trendSvg(c, dimmed) {
+    if (isGroup(c) || trendOf(c) === "steady") return "";
+    const s = trendSegment(c.cx, c.cy, c.r, c);
+    const colour = trendColour[trendOf(c)];
+    return `<g pointer-events="none" opacity="${dimmed ? 0.2 : 1}">
+      <line x1="${s.x1}" y1="${s.y1}" x2="${s.x2}" y2="${s.y2}" stroke="var(--bg)" stroke-width="6" stroke-linecap="round"/>
+      <line x1="${s.x1}" y1="${s.y1}" x2="${s.x2}" y2="${s.y2}" stroke="${colour}" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="${s.x1}" cy="${s.y1}" r="2.5" fill="var(--bg)" stroke="${colour}" stroke-width="1.5"/></g>`;
+  }
+
+  // Renders the chart with at most one group expanded. Returns the shown items by key, for the hover cards.
+  function quadrantChartSvg(expanded) {
     const splitX = xScale(activityThreshold);
     const splitY = yScale(healthyThreshold);
     const left = margin.left;
@@ -279,11 +387,6 @@
       { id: "delay", x: left, y: splitY, w: splitX - left, h: bottom - splitY, anchor: "start" },
       { id: "address", x: splitX, y: splitY, w: right - splitX, h: bottom - splitY, anchor: "end" },
     ];
-
-    const points = [...components]
-      .sort((a, b) => b.linesOfCode - a.linesOfCode)
-      .map((c) => ({ ...c, cx: xScale(c.changes), cy: yScale(c.health), r: bubbleRadius(c.linesOfCode) }));
-    const labelled = placeLabels(points);
 
     const regionSvg = regions.map((r) => {
       const fill = r.id === "address" ? "var(--warn-tint)" : r.id === "plan" ? "var(--good-tint)" : "transparent";
@@ -305,55 +408,52 @@
       <line x1="${left}" x2="${right}" y1="${splitY}" y2="${splitY}" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="6 4"/>
       <rect x="${left}" y="${top}" width="${plotWidth}" height="${plotHeight}" fill="none" stroke="var(--stroke-2)"/>`;
 
-    const trendsSvg = labelled.map((c) => {
-      if (trendOf(c) === "steady") return "";
-      const s = trendSegment(c.cx, c.cy, c.r, c);
-      const colour = trendColour[trendOf(c)];
-      return `<g pointer-events="none">
-        <line x1="${s.x1}" y1="${s.y1}" x2="${s.x2}" y2="${s.y2}" stroke="var(--bg)" stroke-width="6" stroke-linecap="round"/>
-        <line x1="${s.x1}" y1="${s.y1}" x2="${s.x2}" y2="${s.y2}" stroke="${colour}" stroke-width="2.5" stroke-linecap="round"/>
-        <circle cx="${s.x1}" cy="${s.y1}" r="2.5" fill="var(--bg)" stroke="${colour}" stroke-width="1.5"/></g>`;
-    }).join("");
+    const items = {};
+    const others = clusters.map((c, i) => {
+      items[`c${i}`] = c;
+      const dimmed = expanded !== null && expanded !== i;
+      return { trend: trendSvg(c, dimmed), mark: markSvg(c, `c${i}`, dimmed), label: expanded === i ? "" : labelSvg(c, dimmed) };
+    });
 
-    const bubblesSvg = labelled.map((c, i) => {
-      if (quadrantOf(c) === "address") {
-        return `<g class="bubble" data-index="${i}">
-          <circle class="ring" cx="${c.cx}" cy="${c.cy}" r="${c.r + 7}" fill="var(--warn-tint)" stroke="var(--warn)" stroke-opacity="0.5"/>
-          <path class="mark" d="${diamondPath(c.cx, c.cy, c.r)}" fill="var(--warn)" stroke="var(--bg)" stroke-width="1.5"/></g>`;
-      }
-      return `<g class="bubble" data-index="${i}">
-        <circle class="mark" cx="${c.cx}" cy="${c.cy}" r="${c.r}" fill="${dotColour(c.health)}" fill-opacity="0.85" stroke="var(--bg)" stroke-width="1.5"/></g>`;
-    }).join("");
-
-    const labelsSvg = labelled.map((c) => {
-      if (!c.label) return "";
-      const address = quadrantOf(c) === "address";
-      return `<text pointer-events="none" x="${c.label.x}" y="${c.label.y}" text-anchor="${c.label.anchor}" font-size="11"
-        font-weight="${address ? 600 : 400}" fill="${address ? "var(--text)" : "var(--text-2)"}">${escapeHtml(c.name)}</text>`;
-    }).join("");
+    let fanSvg = "";
+    if (expanded !== null) {
+      const group = clusters[expanded];
+      const spread = fanOut(group);
+      const leaders = spread.map((m) => `<line x1="${group.cx}" y1="${group.cy}" x2="${m.cx}" y2="${m.cy}" stroke="var(--text-3)" stroke-width="1" stroke-dasharray="2 3"/>`).join("");
+      const marks = spread.map((m, j) => {
+        items[`m${j}`] = m;
+        return markSvg({ ...m, members: [m], quadrant: group.quadrant }, `m${j}`, false);
+      }).join("");
+      const labels = spread.map((m) => labelSvg({ ...m, quadrant: group.quadrant }, false)).join("");
+      fanSvg = `<g pointer-events="none">${leaders}</g>${marks}${labels}`;
+    }
 
     const axesSvg = `<text x="${left + plotWidth / 2}" y="${height - 12}" text-anchor="middle" font-size="12" fill="var(--text-2)">Change activity: commits to the component's files (log scale) → more relevant</text>
       <text x="16" y="${top + plotHeight / 2}" text-anchor="middle" font-size="12" fill="var(--text-2)" transform="rotate(-90 16 ${top + plotHeight / 2})">Average Code Health (1–10) → healthier</text>`;
 
-    const html = `<div class="chart">
-      <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Components by change activity and Code Health">
-        ${regionSvg}${gridSvg}${splitsSvg}${trendsSvg}${bubblesSvg}${labelsSvg}${axesSvg}
-      </svg>
-      <div class="tooltip" role="tooltip"></div></div>`;
-    return { html, labelled };
+    const svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Components by change activity and Code Health">
+      ${regionSvg}${gridSvg}${splitsSvg}
+      ${others.map((o) => o.trend).join("")}${others.map((o) => o.mark).join("")}${others.map((o) => o.label).join("")}
+      ${fanSvg}${axesSvg}
+    </svg>`;
+    return { svg, items };
   }
 
-  function bindTooltip(chart, labelled) {
+  function renderChart(chart, expanded) {
+    const { svg, items } = quadrantChartSvg(expanded);
+    chart.innerHTML = `${svg}<div class="tooltip" role="tooltip"></div>`;
     const tooltip = chart.querySelector(".tooltip");
     chart.querySelectorAll(".bubble").forEach((bubble) => {
-      const c = labelled[Number(bubble.dataset.index)];
+      const key = bubble.dataset.key;
+      const c = items[key];
       const mark = bubble.querySelector(".mark");
       const ring = bubble.querySelector(".ring");
       bubble.addEventListener("mouseenter", () => {
+        if (bubble.getAttribute("opacity") !== "1") return;
         mark.setAttribute("stroke", "var(--text)");
         mark.setAttribute("fill-opacity", "1");
         if (ring) ring.setAttribute("stroke-opacity", "1");
-        tooltip.innerHTML = tooltipHtml(c);
+        tooltip.innerHTML = key.startsWith("c") && isGroup(c) ? groupTooltipHtml(c, Number(key.slice(1)) === expanded) : tooltipHtml(c);
         const below = c.cy - c.r < 140;
         tooltip.style.left = `${(c.cx / width) * 100}%`;
         tooltip.style.top = `${(c.cy / height) * 100}%`;
@@ -366,7 +466,33 @@
         if (ring) ring.setAttribute("stroke-opacity", "0.5");
         tooltip.style.display = "none";
       });
+      if (key.startsWith("c") && isGroup(c)) {
+        bubble.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const index = Number(key.slice(1));
+          renderChart(chart, expanded === index ? null : index);
+          chart.focus({ preventScroll: true });
+        });
+      }
     });
+    // Clicking anywhere else, or Escape, collapses an expanded group.
+    chart.querySelector("svg").addEventListener("click", () => {
+      if (expanded !== null) renderChart(chart, null);
+    });
+    chart.onkeydown = (event) => {
+      if (event.key === "Escape" && expanded !== null) renderChart(chart, null);
+    };
+  }
+
+  function groupTooltipHtml(g, isExpanded) {
+    const shown = g.members.slice(0, 10);
+    const q = quadrants[g.quadrant];
+    return `<div class="name">${g.members.length} components</div>
+      <div class="quadrant" style="${g.quadrant === "address" ? `color:${css.warn}` : ""}">${q.name} · ${q.action}</div>
+      ${shown.map((m) => `<div class="row"><span>${escapeHtml(m.name)}</span>
+        <span style="color:${dotColour(m.health)};font-weight:600">${m.health.toFixed(2)} · ${m.changes} commits</span></div>`).join("")}
+      ${g.members.length > shown.length ? `<div class="row"><span>and ${g.members.length - shown.length} more</span><span></span></div>` : ""}
+      <div class="quadrant" style="margin:6px 0 0">${isExpanded ? "Click to collapse" : "Click to spread them out"}</div>`;
   }
 
   function tooltipHtml(c) {
@@ -439,7 +565,7 @@
     )).join("");
     const componentTarget = (outcomes.find((o, i) => i > 0) || outcomes[0]).target;
     return `<section>
-      <h2>What uplifting ${addressNames.map(escapeHtml).join(" and ")} to ${componentTarget.toFixed(1)} buys</h2>
+      <h2>What uplifting ${addressNames.length <= 3 ? addressNames.map(escapeHtml).join(" and ") : `the ${addressNames.length} Address components`} to ${componentTarget.toFixed(1)} buys</h2>
       <div class="cards">${cards}</div>
       <p class="small tertiary">Estimated change: the midpoint of the CodeScene outcome model's 90% interval. Component cards: development inside that component.
         Whole codebase: the lines-of-code-weighted average across all components shown (${outcomes[0].baseline.toFixed(2)} → ${target.toFixed(2)}),
@@ -488,6 +614,59 @@
     </section>`;
   }
 
+  // Many Address components: one card pair for the whole codebase, and a table row per component instead of cards.
+  const maxComponentCards = 3;
+
+  function condensedOutcomesSection(addressCount) {
+    const [whole, ...perComponent] = outcomes;
+    const componentTarget = (perComponent[0] || whole).target;
+    const saved = hoursSaved(whole);
+    const wholeOutcome = card(
+      whole.scope,
+      `Code Health <span class="strong" style="color:${dotColour(whole.baseline)}">${whole.baseline.toFixed(2)}</span> → <span class="strong" style="color:${dotColour(whole.target)}">${whole.target.toFixed(2)}</span>`,
+      [["Defects", midpointPercent(whole.defects)], ["Development time", midpointPercent(whole.developmentTime)], ["Productivity", midpointPercent(whole.productivity)]],
+      true,
+      css.good,
+    );
+    const wholeRoi = card(
+      `ROI for a team of ${team.developers} developers`,
+      "All of the team's development time",
+      [
+        ["Hours saved per year", formatInt(Math.round(saved / 10) * 10)],
+        ["Full-time developers freed", (saved / hoursPerDeveloper).toFixed(1)],
+        ["Per developer per week", `${(saved / team.developers / team.weeksPerYear).toFixed(1)} h`],
+      ],
+      true,
+      css.primary,
+    );
+    const rows = perComponent.map((o) => {
+      const componentSaved = hoursSaved(o);
+      return `<tr>
+        <td class="name">${escapeHtml(o.scope)}</td>
+        <td class="num"><span class="strong" style="color:${dotColour(o.baseline)}">${o.baseline.toFixed(2)}</span> → <span class="strong" style="color:${dotColour(o.target)}">${o.target.toFixed(1)}</span></td>
+        <td class="num strong" style="color:${css.good}">${midpointPercent(o.defects)}</td>
+        <td class="num strong" style="color:${css.good}">${midpointPercent(o.developmentTime)}</td>
+        <td class="num strong" style="color:${css.good}">${midpointPercent(o.productivity)}</td>
+        <td class="num">${Math.round(workShare(o.scope) * 100)}%</td>
+        <td class="num strong" style="color:${css.primary}">${formatInt(Math.round(componentSaved / 10) * 10)}</td>
+        <td class="num">${(componentSaved / hoursPerDeveloper).toFixed(1)}</td>
+      </tr>`;
+    }).join("");
+    return `<section>
+      <h2>What uplifting the ${addressCount} Address components to ${componentTarget.toFixed(1)} buys</h2>
+      <div class="cards pair">${wholeOutcome}${wholeRoi}</div>
+      <div class="table-wrap"><table class="outcomes">
+        <thead><tr><th>Component</th><th class="num">Code Health</th><th class="num">Defects</th><th class="num">Dev time</th><th class="num">Productivity</th>
+          <th class="num">Share of commits</th><th class="num">Hours saved / year</th><th class="num">Developers freed</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>
+      <p class="small tertiary">Estimated change: the midpoint of the CodeScene outcome model's 90% interval. Rows: development inside that component.
+        Whole codebase: the lines-of-code-weighted average across all components shown, with the Address components at ${componentTarget.toFixed(1)}
+        and everything else unchanged. Assumes ${team.developers} developers at ${team.hoursPerWeek} hours a week for ${team.weeksPerYear} weeks a year
+        (${formatInt(teamHours)} team hours). A productivity gain p means the same work takes 1/(1 + p) of the time. A component's share of the
+        team's time is approximated by its share of commits.</p>
+    </section>`;
+  }
+
   // -------------------------------------------------------------------------
   // Page
   // -------------------------------------------------------------------------
@@ -496,8 +675,6 @@
   const address = byQuadrant("address").sort((a, b) => b.changes - a.changes);
   const order = ["address", "plan", "delay", "ignore"];
   const addressShare = totalChanges ? Math.round((address.reduce((sum, c) => sum + c.changes, 0) / totalChanges) * 100) : 0;
-  const chart = quadrantChart();
-
   document.title = `Architectural hotspots · ${project.name}`;
   root.innerHTML = `
     <section>
@@ -510,8 +687,11 @@
 
     <section>
       ${legend()}
-      ${chart.html}
-      <p class="small tertiary">One bubble per architectural component in ${escapeHtml(project.name)}. Vertical split: median change activity across
+      <div class="chart" tabindex="-1"></div>
+      <p class="small tertiary">One bubble per architectural component in ${escapeHtml(project.name)}.${groupCount
+        ? ` Components that would overlap within the same quadrant are grouped into one bubble; the number is how many it holds.
+          Hover a group to list them, click it to spread them out, and click again or press Escape to collapse it.`
+        : ""} Vertical split: median change activity across
         components (${activityThreshold} commits). Horizontal split: Healthy (${healthyThreshold.toFixed(1)}). The line left of a bubble shows
         the direction of the component's Code Health trend, steeper when the pace is fast; steady components have no line. Hover a bubble
         for details. Quadrants follow Gartner's PAID model, with change activity as impact and low Code Health as risk.
@@ -525,8 +705,9 @@
         : `<p class="small secondary">No component is both busy and below ${healthyThreshold.toFixed(1)}.</p>`}
     </section>
 
-    ${outcomes.length ? outcomesSection(address.map((c) => c.name)) : ""}
-    ${outcomes.length ? roiSection() : ""}
+    ${outcomes.length > maxComponentCards + 1
+      ? condensedOutcomesSection(address.length)
+      : outcomes.length ? outcomesSection(address.map((c) => c.name)) + roiSection() : ""}
 
     <section>
       <h2>The four quadrants</h2>
@@ -534,7 +715,7 @@
         <span class="secondary">${quadrants[id].description}</span></div>`).join("")}</div>
     </section>`;
 
-  bindTooltip(root.querySelector(".chart"), chart.labelled);
+  renderChart(root.querySelector(".chart"), null);
 })();
 </script>
 </body>
