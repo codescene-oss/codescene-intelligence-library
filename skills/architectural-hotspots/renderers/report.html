@@ -314,7 +314,7 @@
       { x1: right - 110, y1: bottom - 40, x2: right, y2: bottom },
     ];
     const placed = [...titleBoxes];
-    return points.map((p, index) => {
+    return points.map((p) => {
       // Groups carry their count; only groups that need action get a text label too.
       if (isGroup(p) && p.quadrant !== "address") return { ...p, label: null };
       const w = p.name.length * 6.4;
@@ -335,10 +335,9 @@
         return { x1, y1: c.y - h + 3, x2: x1 + w, y2: c.y + 3 };
       };
       const inside = (b) => b.x1 >= margin.left && b.x2 <= width - margin.right && b.y1 >= margin.top;
-      const own = obstacles[index];
       const fits = candidates.find((c) => {
         const b = boxOf(c);
-        return inside(b) && !placed.some((o) => overlaps(o, b)) && !obstacles.some((o) => o !== own && overlaps(o, b));
+        return inside(b) && !placed.some((o) => overlaps(o, b)) && !obstacles.some((o) => overlaps(o, b));
       });
       // When nothing fits, leave the label off rather than overprint; the hover card still names it.
       // Address components and groups are always labelled.
@@ -457,7 +456,7 @@
       <text x="16" y="${top + plotHeight / 2}" text-anchor="middle" font-size="12" fill="var(--text-2)" transform="rotate(-90 16 ${top + plotHeight / 2})">Average Code Health (1–10) → healthier</text>`;
 
     const svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Components by change activity and Code Health">
-      ${regionSvg}${gridSvg}${splitsSvg}
+      ${gridSvg}${regionSvg}${splitsSvg}
       ${others.map((o) => o.trend).join("")}${others.map((o) => o.mark).join("")}${others.map((o) => o.label).join("")}
       ${fanSvg}${axesSvg}
     </svg>`;

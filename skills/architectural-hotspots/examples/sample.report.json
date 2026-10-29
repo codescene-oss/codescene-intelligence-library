@@ -1,0 +1,299 @@
+{
+  "project": {
+    "name": "Example system",
+    "source": "illustrative sample data; outcomes from CodeScene's outcome model"
+  },
+  "components": [
+    {
+      "name": "billing",
+      "health": 6.4,
+      "hotspotHealth": 5.1,
+      "changes": 820,
+      "linesOfCode": 42000,
+      "files": 180,
+      "hotspots": 4,
+      "upliftTargets": 2,
+      "worstFile": {
+        "path": "InvoiceCalculator.java",
+        "health": 3.9
+      },
+      "trend": {
+        "direction": "declining",
+        "pace": "slow"
+      }
+    },
+    {
+      "name": "api-gateway",
+      "health": 9.4,
+      "hotspotHealth": 9.1,
+      "changes": 540,
+      "linesOfCode": 18000,
+      "files": 95,
+      "hotspots": 2,
+      "upliftTargets": 0,
+      "worstFile": {
+        "path": "RouteTable.ts",
+        "health": 8.2
+      },
+      "trend": {
+        "direction": "improving",
+        "pace": "slow"
+      }
+    },
+    {
+      "name": "payments",
+      "health": 4.6,
+      "hotspotHealth": 3.7,
+      "changes": 410,
+      "linesOfCode": 26000,
+      "files": 120,
+      "hotspots": 3,
+      "upliftTargets": 3,
+      "worstFile": {
+        "path": "PaymentProcessor.java",
+        "health": 2.4
+      },
+      "trend": {
+        "direction": "declining",
+        "pace": "fast"
+      }
+    },
+    {
+      "name": "web-ui",
+      "health": 9.7,
+      "hotspotHealth": 9.5,
+      "changes": 300,
+      "linesOfCode": 55000,
+      "files": 610,
+      "hotspots": 2,
+      "upliftTargets": 0,
+      "worstFile": {
+        "path": "CheckoutForm.tsx",
+        "health": 8.4
+      }
+    },
+    {
+      "name": "accounts",
+      "health": 8.1,
+      "hotspotHealth": 7.4,
+      "changes": 260,
+      "linesOfCode": 15000,
+      "files": 70,
+      "hotspots": 1,
+      "upliftTargets": 1,
+      "worstFile": {
+        "path": "AccountService.java",
+        "health": 5.8
+      }
+    },
+    {
+      "name": "search",
+      "health": 9.6,
+      "hotspotHealth": null,
+      "changes": 120,
+      "linesOfCode": 9000,
+      "files": 40,
+      "hotspots": 0,
+      "upliftTargets": 0,
+      "worstFile": {
+        "path": "QueryParser.ts",
+        "health": 8.9
+      },
+      "trend": {
+        "direction": "improving",
+        "pace": "slow"
+      }
+    },
+    {
+      "name": "notifications",
+      "health": 7.2,
+      "hotspotHealth": null,
+      "changes": 90,
+      "linesOfCode": 6000,
+      "files": 30,
+      "hotspots": 0,
+      "upliftTargets": 1,
+      "worstFile": {
+        "path": "Dispatcher.py",
+        "health": 5.5
+      }
+    },
+    {
+      "name": "reporting",
+      "health": 3.8,
+      "hotspotHealth": null,
+      "changes": 70,
+      "linesOfCode": 21000,
+      "files": 85,
+      "hotspots": 0,
+      "upliftTargets": 2,
+      "worstFile": {
+        "path": "ReportBuilder.java",
+        "health": 2.1
+      },
+      "trend": {
+        "direction": "declining",
+        "pace": "slow"
+      }
+    },
+    {
+      "name": "auth",
+      "health": 9.9,
+      "hotspotHealth": null,
+      "changes": 60,
+      "linesOfCode": 4000,
+      "files": 22,
+      "hotspots": 0,
+      "upliftTargets": 0,
+      "worstFile": {
+        "path": "TokenStore.go",
+        "health": 9.6
+      }
+    },
+    {
+      "name": "admin-ui",
+      "health": 8.6,
+      "hotspotHealth": null,
+      "changes": 40,
+      "linesOfCode": 12000,
+      "files": 140,
+      "hotspots": 0,
+      "upliftTargets": 0,
+      "worstFile": {
+        "path": "UserTable.tsx",
+        "health": 7.1
+      }
+    },
+    {
+      "name": "shared-utils",
+      "health": 9.8,
+      "hotspotHealth": null,
+      "changes": 30,
+      "linesOfCode": 3000,
+      "files": 25,
+      "hotspots": 0,
+      "upliftTargets": 0,
+      "worstFile": {
+        "path": "dates.ts",
+        "health": 9.3
+      }
+    },
+    {
+      "name": "data-import",
+      "health": 6.9,
+      "hotspotHealth": null,
+      "changes": 18,
+      "linesOfCode": 7000,
+      "files": 28,
+      "hotspots": 0,
+      "upliftTargets": 1,
+      "worstFile": {
+        "path": "CsvMapper.py",
+        "health": 4.8
+      }
+    },
+    {
+      "name": "legacy-export",
+      "health": 3.2,
+      "hotspotHealth": null,
+      "changes": 6,
+      "linesOfCode": 16000,
+      "files": 12,
+      "hotspots": 0,
+      "upliftTargets": 1,
+      "worstFile": {
+        "path": "ExportJob.java",
+        "health": 1.8
+      }
+    },
+    {
+      "name": "test-fixtures",
+      "health": 10,
+      "hotspotHealth": null,
+      "changes": 4,
+      "linesOfCode": 2500,
+      "files": 18,
+      "hotspots": 0,
+      "upliftTargets": 0,
+      "worstFile": {
+        "path": "fixtures.ts",
+        "health": 10
+      }
+    }
+  ],
+  "outcomes": [
+    {
+      "scope": "Whole codebase",
+      "baseline": 7.27,
+      "target": 8.62,
+      "defects": {
+        "lower": -24.37,
+        "upper": -13.86
+      },
+      "developmentTime": {
+        "lower": -20.55,
+        "upper": -12.88
+      },
+      "productivity": {
+        "lower": 17.02,
+        "upper": 28.65
+      }
+    },
+    {
+      "scope": "billing",
+      "baseline": 6.4,
+      "target": 10,
+      "defects": {
+        "lower": -77.3,
+        "upper": -67.6
+      },
+      "developmentTime": {
+        "lower": -55.17,
+        "upper": -37.23
+      },
+      "productivity": {
+        "lower": 107.66,
+        "upper": 192.72
+      }
+    },
+    {
+      "scope": "payments",
+      "baseline": 4.6,
+      "target": 10,
+      "defects": {
+        "lower": -80.93,
+        "upper": -72
+      },
+      "developmentTime": {
+        "lower": -59.88,
+        "upper": -44.28
+      },
+      "productivity": {
+        "lower": 137.64,
+        "upper": 230.55
+      }
+    },
+    {
+      "scope": "accounts",
+      "baseline": 8.1,
+      "target": 10,
+      "defects": {
+        "lower": -73.35,
+        "upper": -64.1
+      },
+      "developmentTime": {
+        "lower": -45.27,
+        "upper": -26.74
+      },
+      "productivity": {
+        "lower": 46.83,
+        "upper": 96.48
+      }
+    }
+  ],
+  "team": {
+    "developers": 10,
+    "hoursPerWeek": 40,
+    "weeksPerYear": 46
+  }
+}

@@ -3,17 +3,55 @@
   "version": "1.0.0",
   "title": "Architectural hotspots report",
   "summary": "Places each architectural component in a PAID quadrant by change activity and Code Health, and estimates the outcomes and team ROI of uplifting the components to address first.",
-  "audience": ["engineering-manager", "architect", "tech-lead"],
-  "mcp_tools": ["list_projects", "explore_project_components", "explore_project_files", "estimate_engineering_outcomes"],
+  "audience": [
+    "engineering-manager",
+    "architect",
+    "tech-lead"
+  ],
+  "mcp_tools": [
+    "list_projects",
+    "explore_project_components",
+    "explore_project_files",
+    "estimate_engineering_outcomes"
+  ],
   "inputs": [
-    { "name": "project_id", "required": true },
-    { "name": "target_code_health", "default": 10.0 },
-    { "name": "team", "default": { "developers": 10, "hoursPerWeek": 40, "weeksPerYear": 46 } },
-    { "name": "excluded_components", "default": [] }
+    {
+      "name": "project_id",
+      "required": true
+    },
+    {
+      "name": "target_code_health",
+      "default": 10.0
+    },
+    {
+      "name": "team",
+      "default": {
+        "developers": 10,
+        "hoursPerWeek": 40,
+        "weeksPerYear": 46
+      }
+    },
+    {
+      "name": "excluded_components",
+      "default": []
+    }
   ],
   "skill": "SKILL.md",
   "data_schema": "report-data.schema.json",
-  "renderers": [{ "id": "html", "file": "renderers/report.html", "format": "text/html" }],
-  "templates": ["templates/project-notes.md"],
-  "shared": ["../../shared/ground-rules.md"]
+  "renderers": [
+    {
+      "id": "html",
+      "file": "renderers/report.html",
+      "format": "text/html"
+    }
+  ],
+  "templates": [
+    "templates/project-notes.md"
+  ],
+  "shared": [
+    "../../shared/ground-rules.md"
+  ],
+  "examples": [
+    "examples/sample.report.json"
+  ]
 }
