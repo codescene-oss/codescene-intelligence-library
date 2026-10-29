@@ -5,38 +5,53 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Architectural hotspots</title>
 <style>
-  /* CodeScene design system colours. Alpha suffixes keep tints readable in light and dark mode. */
+  /* CodeScene theme colours. The pastel fills match the app's Code Health bubbles; the -ink variants keep
+     numbers and labels readable on white, and fall back to the pastels on dark backgrounds. */
   :root {
-    --bad: #ff0004;
-    --warn: #ff9300;
-    --good: #26a65b;
-    --optimal: #0074e0;
-    --primary: #003d7a;
-    --warn-tint: #ff930024;
-    --good-tint: #26a65b14;
-    --brand-tint: #1f53e014;
+    --unhealthy: #ef8290;
+    --problematic: #f6d991;
+    --healthy: #8ddec8;
+    --unhealthy-ink: #c8475a;
+    --problematic-ink: #9a7213;
+    --healthy-ink: #1f8569;
+    --primary: #2f7b7a;
+    --navy: #0f2d57;
+    --address-tint: #ef829026;
+    --plan-tint: #8ddec826;
+    --brand-tint: #2f7b7a14;
+    --page: #eef2f8;
     --bg: #ffffff;
-    --text: #1a1d21;
-    --text-2: #4a5059;
-    --text-3: #7a818c;
-    --stroke-2: #d5d9de;
-    --stroke-3: #eceef1;
+    --text: #323a4e;
+    --text-2: #4f5866;
+    --text-3: #7d8694;
+    --stroke-2: #d5dbe3;
+    --stroke-3: #eceff4;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --primary: #5cb0ff;
-      --bg: #17191c;
+      --unhealthy-ink: #ef8290;
+      --problematic-ink: #f6d991;
+      --healthy-ink: #8ddec8;
+      --primary: #62d5de;
+      --page: #0a1424;
+      --bg: #12223a;
       --text: #eceef1;
       --text-2: #b4bac2;
       --text-3: #848b95;
-      --stroke-2: #3a3f46;
-      --stroke-3: #2a2e33;
+      --stroke-2: #2e3d52;
+      --stroke-3: #1d2a3d;
     }
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  body { margin: 0; background: var(--page); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
   main { max-width: 1120px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; }
-  section { display: flex; flex-direction: column; gap: 8px; }
+  section { display: flex; flex-direction: column; gap: 8px; background: var(--bg); border-radius: 10px; padding: 20px 24px;
+    box-shadow: 0 1px 2px rgba(15, 45, 87, 0.06), 0 2px 8px rgba(15, 45, 87, 0.05); }
+  /* The header follows the app's navy-to-teal sidebar. */
+  section.hero { background: linear-gradient(120deg, #0f2d57 0%, #0b3a5e 55%, #075062 100%); color: #ffffff; gap: 12px; padding: 28px 24px; }
+  section.hero .eyebrow { color: #62d5de; }
+  section.hero .intro { background: rgba(255, 255, 255, 0.07); border-left-color: #62d5de; color: #dfe8f2; }
+  section.hero .intro strong { color: #62d5de; }
   h1 { font-size: 24px; margin: 0; line-height: 1.25; }
   h2 { font-size: 17px; margin: 0; }
   p { margin: 0; }
@@ -63,7 +78,7 @@
   .tooltip .row span:first-child { color: var(--text-2); }
   .tooltip .row span:last-child { text-align: right; }
   table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--stroke-2); border-radius: 6px; overflow: hidden; font-size: 12px; }
-  th { background: var(--warn-tint); color: var(--text-2); font-size: 11px; font-weight: 600; text-align: left; padding: 6px 12px; }
+  th { background: var(--address-tint); color: var(--text-2); font-size: 11px; font-weight: 600; text-align: left; padding: 6px 12px; }
   td { padding: 8px 12px; border-top: 1px solid var(--stroke-3); color: var(--text-2); overflow-wrap: anywhere; }
   .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   td.name { color: var(--text); font-weight: 600; }
@@ -80,14 +95,16 @@
   .metric span:last-child { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .quadrants { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; font-size: 12px; }
   .quadrants strong { display: block; }
-  .error { border: 1px solid var(--bad); border-radius: 6px; padding: 12px 16px; color: var(--bad); }
+  .error { border: 1px solid var(--unhealthy-ink); border-radius: 6px; padding: 12px 16px; color: var(--unhealthy-ink); }
   @media (max-width: 720px) {
     .cards, .cards.pair, .quadrants { grid-template-columns: minmax(0, 1fr); }
     .table-wrap { overflow-x: auto; }
+    section, section.hero { padding: 16px; }
   }
   @media print {
     main { max-width: none; padding: 0; }
-    section { break-inside: avoid; }
+    section { break-inside: avoid; box-shadow: none; }
+    body { background: #ffffff; }
   }
 </style>
 </head>
@@ -126,14 +143,18 @@
   const { project, components } = report;
   const outcomes = report.outcomes || [];
   const healthyThreshold = 9;
+  const unhealthyThreshold = 4;
   const optimal = 10;
-  const css = { bad: "var(--bad)", warn: "var(--warn)", good: "var(--good)", optimal: "var(--optimal)", primary: "var(--primary)" };
+  const css = { unhealthy: "var(--unhealthy-ink)", good: "var(--healthy-ink)", primary: "var(--primary)" };
 
   function escapeHtml(value) {
     return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
   }
 
-  const dotColour = (health) => (health >= optimal ? css.optimal : health >= healthyThreshold ? css.good : css.warn);
+  // CodeScene's three Code Health classes: unhealthy below 4.0, problematic below 9.0, healthy from 9.0.
+  const healthClass = (health) => (health >= healthyThreshold ? "healthy" : health >= unhealthyThreshold ? "problematic" : "unhealthy");
+  const dotColour = (health) => `var(--${healthClass(health)}-ink)`;
+  const fillColour = (health) => `var(--${healthClass(health)})`;
   const formatInt = (n) => Math.round(n).toLocaleString("en-US");
 
   // -------------------------------------------------------------------------
@@ -141,7 +162,7 @@
   // -------------------------------------------------------------------------
 
   const trendOf = (c) => (c.trend && c.trend.direction) || "steady";
-  const trendColour = { improving: css.good, declining: css.bad, steady: "" };
+  const trendColour = { improving: css.good, declining: css.unhealthy, steady: "" };
   const trendText = (c) => {
     const trend = trendOf(c);
     if (trend === "steady") return c.trend ? "Steady" : "Not enough history";
@@ -343,12 +364,12 @@
     const opacity = dimmed ? 0.2 : 1;
     const address = c.quadrant === "address";
     const shape = address
-      ? `<circle class="ring" cx="${c.cx}" cy="${c.cy}" r="${c.r + 7}" fill="var(--warn-tint)" stroke="var(--warn)" stroke-opacity="0.5"/>
-         <path class="mark" d="${diamondPath(c.cx, c.cy, c.r)}" fill="var(--warn)" stroke="var(--bg)" stroke-width="1.5"/>`
-      : `<circle class="mark" cx="${c.cx}" cy="${c.cy}" r="${c.r}" fill="${dotColour(c.health)}" fill-opacity="0.85" stroke="var(--bg)" stroke-width="1.5"/>`;
+      ? `<circle class="ring" cx="${c.cx}" cy="${c.cy}" r="${c.r + 7}" fill="var(--bg)" fill-opacity="0.85" stroke="var(--navy)" stroke-opacity="0.35"/>
+         <path class="mark" d="${diamondPath(c.cx, c.cy, c.r)}" fill="var(--unhealthy)" stroke="var(--navy)" stroke-width="1.5"/>`
+      : `<circle class="mark" cx="${c.cx}" cy="${c.cy}" r="${c.r}" fill="${fillColour(c.health)}" fill-opacity="0.9" stroke="var(--bg)" stroke-width="1.5"/>`;
     const count = isGroup(c)
       ? `<text pointer-events="none" x="${c.cx}" y="${c.cy + 4.5}" text-anchor="middle" font-size="${Math.min(14, Math.max(10, c.r * 0.8))}"
-           font-weight="700" fill="#ffffff">${c.members.length}</text>`
+           font-weight="700" fill="#0f2d57">${c.members.length}</text>`
       : "";
     return `<g class="bubble${isGroup(c) ? " group" : ""}" data-key="${key}" opacity="${opacity}">${shape}${count}</g>`;
   }
@@ -387,8 +408,8 @@
     ];
 
     const regionSvg = regions.map((r) => {
-      const fill = r.id === "address" ? "var(--warn-tint)" : r.id === "plan" ? "var(--good-tint)" : "transparent";
-      const nameColour = r.id === "address" ? css.warn : r.id === "plan" ? css.good : "var(--text-2)";
+      const fill = r.id === "address" ? "var(--address-tint)" : r.id === "plan" ? "var(--plan-tint)" : "transparent";
+      const nameColour = r.id === "address" ? css.unhealthy : r.id === "plan" ? css.good : "var(--text-2)";
       const tx = r.anchor === "start" ? r.x + 10 : r.x + r.w - 10;
       const lower = r.id === "delay" || r.id === "address";
       return `<rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" fill="${fill}"/>
@@ -419,7 +440,7 @@
       const spread = fanOut(group);
       const leaders = spread.map((m) => `<line x1="${group.cx}" y1="${group.cy}" x2="${m.cx}" y2="${m.cy}" stroke="var(--text-3)" stroke-width="1" stroke-dasharray="2 3"/>`).join("");
       const marks = spread.map((m, j) => {
-        items[`m${j}`] = m;
+        items[`m${j}`] = { ...m, quadrant: group.quadrant };
         return markSvg({ ...m, members: [m], quadrant: group.quadrant }, `m${j}`, false);
       }).join("");
       const labels = spread.map((m) => labelSvg({ ...m, quadrant: group.quadrant }, false)).join("");
@@ -459,9 +480,9 @@
         tooltip.style.display = "block";
       });
       bubble.addEventListener("mouseleave", () => {
-        mark.setAttribute("stroke", "var(--bg)");
+        mark.setAttribute("stroke", c.quadrant === "address" ? "var(--navy)" : "var(--bg)");
         mark.setAttribute("fill-opacity", "0.85");
-        if (ring) ring.setAttribute("stroke-opacity", "0.5");
+        if (ring) ring.setAttribute("stroke-opacity", "0.35");
         tooltip.style.display = "none";
       });
       if (key.startsWith("c") && isGroup(c)) {
@@ -486,7 +507,7 @@
     const shown = g.members.slice(0, 10);
     const q = quadrants[g.quadrant];
     return `<div class="name">${g.members.length} components</div>
-      <div class="quadrant" style="${g.quadrant === "address" ? `color:${css.warn}` : ""}">${q.name} · ${q.action}</div>
+      <div class="quadrant" style="${g.quadrant === "address" ? `color:${css.unhealthy}` : ""}">${q.name} · ${q.action}</div>
       ${shown.map((m) => `<div class="row"><span>${escapeHtml(m.name)}</span>
         <span style="color:${dotColour(m.health)};font-weight:600">${m.health.toFixed(2)} · ${m.changes} commits</span></div>`).join("")}
       ${g.members.length > shown.length ? `<div class="row"><span>and ${g.members.length - shown.length} more</span><span></span></div>` : ""}
@@ -505,28 +526,28 @@
     if (c.worstFile) rows.push(["Worst file", `${c.worstFile.path} (${c.worstFile.health.toFixed(2)})`, dotColour(c.worstFile.health)]);
     const q = quadrants[quadrantOf(c)];
     return `<div class="name">${escapeHtml(c.name)}</div>
-      <div class="quadrant" style="${quadrantOf(c) === "address" ? `color:${css.warn}` : ""}">${q.name} · ${q.action}</div>
+      <div class="quadrant" style="${quadrantOf(c) === "address" ? `color:${css.unhealthy}` : ""}">${q.name} · ${q.action}</div>
       ${rows.map(([label, value, colour]) => `<div class="row"><span>${label}</span>
         <span style="color:${colour || "var(--text)"};font-weight:${colour ? 600 : 400}">${escapeHtml(value)}</span></div>`).join("")}`;
   }
 
   function legend() {
     const items = [
-      [`Unhealthy (below ${healthyThreshold.toFixed(1)})`, dotColour(healthyThreshold - 1)],
-      [`Healthy (${healthyThreshold.toFixed(1)} or higher)`, dotColour(healthyThreshold)],
-      [`Optimal (${optimal.toFixed(1)})`, dotColour(optimal)],
+      [`Unhealthy (below ${unhealthyThreshold.toFixed(1)})`, fillColour(unhealthyThreshold - 1)],
+      [`Problematic (below ${healthyThreshold.toFixed(1)})`, fillColour(healthyThreshold - 1)],
+      [`Healthy (${healthyThreshold.toFixed(1)} or higher)`, fillColour(healthyThreshold)],
     ];
     const trendLine = (colour, rise) =>
       `<svg width="22" height="14" viewBox="0 0 22 14"><line x1="3" y1="${7 + rise / 2}" x2="19" y2="${7 - rise / 2}" stroke="${colour}" stroke-width="2.5" stroke-linecap="round"/></svg>`;
     return `<div class="legend">
-      <span class="key"><svg width="16" height="16" viewBox="0 0 16 16"><path d="${diamondPath(8, 8, 6)}" fill="var(--warn)"/></svg>Architectural hotspot to address</span>
+      <span class="key"><svg width="16" height="16" viewBox="0 0 16 16"><path d="${diamondPath(8, 8, 6)}" fill="var(--unhealthy)" stroke="var(--navy)" stroke-width="1.2"/></svg>Architectural hotspot to address</span>
       ${items.map(([label, colour]) => `<span><i class="dot" style="background:${colour}"></i>${label}</span>`).join("")}
-      <span>12-month trend: ${trendLine(css.good, 8)} Improving ${trendLine(css.bad, -8)} Declining</span>
+      <span>12-month trend: ${trendLine(css.good, 8)} Improving ${trendLine(css.unhealthy, -8)} Declining</span>
       <span class="tertiary">Bubble size: lines of code</span></div>`;
   }
 
   function addressTable(items) {
-    const diamond = `<svg width="12" height="12" viewBox="0 0 12 12"><path d="${diamondPath(6, 6, 5)}" fill="var(--warn)"/></svg>`;
+    const diamond = `<svg width="12" height="12" viewBox="0 0 12 12"><path d="${diamondPath(6, 6, 5)}" fill="var(--unhealthy)" stroke="var(--navy)" stroke-width="1"/></svg>`;
     const rows = items.map((c) => `<tr>
       <td>${diamond}</td>
       <td class="name">${escapeHtml(c.name)}</td>
@@ -675,7 +696,7 @@
   const addressShare = totalChanges ? Math.round((address.reduce((sum, c) => sum + c.changes, 0) / totalChanges) * 100) : 0;
   document.title = `Architectural hotspots · ${project.name}`;
   root.innerHTML = `
-    <section>
+    <section class="hero">
       <div class="eyebrow">CodeScene · Architectural debt</div>
       <h1>Architectural hotspots: where to pay down technical debt</h1>
       <div class="intro"><strong>The idea</strong>Code Health per architectural component shows where the technical debt sits.
