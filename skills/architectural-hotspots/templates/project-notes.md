@@ -14,7 +14,7 @@ Keep this file in your own workspace (for example `codescene/projects/{{project-
 ## Decisions
 
 - Left-out components and why: {{left-out-components}}
-- X-axis split: the median commits across the plotted components ({{median-commits}}).
+- X-axis split: head/tail breaks at the mean commits across the plotted components ({{mean-commits}}).
 - Worst file per component: {{how-worst-files-were-found}}
 
 ## Observations

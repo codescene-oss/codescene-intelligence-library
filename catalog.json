@@ -5,7 +5,18 @@
       "version": "1.0.0",
       "path": "skills/architectural-hotspots",
       "summary": "Places each architectural component in a PAID quadrant by change activity and Code Health, and estimates the outcomes and team ROI of uplifting the components to address first.",
-      "renderers": ["html"]
+      "renderers": [
+        "html"
+      ]
+    },
+    {
+      "id": "refactoring-targets",
+      "version": "1.0.0",
+      "path": "skills/refactoring-targets",
+      "summary": "Turns CodeScene's uplift targets into a prioritized refactoring backlog: why each file, where to start, who to involve, the risks to plan for, and the estimated outcome.",
+      "renderers": [
+        "html"
+      ]
     }
   ]
 }

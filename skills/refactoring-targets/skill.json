@@ -1,0 +1,52 @@
+{
+  "id": "refactoring-targets",
+  "version": "1.0.0",
+  "title": "Refactoring targets report",
+  "summary": "Turns CodeScene's uplift targets into a prioritized refactoring backlog: why each file, where to start, who to involve, the risks to plan for, and the estimated outcome.",
+  "audience": [
+    "engineering-manager",
+    "tech-lead"
+  ],
+  "mcp_tools": [
+    "list_projects",
+    "explore_project_files",
+    "review_analyzed_file",
+    "estimate_engineering_outcomes"
+  ],
+  "inputs": [
+    {
+      "name": "project_id",
+      "required": true
+    },
+    {
+      "name": "target_code_health",
+      "default": 9.0
+    },
+    {
+      "name": "max_targets",
+      "default": 10
+    },
+    {
+      "name": "include_local_targets",
+      "default": true
+    }
+  ],
+  "skill": "SKILL.md",
+  "data_schema": "report-data.schema.json",
+  "renderers": [
+    {
+      "id": "html",
+      "file": "renderers/report.html",
+      "format": "text/html"
+    }
+  ],
+  "templates": [
+    "templates/project-notes.md"
+  ],
+  "shared": [
+    "../../shared/ground-rules.md"
+  ],
+  "examples": [
+    "examples/sample.report.json"
+  ]
+}

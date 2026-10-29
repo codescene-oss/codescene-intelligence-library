@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "codescene://skills/refactoring-targets/report-data.schema.json",
+  "title": "ReportData",
+  "type": "object",
+  "required": ["project", "targetHealth", "targets"],
+  "additionalProperties": false,
+  "properties": {
+    "project": {
+      "type": "object",
+      "required": ["name", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "source": { "type": "string", "description": "For example: CodeScene analysis, project <id>" }
+      }
+    },
+    "targetHealth": { "type": "number", "minimum": 1, "maximum": 10, "description": "Code Health the outcomes assume after refactoring." },
+    "omitted": { "type": "integer", "minimum": 0, "description": "Uplift targets left out to keep the report short." },
+    "targets": { "type": "array", "items": { "$ref": "#/$defs/target" }, "description": "In rank order." }
+  },
+  "$defs": {
+    "range": {
+      "type": "object",
+      "required": ["lower", "upper"],
+      "additionalProperties": false,
+      "properties": { "lower": { "type": "number" }, "upper": { "type": "number" } }
+    },
+    "target": {
+      "type": "object",
+      "required": ["path", "type", "health", "changes", "linesOfCode"],
+      "additionalProperties": false,
+      "properties": {
+        "path": { "type": "string" },
+        "component": { "type": ["string", "null"] },
+        "type": { "enum": ["primary", "secondary", "local"] },
+        "health": { "type": "number", "minimum": 1, "maximum": 10 },
+        "healthSeries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["date", "value"],
+            "additionalProperties": false,
+            "properties": { "date": { "type": "string" }, "value": { "type": "number" } }
+          }
+        },
+        "trend": {
+          "type": "object",
+          "required": ["direction", "pace"],
+          "additionalProperties": false,
+          "properties": {
+            "direction": { "enum": ["improving", "declining", "steady"] },
+            "pace": { "enum": ["slow", "fast", null] }
+          }
+        },
+        "changes": { "type": "integer", "minimum": 0 },
+        "linesOfCode": { "type": "integer", "minimum": 0 },
+        "coverage": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "isHotspot": { "type": "boolean" },
+        "owner": {
+          "type": ["object", "null"],
+          "required": ["name", "ownership", "isActive"],
+          "additionalProperties": false,
+          "properties": { "name": { "type": "string" }, "ownership": { "type": "number" }, "isActive": { "type": "boolean" } }
+        },
+        "formerContributorShare": { "type": ["number", "null"] },
+        "offboardingRisk": { "type": "boolean" },
+        "coupledFiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "couplingPercent"],
+            "additionalProperties": false,
+            "properties": { "path": { "type": "string" }, "couplingPercent": { "type": "number" } }
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "severity"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "severity": { "type": "string" },
+              "location": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": { "symbol": { "type": "string" }, "startLine": { "type": "integer" }, "endLine": { "type": "integer" } }
+              }
+            }
+          }
+        },
+        "startHere": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["target"],
+            "additionalProperties": false,
+            "properties": {
+              "target": { "type": "string" },
+              "scope": { "type": "string" },
+              "loc": { "type": "integer" },
+              "issues": { "type": "array", "items": { "type": "string" } },
+              "text": { "type": "string" }
+            }
+          }
+        },
+        "reviewError": { "type": "string" },
+        "outcome": {
+          "type": "object",
+          "required": ["defects", "developmentTime", "productivity"],
+          "additionalProperties": false,
+          "properties": {
+            "defects": { "$ref": "#/$defs/range" },
+            "developmentTime": { "$ref": "#/$defs/range" },
+            "productivity": { "$ref": "#/$defs/range" }
+          }
+        }
+      }
+    }
+  }
+}

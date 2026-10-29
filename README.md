@@ -9,6 +9,7 @@ Everything here is generic: no project names, people or analysis numbers. Projec
 | Skill | Summary |
 |---|---|
 | [architectural-hotspots](skills/architectural-hotspots/SKILL.md) | Components in PAID quadrants by change activity and Code Health, with outcomes and team ROI for uplifting the ones to address first. [Details](#architectural-hotspots) |
+| [refactoring-targets](skills/refactoring-targets/SKILL.md) | CodeScene's uplift targets as a prioritized refactoring backlog for an engineering manager: why each file, where to start, who to involve, the risks to plan for and the estimated outcome. [Details](#refactoring-targets) |
 
 ## Adding a skill
 
@@ -56,3 +57,18 @@ PAID is Gartner's model for prioritizing technical debt. It places each item on 
 | **Delay** | Low | High | Real debt, but cheap to carry; revisit if work shifts there |
 
 The report measures both axes with CodeScene data. Impact is change activity: how much of the team's development runs through a component. Risk is low Code Health. Change activity follows a power law, so the split between busy and quiet uses head/tail breaks, cutting at the mean; the split between healthy and unhealthy is Code Health 9.0. The result separates the debt worth paying down from the debt that can safely wait.
+
+### Refactoring targets
+
+Turns CodeScene's uplift targets into a refactoring backlog that an engineering manager can plan from.
+
+![Refactoring targets report](docs/images/refactoring-targets.png)
+
+Uplift targets are unhealthy files that the team changes often, so refactoring them pays back in everyday delivery. CodeScene picks **primary** and **secondary** targets across the whole project, and **local** targets within each architectural component. The report keeps that order and, within each type, puts the most-changed file first. It contains:
+
+- **A summary** of how many targets there are, how often the team changes them, their size, and how many need extra planning.
+- **A backlog table** with one row per target: Code Health, commits, size, main author and the risks to plan for.
+- **A card per target** with the evidence: the functions to start with, the Code Health issues, the files that change together with it, its Code Health trend, and the estimated outcome of refactoring it.
+- **Who to involve:** the targets grouped by main author, flagging authors who are no longer active.
+
+The risks are derived from the data. *Declining* means Code Health is getting worse, so the cost grows the longer it waits. *Knowledge risk* means most of the code would leave with its main author or already has. *Needs tests first* means line coverage is low or unknown, so add tests before refactoring.
