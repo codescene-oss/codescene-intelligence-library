@@ -23,6 +23,19 @@ skills/<id>/
 |---|---|
 | [architectural-hotspots](skills/architectural-hotspots/SKILL.md) | Components in PAID quadrants by change activity and Code Health, with outcomes and team ROI for uplifting the ones to address first |
 
+### The PAID model
+
+PAID is Gartner's model for prioritizing technical debt. It places each item on two axes, business impact and risk, and sorts it into one of four quadrants:
+
+| Quadrant | Impact | Risk | Action |
+|---|---|---|---|
+| **Plan** | High | Low | Maintain; guard it so debt doesn't creep in |
+| **Address** | High | High | Fix now; this debt taxes most of the delivery work |
+| **Ignore** | Low | Low | No action |
+| **Delay** | Low | High | Real debt, but cheap to carry; revisit if work shifts there |
+
+The reports here measure both axes with CodeScene data. Impact is change activity: how much of the team's development runs through the code. Risk is low Code Health. Change activity follows a power law, so the split between busy and quiet uses head/tail breaks (the mean), and the split between healthy and unhealthy is Code Health 9.0. The result separates the debt worth paying down from the debt that can safely wait.
+
 ## Adding a skill
 
 1. Create `skills/<id>/` with the files above. List every MCP tool the skill calls in `skill.json`.
