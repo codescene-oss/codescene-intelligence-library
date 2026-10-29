@@ -90,6 +90,7 @@ The `{{REPORT_DATA}}` block is a `<script type="application/json">` element. Put
 
 - SVG `<title>` tooltips don't show in every viewer. The renderer uses an absolutely positioned card; keep `pointer-events="none"` on labels and overlays so they don't steal the hover.
 - Address components are orange diamonds with a soft ring; everything else is a circle coloured by Code Health. Don't go back to plain dots for Address.
+- The Y axis always reaches at least 1.0 below Healthy, so the Address and Delay areas are visible even when every component is healthy. An empty Address area says "Nothing to address".
 - Bubbles that would overlap within the same quadrant are merged into a numbered group, positioned and sized by its members' lines of code. Groups never span quadrants. Hovering a group lists its members, worst Code Health first; clicking spreads them out around it and dims the rest. Nothing to configure: the tables still list every component.
 - Label placement avoids bubbles and trend lines. When you add marks to the chart, add them to the obstacles in `placeLabels`. In a dense cluster, a label that fits nowhere is left off (Address components are always labelled); the hover card still names it.
 - With up to three Address components, outcomes and ROI show one card per component. With more, the renderer shows the whole-codebase outcome and ROI as two cards, followed by one table row per component; one card each doesn't scale. Keep the whole codebase first in `outcomes` either way.

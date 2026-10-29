@@ -216,7 +216,9 @@
   const minChanges = Math.max(1, Math.min(...components.map((c) => c.changes)));
   const xMin = Math.pow(10, Math.floor(Math.log10(minChanges / 1.5)));
   const xMax = Math.pow(10, Math.ceil(Math.log10(Math.max(...components.map((c) => c.changes), 1) * 1.5)));
-  const yMin = Math.floor(Math.min(...components.map((c) => c.health)) - 0.5);
+  // Always keep at least one point of Code Health below Healthy, so the Address and Delay areas stay visible
+  // even when every component is healthy.
+  const yMin = Math.min(Math.floor(Math.min(...components.map((c) => c.health)) - 0.5), healthyThreshold - 1);
   const yMax = optimal;
 
   const xTicks = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000].filter((t) => t >= xMin && t <= xMax);
@@ -414,7 +416,11 @@
       const lower = r.id === "delay" || r.id === "address";
       return `<rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" fill="${fill}"/>
         <text x="${tx}" y="${lower ? r.y + r.h - 26 : r.y + 20}" text-anchor="${r.anchor}" font-size="14" font-weight="700" letter-spacing="0.5" fill="${nameColour}">${quadrants[r.id].name.toUpperCase()}</text>
-        <text x="${tx}" y="${lower ? r.y + r.h - 10 : r.y + 36}" text-anchor="${r.anchor}" font-size="12" fill="var(--text-3)">${quadrants[r.id].action}</text>`;
+        <text x="${tx}" y="${lower ? r.y + r.h - 10 : r.y + 36}" text-anchor="${r.anchor}" font-size="12" fill="var(--text-3)">${quadrants[r.id].action}</text>
+        ${r.id === "address" && !components.some((c) => quadrantOf(c) === "address")
+          ? `<text x="${r.x + r.w / 2}" y="${r.y + r.h / 2 - 2}" text-anchor="middle" font-size="13" font-weight="600" fill="var(--healthy-ink)">✓ Nothing to address</text>
+             <text x="${r.x + r.w / 2}" y="${r.y + r.h / 2 + 15}" text-anchor="middle" font-size="12" fill="var(--text-3)">No busy part of the architecture is below ${healthyThreshold.toFixed(1)}</text>`
+          : ""}`;
     }).join("");
 
     const gridSvg =
