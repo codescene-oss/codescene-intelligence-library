@@ -1,7 +1,8 @@
 {
   "project": {
     "name": "Example system",
-    "source": "Example data"
+    "source": "Example data",
+    "id": 1
   },
   "targetHealth": 9,
   "omitted": 3,
@@ -54,7 +55,8 @@
             "symbol": "calculateTotals",
             "startLine": 212,
             "endLine": 348
-          }
+          },
+          "recommendation": "Reduce the number of logical branches: decompose the function, or replace conditionals with polymorphism or lookup tables."
         },
         {
           "name": "Bumpy Road Ahead",
@@ -63,7 +65,8 @@
             "symbol": "applyDiscounts",
             "startLine": 410,
             "endLine": 486
-          }
+          },
+          "recommendation": "Extract each bump (a block of nested conditional logic) into a function of its own with a descriptive name."
         },
         {
           "name": "Large Method",
@@ -72,7 +75,8 @@
             "symbol": "calculateTotals",
             "startLine": 212,
             "endLine": 348
-          }
+          },
+          "recommendation": "Look for natural chunks inside the function that express a single task, and use the EXTRACT FUNCTION refactoring to encapsulate them."
         }
       ],
       "startHere": [
@@ -83,7 +87,12 @@
           "issues": [
             "Complex Method",
             "Large Method"
-          ]
+          ],
+          "revisions": 64,
+          "cyclomaticComplexity": 31,
+          "defects": 0,
+          "recommendationType": "complex_unhealthy_hotspot",
+          "text": "calculateTotals changes frequently and has Code Health issues."
         },
         {
           "target": "applyDiscounts",
@@ -91,7 +100,12 @@
           "loc": 77,
           "issues": [
             "Bumpy Road Ahead"
-          ]
+          ],
+          "revisions": 29,
+          "cyclomaticComplexity": 12,
+          "defects": 0,
+          "recommendationType": "unhealthy_hotspot",
+          "text": "applyDiscounts changes frequently and has Code Health issues."
         }
       ],
       "trend": {
@@ -157,7 +171,8 @@
             "symbol": "process",
             "startLine": 88,
             "endLine": 402
-          }
+          },
+          "recommendation": "Split the function by responsibility first; it is both long and complex, so start with the deepest nesting."
         },
         {
           "name": "Deep, Nested Complexity",
@@ -166,7 +181,8 @@
             "symbol": "retryCapture",
             "startLine": 450,
             "endLine": 530
-          }
+          },
+          "recommendation": "Flatten the nesting with guard clauses, or extract the nested blocks into functions."
         }
       ],
       "startHere": [
@@ -176,7 +192,12 @@
           "loc": 315,
           "issues": [
             "Brain Method"
-          ]
+          ],
+          "revisions": 58,
+          "cyclomaticComplexity": 40,
+          "defects": 0,
+          "recommendationType": "complex_unhealthy_hotspot",
+          "text": "process changes frequently and has Code Health issues."
         },
         {
           "target": "retryCapture",
@@ -184,7 +205,12 @@
           "loc": 81,
           "issues": [
             "Deep, Nested Complexity"
-          ]
+          ],
+          "revisions": 21,
+          "cyclomaticComplexity": 9,
+          "defects": 0,
+          "recommendationType": "unhealthy_hotspot",
+          "text": "retryCapture changes frequently and has Code Health issues."
         }
       ],
       "trend": {
@@ -250,7 +276,8 @@
             "symbol": "updateProfile",
             "startLine": 120,
             "endLine": 190
-          }
+          },
+          "recommendation": "Extract the duplicated logic into a shared function and call it from both places."
         },
         {
           "name": "Complex Conditional",
@@ -259,7 +286,8 @@
             "symbol": "canMerge",
             "startLine": 230,
             "endLine": 262
-          }
+          },
+          "recommendation": "Encapsulate the conditional expression in a function with a name that says what it checks."
         }
       ],
       "startHere": [
@@ -269,7 +297,12 @@
           "loc": 71,
           "issues": [
             "Code Duplication"
-          ]
+          ],
+          "revisions": 18,
+          "cyclomaticComplexity": 8,
+          "defects": 0,
+          "recommendationType": "unhealthy_hotspot",
+          "text": "updateProfile changes frequently and has Code Health issues."
         }
       ],
       "outcome": {
@@ -323,17 +356,6 @@
           "couplingPercent": 47
         }
       ],
-      "findings": [
-        {
-          "name": "Large Method",
-          "severity": "problem",
-          "location": {
-            "symbol": "renderStep",
-            "startLine": 40,
-            "endLine": 175
-          }
-        }
-      ],
       "startHere": [
         {
           "target": "renderStep",
@@ -341,7 +363,12 @@
           "loc": 136,
           "issues": [
             "Large Method"
-          ]
+          ],
+          "revisions": 15,
+          "cyclomaticComplexity": 22,
+          "defects": 0,
+          "recommendationType": "complex_unhealthy_hotspot",
+          "text": "renderStep changes frequently and has Code Health issues."
         }
       ],
       "trend": {
@@ -394,21 +421,6 @@
       "formerContributorShare": 0.1,
       "offboardingRisk": true,
       "coupledFiles": [],
-      "findings": [
-        {
-          "name": "Brain Class",
-          "severity": "problem"
-        },
-        {
-          "name": "Complex Method",
-          "severity": "problem",
-          "location": {
-            "symbol": "build",
-            "startLine": 60,
-            "endLine": 240
-          }
-        }
-      ],
       "startHere": [
         {
           "target": "build",
@@ -416,7 +428,12 @@
           "loc": 181,
           "issues": [
             "Complex Method"
-          ]
+          ],
+          "revisions": 26,
+          "cyclomaticComplexity": 14,
+          "defects": 0,
+          "recommendationType": "unhealthy_hotspot",
+          "text": "build changes frequently and has Code Health issues."
         }
       ],
       "outcome": {
@@ -434,5 +451,6 @@
         }
       }
     }
-  ]
+  ],
+  "analysisDate": "2026-10-01"
 }

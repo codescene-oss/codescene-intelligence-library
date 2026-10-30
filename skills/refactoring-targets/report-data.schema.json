@@ -3,90 +3,253 @@
   "$id": "codescene://skills/refactoring-targets/report-data.schema.json",
   "title": "ReportData",
   "type": "object",
-  "required": ["project", "targetHealth", "targets"],
+  "required": [
+    "project",
+    "targetHealth",
+    "targets"
+  ],
   "additionalProperties": false,
   "properties": {
     "project": {
       "type": "object",
-      "required": ["name", "source"],
+      "required": [
+        "name",
+        "source"
+      ],
       "additionalProperties": false,
       "properties": {
-        "name": { "type": "string" },
-        "source": { "type": "string", "description": "For example: CodeScene analysis, project <id>" }
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string",
+          "description": "For example: CodeScene analysis, project <id>"
+        },
+        "id": {
+          "type": "integer",
+          "description": "CodeScene project id, used in the refactoring specs."
+        }
       }
     },
-    "targetHealth": { "type": "number", "minimum": 1, "maximum": 10, "description": "Code Health the outcomes assume after refactoring." },
-    "omitted": { "type": "integer", "minimum": 0, "description": "Uplift targets left out to keep the report short." },
-    "targets": { "type": "array", "items": { "$ref": "#/$defs/target" }, "description": "In rank order." }
+    "targetHealth": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "Code Health the outcomes assume after refactoring."
+    },
+    "omitted": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Uplift targets left out to keep the report short."
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/target"
+      },
+      "description": "In rank order."
+    },
+    "analysisDate": {
+      "type": "string",
+      "description": "Date of the CodeScene analysis the data comes from (YYYY-MM-DD)."
+    }
   },
   "$defs": {
     "range": {
       "type": "object",
-      "required": ["lower", "upper"],
+      "required": [
+        "lower",
+        "upper"
+      ],
       "additionalProperties": false,
-      "properties": { "lower": { "type": "number" }, "upper": { "type": "number" } }
+      "properties": {
+        "lower": {
+          "type": "number"
+        },
+        "upper": {
+          "type": "number"
+        }
+      }
     },
     "target": {
       "type": "object",
-      "required": ["path", "type", "health", "changes", "linesOfCode"],
+      "required": [
+        "path",
+        "type",
+        "health",
+        "changes",
+        "linesOfCode"
+      ],
       "additionalProperties": false,
       "properties": {
-        "path": { "type": "string" },
-        "component": { "type": ["string", "null"] },
-        "type": { "enum": ["primary", "secondary", "local"] },
-        "health": { "type": "number", "minimum": 1, "maximum": 10 },
+        "path": {
+          "type": "string"
+        },
+        "component": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "enum": [
+            "primary",
+            "secondary",
+            "local"
+          ]
+        },
+        "health": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10
+        },
         "healthSeries": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["date", "value"],
+            "required": [
+              "date",
+              "value"
+            ],
             "additionalProperties": false,
-            "properties": { "date": { "type": "string" }, "value": { "type": "number" } }
+            "properties": {
+              "date": {
+                "type": "string"
+              },
+              "value": {
+                "type": "number"
+              }
+            }
           }
         },
         "trend": {
           "type": "object",
-          "required": ["direction", "pace"],
+          "required": [
+            "direction",
+            "pace"
+          ],
           "additionalProperties": false,
           "properties": {
-            "direction": { "enum": ["improving", "declining", "steady"] },
-            "pace": { "enum": ["slow", "fast", null] }
+            "direction": {
+              "enum": [
+                "improving",
+                "declining",
+                "steady"
+              ]
+            },
+            "pace": {
+              "enum": [
+                "slow",
+                "fast",
+                null
+              ]
+            }
           }
         },
-        "changes": { "type": "integer", "minimum": 0 },
-        "linesOfCode": { "type": "integer", "minimum": 0 },
-        "coverage": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
-        "isHotspot": { "type": "boolean" },
-        "owner": {
-          "type": ["object", "null"],
-          "required": ["name", "ownership", "isActive"],
-          "additionalProperties": false,
-          "properties": { "name": { "type": "string" }, "ownership": { "type": "number" }, "isActive": { "type": "boolean" } }
+        "changes": {
+          "type": "integer",
+          "minimum": 0
         },
-        "formerContributorShare": { "type": ["number", "null"] },
-        "offboardingRisk": { "type": "boolean" },
+        "linesOfCode": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "coverage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "isHotspot": {
+          "type": "boolean"
+        },
+        "owner": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "required": [
+            "name",
+            "ownership",
+            "isActive"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "ownership": {
+              "type": "number"
+            },
+            "isActive": {
+              "type": "boolean"
+            }
+          }
+        },
+        "formerContributorShare": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "offboardingRisk": {
+          "type": "boolean"
+        },
         "coupledFiles": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["path", "couplingPercent"],
+            "required": [
+              "path",
+              "couplingPercent"
+            ],
             "additionalProperties": false,
-            "properties": { "path": { "type": "string" }, "couplingPercent": { "type": "number" } }
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "couplingPercent": {
+                "type": "number"
+              }
+            }
           }
         },
         "findings": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["name", "severity"],
+            "required": [
+              "name",
+              "severity"
+            ],
             "additionalProperties": false,
             "properties": {
-              "name": { "type": "string" },
-              "severity": { "type": "string" },
+              "name": {
+                "type": "string"
+              },
+              "severity": {
+                "type": "string"
+              },
               "location": {
                 "type": "object",
                 "additionalProperties": false,
-                "properties": { "symbol": { "type": "string" }, "startLine": { "type": "integer" }, "endLine": { "type": "integer" } }
+                "properties": {
+                  "symbol": {
+                    "type": "string"
+                  },
+                  "startLine": {
+                    "type": "integer"
+                  },
+                  "endLine": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "recommendation": {
+                "type": "string",
+                "description": "CodeScene's guidance for fixing this issue."
               }
             }
           }
@@ -95,27 +258,70 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["target"],
+            "required": [
+              "target"
+            ],
             "additionalProperties": false,
             "properties": {
-              "target": { "type": "string" },
-              "scope": { "type": "string" },
-              "loc": { "type": "integer" },
-              "issues": { "type": "array", "items": { "type": "string" } },
-              "text": { "type": "string" }
+              "target": {
+                "type": "string"
+              },
+              "scope": {
+                "type": "string"
+              },
+              "loc": {
+                "type": "integer"
+              },
+              "issues": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "text": {
+                "type": "string"
+              },
+              "recommendationType": {
+                "type": "string"
+              },
+              "revisions": {
+                "type": "integer"
+              },
+              "cyclomaticComplexity": {
+                "type": "integer"
+              },
+              "defects": {
+                "type": "integer"
+              }
             }
           }
         },
-        "reviewError": { "type": "string" },
+        "reviewError": {
+          "type": "string"
+        },
         "outcome": {
           "type": "object",
-          "required": ["defects", "developmentTime", "productivity"],
+          "required": [
+            "defects",
+            "developmentTime",
+            "productivity"
+          ],
           "additionalProperties": false,
           "properties": {
-            "defects": { "$ref": "#/$defs/range" },
-            "developmentTime": { "$ref": "#/$defs/range" },
-            "productivity": { "$ref": "#/$defs/range" }
+            "defects": {
+              "$ref": "#/$defs/range"
+            },
+            "developmentTime": {
+              "$ref": "#/$defs/range"
+            },
+            "productivity": {
+              "$ref": "#/$defs/range"
+            }
           }
+        },
+        "startHereMessage": {
+          "type": "string",
+          "description": "Why CodeScene has no prioritized refactorings for this file, when it has none."
         }
       }
     }

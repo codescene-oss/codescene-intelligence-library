@@ -103,6 +103,21 @@
   .block li .where { color: var(--text-3); font-size: 12px; }
   .outcome { display: flex; gap: 24px; flex-wrap: wrap; background: var(--plan-tint); border-radius: 6px; padding: 10px 14px; font-size: 12px; color: var(--text-2); }
   .outcome strong { display: block; font-size: 18px; color: var(--healthy-ink); font-variant-numeric: tabular-nums; }
+  .spec-btn { font: inherit; font-size: 11px; font-weight: 600; color: var(--primary); background: var(--brand-tint); border: 1px solid var(--primary);
+    border-radius: 4px; padding: 2px 8px; margin-top: 4px; cursor: pointer; white-space: nowrap; }
+  .spec-btn:hover { background: var(--primary); color: #ffffff; }
+  .target-head .spec-btn { margin: 0 0 0 auto; font-size: 12px; padding: 4px 10px; }
+  dialog.spec { width: min(860px, calc(100vw - 32px)); max-height: calc(100vh - 48px); border: none; border-radius: 10px; padding: 0;
+    background: var(--bg); color: var(--text); box-shadow: 0 12px 40px rgba(15, 45, 87, 0.35); }
+  dialog.spec::backdrop { background: rgba(15, 45, 87, 0.45); }
+  .spec-head { display: flex; align-items: center; gap: 8px; padding: 14px 18px; border-bottom: 1px solid var(--stroke-2); }
+  .spec-head h2 { flex: 1; font-size: 15px; }
+  .spec-head button { font: inherit; font-size: 12px; font-weight: 600; border-radius: 4px; padding: 5px 12px; cursor: pointer;
+    border: 1px solid var(--primary); background: var(--bg); color: var(--primary); }
+  .spec-head button.primary-action { background: var(--primary); color: #ffffff; }
+  .spec-intro { padding: 10px 18px 0; font-size: 12px; color: var(--text-2); }
+  .spec pre { margin: 12px 18px 18px; padding: 14px 16px; background: var(--page); border-radius: 6px; overflow: auto; max-height: calc(100vh - 220px);
+    font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; color: var(--text); }
   .muted-box { background: var(--stroke-3); border-radius: 6px; padding: 10px 14px; font-size: 12px; color: var(--text-2); }
   .error { border: 1px solid var(--unhealthy-ink); border-radius: 6px; padding: 12px 16px; color: var(--unhealthy-ink); }
   .empty { text-align: center; padding: 24px; color: var(--healthy-ink); font-weight: 600; }
@@ -223,7 +238,8 @@
     const rows = targets.map((t, i) => `<tr>
       <td class="num strong">${i + 1}</td>
       <td class="file-cell"><a class="file" href="#target-${i + 1}" style="color:var(--text)">${escapeHtml(fileName(t.path))}</a>
-        <div class="small tertiary">${escapeHtml(t.component || "")}</div></td>
+        <div class="small tertiary">${escapeHtml(t.component || "")}</div>
+        ${hasSpec(t) ? `<button class="spec-btn" data-spec="${i}">Refactoring spec</button>` : ""}</td>
       <td><span class="badge ${t.type}">${typeLabel[t.type]}</span></td>
       <td class="num strong" style="color:${inkColour(t.health)}">${t.health.toFixed(2)}</td>
       <td class="num">${formatInt(t.changes)}</td>
@@ -247,16 +263,20 @@
         t.owner ? `<div class="small tertiary">${Math.round(t.owner.ownership * 100)}% of the code${t.owner.isActive ? "" : ", inactive"}</div>` : ""],
     ];
     const start = (t.startHere || []).map((s) => `<li><strong>${escapeHtml(s.target)}</strong>
-      <span class="where">${s.loc ? `${s.loc} lines` : ""}${s.issues && s.issues.length ? ` · ${s.issues.map(escapeHtml).join(", ")}` : ""}</span></li>`).join("");
+      <span class="where">${evidenceText(s)}${s.issues && s.issues.length ? ` · ${s.issues.map(escapeHtml).join(", ")}` : ""}</span></li>`).join("");
     const findings = (t.findings || []).map((f) => `<li>${escapeHtml(f.name)}
       ${f.location && f.location.symbol ? `<span class="where">in ${escapeHtml(f.location.symbol)}${f.location.startLine ? `, lines ${f.location.startLine}–${f.location.endLine}` : ""}</span>` : ""}</li>`).join("");
     const coupled = (t.coupledFiles || []).map((c) => `<li>${escapeHtml(fileName(c.path))} <span class="where">${c.couplingPercent}% of commits</span></li>`).join("");
-    const review = t.reviewError
-      ? `<div class="muted-box">CodeScene's file review was unavailable for this file, so the functions to start with and the Code Health issues are missing. ${escapeHtml(t.reviewError)}</div>`
-      : `<div class="columns">
-          <div class="block"><h3>Start here</h3>${start ? `<ul>${start}</ul>` : '<p class="small tertiary">No function-level recommendations.</p>'}</div>
-          <div class="block"><h3>Code Health issues</h3>${findings ? `<ul>${findings}</ul>` : '<p class="small tertiary">No issues reported.</p>'}</div>
-        </div>`;
+    const startBlock = start
+      ? `<ul>${start}</ul>`
+      : `<p class="small tertiary">${escapeHtml(t.startHereMessage || "No function-level recommendations.")}</p>`;
+    const findingsBlock = t.reviewError
+      ? `<p class="small tertiary">CodeScene's file review was unavailable for this file. ${escapeHtml(t.reviewError)}</p>`
+      : findings ? `<ul>${findings}</ul>` : t.findings ? '<p class="small tertiary">No issues reported.</p>' : '<p class="small tertiary">Not reviewed; local targets get the prioritized refactorings only.</p>';
+    const review = `<div class="columns">
+        <div class="block"><h3>Start here</h3>${startBlock}</div>
+        <div class="block"><h3>Code Health issues</h3>${findingsBlock}</div>
+      </div>`;
     const outcome = t.outcome
       ? `<div class="outcome"><div>If refactored to Code Health ${targetHealth.toFixed(1)}:</div>
           <div><strong>${signedPercent(midpoint(t.outcome.defects))}</strong>defects</div>
@@ -266,13 +286,167 @@
     return `<div class="target" id="target-${i + 1}">
       <div class="target-head"><span class="rank">${i + 1}</span><span class="title">${escapeHtml(fileName(t.path))}</span>
         <span class="badge ${t.type}">${typeLabel[t.type]} target</span>${t.isHotspot ? '<span class="badge local">Hotspot</span>' : ""}
-        <span>${flags(t)}</span></div>
+        <span>${flags(t)}</span>${hasSpec(t) ? `<button class="spec-btn" data-spec="${i}">Refactoring spec</button>` : ""}</div>
       <div class="path">${escapeHtml(t.path)}${t.component ? ` · component ${escapeHtml(t.component)}` : ""}</div>
       <div class="facts">${facts.map(([label, value, extra]) => `<div class="fact"><div class="label">${label}</div><div class="value">${value}</div>${extra}</div>`).join("")}</div>
       ${review}
       ${coupled ? `<div class="block"><h3>Changes together with</h3><ul>${coupled}</ul></div>` : ""}
       ${outcome}
     </div>`;
+  }
+
+  // -------------------------------------------------------------------------
+  // Refactoring spec: a Markdown brief for a coding agent, built only from the report data
+  // -------------------------------------------------------------------------
+
+  const hasSpec = (t) => t.type === "primary" || t.type === "secondary";
+
+  function evidenceText(s) {
+    const parts = [];
+    if (s.loc) parts.push(`${s.loc} lines`);
+    if (s.cyclomaticComplexity) parts.push(`complexity ${s.cyclomaticComplexity}`);
+    if (s.revisions) parts.push(`changed in ${s.revisions} commits`);
+    return parts.join(", ");
+  }
+
+  const trendWords = (t) =>
+    !t.trend || t.trend.direction === "steady" ? "steady" : `${t.trend.direction}${t.trend.pace ? ` (${t.trend.pace})` : ""}`;
+
+  function buildSpec(t) {
+    const name = fileName(t.path);
+    const lines = [];
+    const push = (...xs) => lines.push(...xs);
+    const where = (f) => f.location && f.location.symbol
+      ? ` in \`${f.location.symbol}\`${f.location.startLine ? ` (lines ${f.location.startLine}–${f.location.endLine})` : ""}` : "";
+
+    push(`# Refactoring spec: ${name}`, "",
+      `- File: \`${t.path}\``);
+    if (t.component) push(`- Component: ${t.component}`);
+    push(`- Source: ${project.source}${report.analysisDate ? `, analysis of ${report.analysisDate}` : ""}. Check that the functions and line numbers below still match the code.`, "");
+
+    push("## Goal", "",
+      `Raise the Code Health of \`${name}\` from ${t.health.toFixed(2)} to ${targetHealth.toFixed(1)} or higher, without changing its behaviour.`,
+      `CodeScene ranks it as a ${t.type} uplift target: it was changed in ${t.changes} commits, it has ${formatInt(t.linesOfCode)} lines of code, and its Code Health trend is ${trendWords(t)}.`);
+    if (t.outcome) {
+      push(`CodeScene's outcome model estimates ${signedPercent(midpoint(t.outcome.defects))} defects and ${signedPercent(midpoint(t.outcome.developmentTime))} development time for future work in this file at Code Health ${targetHealth.toFixed(1)}.`);
+    }
+    push("");
+
+    push("## Refactor these functions, in this order", "");
+    if (t.startHere && t.startHere.length) {
+      t.startHere.forEach((s, k) => {
+        push(`### ${k + 1}. \`${s.target}\``, "");
+        if (s.issues && s.issues.length) push(`- Code Health issues: ${s.issues.join(", ")}`);
+        const evidence = evidenceText(s);
+        if (evidence) push(`- Evidence: ${evidence}${typeof s.defects === "number" ? `, ${s.defects} defects` : ""}`);
+        if (s.text) push(`- Why: ${s.text}`);
+        (t.findings || []).filter((f) => f.location && f.location.symbol === s.target).forEach((f) => {
+          push(`- ${f.name}${f.location.startLine ? ` (lines ${f.location.startLine}–${f.location.endLine})` : ""}${f.recommendation ? `: ${f.recommendation}` : ""}`);
+        });
+        push("");
+      });
+    } else {
+      push(`CodeScene had no prioritized refactorings for this file${t.startHereMessage ? ` (${t.startHereMessage})` : ""}. Start with a fresh review of the file (see *How to work*) and use its findings instead.`, "");
+    }
+
+    const listed = new Set((t.startHere || []).map((s) => s.target));
+    const others = (t.findings || []).filter((f) => !(f.location && listed.has(f.location.symbol)));
+    if (others.length) {
+      push("## Other Code Health issues in the file", "");
+      others.forEach((f) => push(`- **${f.name}**${where(f)}${f.recommendation ? `: ${f.recommendation}` : ""}`));
+      push("");
+    } else if (t.reviewError) {
+      push("## Other Code Health issues in the file", "",
+        "CodeScene's file review was unavailable when this spec was made, so the per-issue guidance is missing. Get it with a fresh review (see *How to work*).", "");
+    }
+
+    push("## Before you change anything", "");
+    if (hasThinSafetyNet(t)) {
+      push(`- Line coverage is ${t.coverage === null || t.coverage === undefined ? "unknown" : `${Math.round(t.coverage * 100)}%`}. Add characterization tests around the functions above first, so the refactoring provably keeps the behaviour.`);
+    } else {
+      push(`- Line coverage is ${Math.round(t.coverage * 100)}%. Run the tests before you start, so you know they pass.`);
+    }
+    (t.coupledFiles || []).forEach((c) => push(`- \`${fileName(c.path)}\` changes together with this file in ${c.couplingPercent}% of its commits. Check whether it needs the same change: \`${c.path}\``));
+    if (t.owner) {
+      push(t.owner.isActive
+        ? `- ${t.owner.name} wrote ${Math.round(t.owner.ownership * 100)}% of the code. Ask them to review the plan and the changes.`
+        : `- The main author, ${t.owner.name}, is no longer active. Plan extra time to understand the code, and keep each step small.`);
+    }
+    if (isDeclining(t)) push("- Code Health is declining: avoid adding features to these functions while the refactoring is in progress.");
+    push("");
+
+    push("## Constraints", "",
+      "- Preserve behaviour. The tests must pass before and after every step.",
+      "- Keep the public API and exported names unchanged.",
+      "- One refactoring per commit, so each step can be reviewed and reverted on its own.",
+      "- Don't reformat or change code outside the functions you are refactoring.", "");
+
+    push("## How to work", "",
+      `1. Get a fresh view from the CodeScene MCP server: \`list_prioritized_refactorings\` and \`review_analyzed_file\` for \`${t.path}\`${project.id ? ` in project ${project.id}` : ""}. Compare it with this spec; the analysis may have moved on.`,
+      "2. Read the functions above and propose a step-by-step plan: which refactoring, in which function, in which order. Wait for approval before changing code.",
+      "3. Add the tests from *Before you change anything* first, if any are needed.",
+      "4. After each step, run the tests and check the file's Code Health with CodeScene's local Code Health tool (the IDE extension or CLI), which sees uncommitted changes.",
+      `5. Stop when the file reaches Code Health ${targetHealth.toFixed(1)}, or when the next step would change behaviour. Report what you changed, the new Code Health, and what is left.`, "");
+
+    push("## Done when", "",
+      `- CodeScene reports Code Health ${targetHealth.toFixed(1)} or higher for \`${name}\`.`,
+      "- All tests pass and the behaviour is unchanged.");
+    if (t.owner && t.owner.isActive) push(`- ${t.owner.name} has reviewed the changes.`);
+    return lines.join("\n") + "\n";
+  }
+
+  function specDialog() {
+    let dialog = document.getElementById("spec-dialog");
+    if (dialog) return dialog;
+    dialog = document.createElement("dialog");
+    dialog.id = "spec-dialog";
+    dialog.className = "spec";
+    dialog.innerHTML = `<div class="spec-head"><h2></h2>
+        <button class="primary-action" data-action="copy">Copy</button>
+        <button data-action="download">Download .md</button>
+        <button data-action="close" aria-label="Close">✕</button></div>
+      <p class="spec-intro">Give this spec to your coding agent. It asks the agent to refresh the data with the CodeScene MCP server,
+        propose a plan for approval, and check Code Health after every step.</p>
+      <pre></pre>`;
+    document.body.appendChild(dialog);
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+      const action = event.target.dataset && event.target.dataset.action;
+      const text = dialog.querySelector("pre").textContent;
+      if (action === "close") dialog.close();
+      if (action === "copy") {
+        const done = () => { event.target.textContent = "Copied"; setTimeout(() => (event.target.textContent = "Copy"), 1500); };
+        const fallback = () => { selectSpec(dialog); event.target.textContent = "Selected: press Ctrl/⌘+C"; setTimeout(() => (event.target.textContent = "Copy"), 3000); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+        else fallback();
+      }
+      if (action === "download") {
+        const url = URL.createObjectURL(new Blob([text], { type: "text/markdown" }));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = dialog.dataset.filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    });
+    return dialog;
+  }
+
+  // Clipboard access can be blocked in some viewers; select the text so the user can copy it by hand.
+  function selectSpec(dialog) {
+    const range = document.createRange();
+    range.selectNodeContents(dialog.querySelector("pre"));
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
+  function openSpec(t) {
+    const dialog = specDialog();
+    dialog.querySelector("h2").textContent = `Refactoring spec: ${fileName(t.path)}`;
+    dialog.querySelector("pre").textContent = buildSpec(t);
+    dialog.dataset.filename = `refactoring-spec-${fileName(t.path).replace(/[^A-Za-z0-9._-]+/g, "-")}.md`;
+    dialog.showModal();
   }
 
   function peopleTable() {
@@ -346,10 +520,18 @@
         before refactoring it.</p>
       <p class="small secondary"><strong>Outcomes</strong> are the midpoint of the 90% interval from CodeScene's outcome model for
         raising a file's Code Health to ${targetHealth.toFixed(1)}, and apply to development inside that file.</p>
+      <p class="small secondary"><strong>Refactoring specs</strong>: primary and secondary targets have a spec to hand to a coding agent.
+        It is built from this report's data, and asks the agent to refresh it with the CodeScene MCP server, propose a plan for approval,
+        and check Code Health after every step.</p>
       ${failedReviews ? `<p class="small secondary"><strong>Reviews</strong>: CodeScene's file review was unavailable for ${failedReviews}
-        ${failedReviews === 1 ? "target" : "targets"}; those cards show the backlog data without the function-level detail.</p>` : ""}
+        ${failedReviews === 1 ? "target" : "targets"}; their cards and specs lack the per-issue details, but keep the functions to start with.</p>` : ""}
       <p class="small tertiary">Source: ${escapeHtml(project.source)}.</p>
     </section>`;
+
+  root.addEventListener("click", (event) => {
+    const button = event.target.closest(".spec-btn");
+    if (button) openSpec(targets[Number(button.dataset.spec)]);
+  });
 })();
 </script>
 </body>

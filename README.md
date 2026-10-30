@@ -9,7 +9,7 @@ Everything here is generic: no project names, people or analysis numbers. Projec
 | Skill | Summary |
 |---|---|
 | [architectural-hotspots](skills/architectural-hotspots/SKILL.md) | Components in PAID quadrants by change activity and Code Health, with outcomes and team ROI for uplifting the ones to address first. [Details](#architectural-hotspots) |
-| [refactoring-targets](skills/refactoring-targets/SKILL.md) | CodeScene's uplift targets as a prioritized refactoring backlog for an engineering manager: why each file, where to start, who to involve, the risks to plan for and the estimated outcome. [Details](#refactoring-targets) |
+| [refactoring-targets](skills/refactoring-targets/SKILL.md) | CodeScene's uplift targets as a prioritized refactoring backlog for an engineering manager: why each file, where to start, who to involve, the risks to plan for and the estimated outcome, plus a refactoring spec per primary and secondary target to hand to a coding agent. [Details](#refactoring-targets) |
 
 ## Adding a skill
 
@@ -70,5 +70,6 @@ Uplift targets are unhealthy files that the team changes often, so refactoring t
 - **A backlog table** with one row per target: Code Health, commits, size, main author and the risks to plan for.
 - **A card per target** with the evidence: the functions to start with, the Code Health issues, the files that change together with it, its Code Health trend, and the estimated outcome of refactoring it.
 - **Who to involve:** the targets grouped by main author, flagging authors who are no longer active.
+- **A refactoring spec** for each primary and secondary target, behind a *Refactoring spec* button. It's a Markdown brief for a coding agent: the goal, the functions to refactor in CodeScene's priority order with their evidence and CodeScene's guidance per Code Health issue, what to check first, constraints, and when the work is done. Copy it or download it as a `.md` file. The spec also tells the agent to refresh the data with the CodeScene MCP server, propose a plan for approval, and check Code Health after every step.
 
 The risks are derived from the data. *Declining* means Code Health is getting worse, so the cost grows the longer it waits. *Knowledge risk* means most of the code would leave with its main author or already has. *Needs tests first* means line coverage is low or unknown, so add tests before refactoring.
