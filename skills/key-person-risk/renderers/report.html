@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Key person risk</title>
+<style>
+  /* CodeScene theme colours. The pastel fills match the app's Code Health bubbles; the -ink variants keep
+     numbers and labels readable on white, and fall back to the pastels on dark backgrounds. */
+  :root {
+    --unhealthy: #ef8290;
+    --problematic: #f6d991;
+    --healthy: #8ddec8;
+    --unhealthy-ink: #c8475a;
+    --problematic-ink: #9a7213;
+    --healthy-ink: #1f8569;
+    --primary: #2f7b7a;
+    --navy: #0f2d57;
+    --address-tint: #ef829026;
+    --plan-tint: #8ddec826;
+    --brand-tint: #2f7b7a14;
+    --page: #eef2f8;
+    --bg: #ffffff;
+    --text: #323a4e;
+    --text-2: #4f5866;
+    --text-3: #7d8694;
+    --stroke-2: #d5dbe3;
+    --stroke-3: #eceff4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --unhealthy-ink: #ef8290;
+      --problematic-ink: #f6d991;
+      --healthy-ink: #8ddec8;
+      --primary: #62d5de;
+      --page: #0a1424;
+      --bg: #12223a;
+      --text: #eceef1;
+      --text-2: #b4bac2;
+      --text-3: #848b95;
+      --stroke-2: #2e3d52;
+      --stroke-3: #1d2a3d;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; }
+  section { display: flex; flex-direction: column; gap: 8px; background: var(--bg); border-radius: 10px; padding: 20px 24px;
+    box-shadow: 0 1px 2px rgba(15, 45, 87, 0.06), 0 2px 8px rgba(15, 45, 87, 0.05); }
+  /* The header follows the app's navy-to-teal sidebar. */
+  section.hero { background: linear-gradient(120deg, #0f2d57 0%, #0b3a5e 55%, #075062 100%); color: #ffffff; gap: 12px; padding: 28px 24px; }
+  section.hero .eyebrow { color: #62d5de; }
+  section.hero .intro { background: rgba(255, 255, 255, 0.07); border-left-color: #62d5de; color: #dfe8f2; }
+  section.hero .intro strong { color: #62d5de; }
+  h1 { font-size: 24px; margin: 0; line-height: 1.25; }
+  h2 { font-size: 17px; margin: 0; }
+  p { margin: 0; }
+  .eyebrow { color: var(--primary); font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; }
+  .small { font-size: 12px; }
+  .secondary { color: var(--text-2); }
+  .tertiary { color: var(--text-3); }
+  .intro { background: var(--brand-tint); border-left: 3px solid var(--primary); border-radius: 4px; padding: 12px 16px; }
+  .intro strong { color: var(--primary); display: block; margin-bottom: 4px; }
+  .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+  .kpi { border: 1px solid var(--stroke-2); border-radius: 6px; padding: 12px 14px; }
+  .kpi .value { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--navy); }
+  .kpi .value .of { font-size: 14px; font-weight: 600; color: var(--text-3); }
+  .kpi .label { font-size: 12px; color: var(--text-2); }
+  .kpi .detail { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; font-size: 12px; color: var(--text-2); }
+  .legend span { display: inline-flex; gap: 6px; align-items: center; }
+  .chart { position: relative; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart svg text { font-family: inherit; }
+  .dot { cursor: pointer; }
+  .tooltip { position: absolute; pointer-events: none; background: var(--bg); border: 1px solid var(--stroke-2); border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); padding: 8px 12px; min-width: 250px; z-index: 1; font-size: 11px; line-height: 17px; display: none; }
+  .tooltip .name { font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+  .tooltip .sub { color: var(--text-3); margin-bottom: 6px; }
+  .tooltip .row { display: flex; justify-content: space-between; gap: 16px; }
+  .tooltip .row span:first-child { color: var(--text-2); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--stroke-2); border-radius: 6px; overflow: hidden; font-size: 12px; }
+  th { background: var(--brand-tint); color: var(--text-2); font-size: 11px; font-weight: 600; text-align: left; padding: 6px 10px; white-space: nowrap; }
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover { color: var(--primary); }
+  th .arrow { color: var(--primary); }
+  td { padding: 8px 10px; border-top: 1px solid var(--stroke-3); color: var(--text-2); vertical-align: top; }
+  td.name { color: var(--text); font-weight: 600; white-space: nowrap; }
+  td.file { color: var(--text); font-weight: 600; min-width: 160px; overflow-wrap: break-word; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .strong { font-weight: 600; }
+  .people-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .person { border: 1px solid var(--stroke-2); border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .person h3 { margin: 0; font-size: 15px; color: var(--navy); }
+  .person p { font-size: 13px; color: var(--text-2); }
+  .person ul { margin: 0; padding-left: 18px; font-size: 12px; color: var(--text-2); }
+  .person li { margin-bottom: 2px; }
+  .action { display: inline-block; font-size: 11px; font-weight: 600; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+  .action.refactor { background: var(--address-tint); color: var(--unhealthy-ink); }
+  .action.tests { background: #f6d99140; color: var(--problematic-ink); }
+  .action.pair { background: var(--plan-tint); color: var(--healthy-ink); }
+  .flag { color: var(--unhealthy-ink); font-weight: 600; }
+  .empty { text-align: center; padding: 16px; color: var(--healthy-ink); font-weight: 600; }
+  .error { border: 1px solid var(--unhealthy-ink); border-radius: 6px; padding: 12px 16px; color: var(--unhealthy-ink); }
+  @media (max-width: 720px) {
+    .kpis, .people-cards { grid-template-columns: minmax(0, 1fr); }
+    section, section.hero { padding: 16px; }
+  }
+  @media print {
+    main { max-width: none; padding: 0; }
+    section, .person { break-inside: avoid; box-shadow: none; }
+    body { background: #ffffff; }
+  }
+</style>
+<style>
+  .badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; border-radius: 10px;
+    padding: 1px 8px; white-space: nowrap; }
+  .badge.primary { background: var(--navy); color: #ffffff; }
+  .badge.secondary { background: var(--brand-tint); color: var(--primary); border: 1px solid var(--primary); }
+  .badge.local { background: var(--stroke-3); color: var(--text-2); }
+  .badge.tf1 { background: var(--unhealthy-ink); color: #ffffff; }
+  .badge.tf2 { background: var(--address-tint); color: var(--unhealthy-ink); border: 1px solid var(--unhealthy-ink); }
+  .headline { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 24px; align-items: center; }
+  .tf-number { text-align: center; border: 2px solid var(--unhealthy-ink); border-radius: 10px; padding: 12px 8px; }
+  .tf-number .value { font-size: 52px; font-weight: 800; line-height: 1; color: var(--unhealthy-ink); }
+  .tf-number .label { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 4px; }
+  .tf-number .detail { font-size: 11px; color: var(--text-3); }
+  .headline p { font-size: 15px; line-height: 1.55; }
+  .kpis.three { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 8px; }
+  .leave-chart { display: flex; flex-direction: column; gap: 14px; position: relative; }
+  .leave-row { display: grid; grid-template-columns: 170px minmax(0, 1fr) 190px; gap: 14px; align-items: start; }
+  .leave-row .who { font-weight: 700; font-size: 13px; color: var(--text); padding-top: 3px; }
+  .leave-row .who .tertiary { display: block; font-weight: 400; font-size: 11px; }
+  .bar { display: flex; height: 26px; gap: 2px; }
+  .block { height: 100%; border-radius: 3px; min-width: 4px; cursor: pointer; background: var(--stroke-2); }
+  .block.risk { background: var(--unhealthy); box-shadow: inset 0 0 0 1.5px var(--unhealthy-ink); }
+  .block:hover { outline: 2px solid var(--navy); outline-offset: 1px; }
+  .risk-labels { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 5px; font-size: 11px; color: var(--text-2); }
+  .risk-labels strong { color: var(--unhealthy-ink); }
+  .leave-row .count { font-size: 12px; color: var(--text-2); padding-top: 4px; }
+  .leave-row .count strong { color: var(--unhealthy-ink); }
+  .risk-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .risk-card { border: 1px solid var(--stroke-2); border-left: 4px solid var(--unhealthy-ink); border-radius: 8px; padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 8px; }
+  .risk-card h3 { margin: 0; font-size: 15px; color: var(--text); overflow-wrap: anywhere; }
+  .risk-card .remain { font-size: 13px; color: var(--text-2); }
+  .risk-card .remain strong { color: var(--unhealthy-ink); font-size: 18px; }
+  .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .fact .label { font-size: 11px; color: var(--text-3); }
+  .fact .value { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .chart-tooltip { position: absolute; pointer-events: none; background: var(--bg); border: 1px solid var(--stroke-2); border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); padding: 8px 12px; min-width: 250px; z-index: 2; font-size: 11px; line-height: 17px; display: none; }
+  .chart-tooltip .name { font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+  .chart-tooltip .sub { color: var(--text-3); margin-bottom: 6px; }
+  .chart-tooltip .row { display: flex; justify-content: space-between; gap: 16px; }
+  .chart-tooltip .row span:first-child { color: var(--text-2); }
+  @media (max-width: 720px) {
+    .headline, .leave-row, .risk-cards, .kpis.three { grid-template-columns: minmax(0, 1fr); }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>
+</head>
+<body>
+<main id="report"></main>
+
+<!-- {{REPORT_DATA}}: replace the placeholder object with ReportData JSON that validates against report-data.schema.json.
+     Keep everything outside this block unchanged. -->
+<script type="application/json" id="report-data">
+{
+  "project": { "name": "{{project-name}}", "source": "{{source}}" },
+  "components": [],
+  "files": []
+}
+</script>
+<!-- {{/REPORT_DATA}} -->
+
+<script>
+// ---------------------------------------------------------------------------
+// Generic layout below: no project-specific values.
+// ---------------------------------------------------------------------------
+(function () {
+  const root = document.getElementById("report");
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+  }
+
+  let report;
+  try {
+    report = JSON.parse(document.getElementById("report-data").textContent);
+  } catch (e) {
+    root.innerHTML = `<p class="error">The report data is not valid JSON: ${escapeHtml(e.message)}</p>`;
+    return;
+  }
+  const components = report.components || [];
+  const files = report.files || [];
+  if (components.length === 0) {
+    root.innerHTML = `<p class="error">The report has no components. Fill the {{REPORT_DATA}} block with data from CodeScene.</p>`;
+    return;
+  }
+
+  const { project } = report;
+  const concentration = report.concentration || 0.5;
+  const healthyThreshold = 9;
+  const unhealthyThreshold = 4;
+  const thinCoverage = 0.5;
+  const typeLabel = { primary: "Primary target", secondary: "Secondary target", local: "Local target" };
+
+  // CodeScene's three Code Health classes: unhealthy below 4.0, problematic below 9.0, healthy from 9.0.
+  const healthClass = (health) => (health >= healthyThreshold ? "healthy" : health >= unhealthyThreshold ? "problematic" : "unhealthy");
+  const inkColour = (health) => `var(--${healthClass(health)}-ink)`;
+  const formatInt = (n) => Math.round(n).toLocaleString("en-US");
+  const percent = (x) => `${Math.round(x * 100)}%`;
+  const fileName = (path) => path.split("/").pop();
+  const healthText = (h) => `<span class="strong" style="color:${inkColour(h)}">${h.toFixed(2)}</span>`;
+  const hasCoverage = (f) => f.coverage !== null && f.coverage !== undefined;
+  // Unknown coverage is not evidence of missing tests: only measured coverage below the threshold counts as untested.
+  const isUntested = (f) => hasCoverage(f) && f.coverage < thinCoverage;
+  const coverageText = (f) => (hasCoverage(f) ? percent(f.coverage) : "Unknown");
+  const byChanges = (a, b) => b.changes - a.changes;
+
+  // -------------------------------------------------------------------------
+  // Truck factor: derived from the data, never added by hand
+  // -------------------------------------------------------------------------
+
+  // 1: the main author holds the knowledge alone. 2: an off-boarding risk shared by its two main contributors.
+  const truckFactor = (f) => (f.owner.ownership >= concentration ? 1 : f.offboardingRisk ? 2 : null);
+  const atRisk = files.filter((f) => truckFactor(f) !== null);
+  const risks = files.filter((f) => f.offboardingRisk).sort(byChanges);
+  const ledByOne = (c) => c.owner.ownership >= concentration;
+  const isLost = (x) => (x.formerContributorShare || 0) >= 0.5 || x.owner.isActive === false;
+  const partnerOf = (f) => (f.contributors || []).find((c) => c.name !== f.owner.name && c.isActive);
+  const holdersOf = (f) => {
+    const list = (f.contributors || []).slice(0, 2).map((c) => c.name);
+    return list.length ? list : [f.owner.name];
+  };
+
+  // Project truck factor, estimated greedily from component main authors weighted by commits. Components whose main
+  // author is already inactive have lost that knowledge; they count from the start, and only active people can leave.
+  function projectTruckFactor() {
+    const total = components.reduce((s, c) => s + c.changes, 0);
+    const lostChanges = components.filter((c) => !c.owner.isActive).reduce((s, c) => s + c.changes, 0);
+    const byPerson = new Map();
+    components.filter((c) => c.owner.isActive).forEach((c) => byPerson.set(c.owner.name, (byPerson.get(c.owner.name) || 0) + c.changes));
+    const ranked = [...byPerson.entries()].sort((a, b) => b[1] - a[1]);
+    const removed = [];
+    let orphaned = lostChanges;
+    for (const [name, changes] of ranked) {
+      if (orphaned > total / 2) break;
+      removed.push(name);
+      orphaned += changes;
+    }
+    return { value: removed.length, people: removed, share: total ? orphaned / total : 0, lostShare: total ? lostChanges / total : 0 };
+  }
+  const projectTf = projectTruckFactor();
+
+  function weighted(list, value) {
+    const known = list.filter((x) => value(x) !== null && value(x) !== undefined);
+    const lines = known.reduce((sum, x) => sum + x.linesOfCode, 0);
+    return lines ? known.reduce((sum, x) => sum + value(x) * x.linesOfCode, 0) / lines : null;
+  }
+
+  // People: the main authors of truck factor 1 files and off-boarding risks, plus whoever leads a component.
+  function buildPeople() {
+    const map = new Map();
+    const person = (owner) => {
+      if (!map.has(owner.name)) map.set(owner.name, { name: owner.name, isActive: owner.isActive, files: [], components: [] });
+      return map.get(owner.name);
+    };
+    atRisk.forEach((f) => person(f.owner).files.push(f));
+    components.filter(ledByOne).forEach((c) => person(c.owner).components.push(c));
+    return [...map.values()].map((p) => {
+      const history = p.files.filter((f) => f.healthYearAgo !== null && f.healthYearAgo !== undefined);
+      const now = weighted(history, (f) => f.health);
+      const before = weighted(history, (f) => f.healthYearAgo);
+      return {
+        ...p,
+        files: p.files.sort((a, b) => Number(b.offboardingRisk) - Number(a.offboardingRisk) || b.changes - a.changes),
+        risks: p.files.filter((f) => f.offboardingRisk).length,
+        tf1: p.files.filter((f) => truckFactor(f) === 1).length,
+        changes: p.files.reduce((s, f) => s + f.changes, 0),
+        health: weighted(p.files, (f) => f.health),
+        healthYearAgo: before,
+        healthChange: now !== null && before !== null ? now - before : null,
+        coverage: weighted(p.files, (f) => f.coverage),
+        componentCount: p.components.length,
+      };
+    }).sort((a, b) => b.risks - a.risks || b.changes - a.changes);
+  }
+  const people = buildPeople();
+
+  // -------------------------------------------------------------------------
+  // Sections
+  // -------------------------------------------------------------------------
+
+  function headline() {
+    const names = projectTf.people.map(escapeHtml);
+    const list = names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0];
+    const riskPeople = new Set(risks.map((f) => f.owner.name)).size;
+    return `<div class="headline">
+        <div class="tf-number"><div class="value">${projectTf.value}</div><div class="label">Truck factor</div><div class="detail">estimate for ${escapeHtml(project.name)}</div></div>
+        <p>${projectTf.lostShare >= 0.01 ? `Components carrying <strong>${percent(projectTf.lostShare)}</strong> of all commits have already lost their main author. ` : ""}${projectTf.value
+          ? `If <strong>${list}</strong> left${projectTf.lostShare >= 0.01 ? " too" : ""}, components carrying <strong>${percent(projectTf.share)}</strong> of all commits would be without their main author.`
+          : "That is already more than half of the commits."}
+          ${risks.length ? `CodeScene flags <strong>${risks.length} ${risks.length === 1 ? "file" : "files"}</strong> as off-boarding risks, held by
+          ${riskPeople} ${riskPeople === 1 ? "person" : "people"}: little of their knowledge would remain if the two main contributors left.` : "CodeScene flags no off-boarding risks."}</p>
+      </div>
+      <div class="kpis three">
+        <div class="kpi"><div class="value">${risks.length}</div><div class="label">Off-boarding risks</div><div class="detail">truck factor 2 or less</div></div>
+        <div class="kpi"><div class="value">${files.filter((f) => truckFactor(f) === 1).length}</div><div class="label">Files at truck factor 1</div><div class="detail">one person wrote ${percent(concentration)} or more</div></div>
+        <div class="kpi"><div class="value">${components.filter(ledByOne).length} <span class="of">of ${components.length}</span></div><div class="label">Components at truck factor 1</div><div class="detail">led by one person</div></div>
+      </div>`;
+  }
+
+  function leaveChart() {
+    const rows = people.filter((p) => p.files.length);
+    if (!rows.length) return `<p class="empty">✓ No file depends on one person.</p>`;
+    const maxChanges = Math.max(...rows.map((p) => p.changes), 1);
+    return `<div class="leave-chart">${rows.map((p) => {
+      const blocks = p.files.map((f) => `<div class="block ${f.offboardingRisk ? "risk" : ""}" data-path="${escapeHtml(f.path)}"
+        style="flex: 0 0 calc(${(f.changes / maxChanges) * 100}% - 2px)"></div>`).join("");
+      const labels = p.files.filter((f) => f.offboardingRisk).map((f) =>
+        `<span><strong>${escapeHtml(fileName(f.path))}</strong> ${percent(f.remainingKnowledge || 0)} of the knowledge would remain</span>`).join("");
+      const counts = [];
+      if (p.risks) counts.push(`<strong>${p.risks} off-boarding ${p.risks === 1 ? "risk" : "risks"}</strong>`);
+      const others = p.files.filter((f) => !f.offboardingRisk).length;
+      if (others) counts.push(`${others} ${p.risks ? "other " : ""}${others === 1 ? "file" : "files"} at truck factor 1`);
+      return `<div class="leave-row">
+        <div class="who">${escapeHtml(p.name)}${p.isActive ? "" : ' <span class="flag">inactive</span>'}<span class="tertiary">${formatInt(p.changes)} commits</span></div>
+        <div><div class="bar">${blocks}</div>${labels ? `<div class="risk-labels">${labels}</div>` : ""}</div>
+        <div class="count">${counts.join(" · ")}</div>
+      </div>`;
+    }).join("")}<div class="chart-tooltip" role="tooltip"></div></div>`;
+  }
+
+  function blockTooltip(f) {
+    const partner = partnerOf(f);
+    const tf = truckFactor(f);
+    const rows = [
+      ["Truck factor", tf === 1 ? `1: ${f.owner.name} wrote ${percent(f.owner.ownership)}` : `2: ${holdersOf(f).join(" and ")}`],
+      ["Code Health", f.health.toFixed(2), inkColour(f.health)],
+      ["A year ago", f.healthYearAgo === null || f.healthYearAgo === undefined ? "—" : f.healthYearAgo.toFixed(2)],
+      ["Line coverage", coverageText(f)],
+      ["Commits", formatInt(f.changes)],
+      ["Next contributor", partner ? `${partner.name} (${percent(partner.ownership)})` : "None listed"],
+    ];
+    if (f.offboardingRisk) rows.unshift(["Off-boarding risk", `${percent(f.remainingKnowledge || 0)} would remain`, "var(--unhealthy-ink)"]);
+    return `<div class="name">${escapeHtml(fileName(f.path))}</div><div class="sub">${escapeHtml(f.component || f.path)}${f.type ? ` · ${typeLabel[f.type]}` : ""}</div>
+      ${rows.map(([label, value, colour]) => `<div class="row"><span>${label}</span><span style="color:${colour || "var(--text)"};font-weight:${colour ? 600 : 400}">${escapeHtml(value)}</span></div>`).join("")}`;
+  }
+
+  function bindLeaveChart(chart) {
+    if (!chart) return;
+    const tooltip = chart.querySelector(".chart-tooltip");
+    const byPath = new Map(files.map((f) => [f.path, f]));
+    chart.querySelectorAll(".block").forEach((block) => {
+      block.addEventListener("mouseenter", () => {
+        tooltip.innerHTML = blockTooltip(byPath.get(block.dataset.path));
+        const box = block.getBoundingClientRect();
+        const outer = chart.getBoundingClientRect();
+        tooltip.style.left = `${Math.min(box.left - outer.left, outer.width - 270)}px`;
+        tooltip.style.top = `${box.bottom - outer.top + 8}px`;
+        tooltip.style.display = "block";
+      });
+      block.addEventListener("mouseleave", () => (tooltip.style.display = "none"));
+    });
+  }
+
+  function riskCards() {
+    if (!risks.length) return `<p class="empty">✓ CodeScene flags no off-boarding risks in ${escapeHtml(project.name)}.</p>`;
+    return `<div class="risk-cards">${risks.map((f) => {
+      const holders = holdersOf(f);
+      const partner = (f.contributors || []).slice(2).find((c) => c.isActive) || null;
+      const actions = [];
+      if (isUntested(f)) actions.push("add tests around the code");
+      actions.push(f.health < healthyThreshold
+        ? `refactor it together with ${partner ? escapeHtml(partner.name) : "a new contributor"}, so the knowledge spreads while the code improves`
+        : `pair ${partner ? escapeHtml(partner.name) : "a new contributor"} with ${escapeHtml(holders[0])} on the next changes`);
+      return `<div class="risk-card">
+        <div><h3>${escapeHtml(fileName(f.path))}</h3><div class="small tertiary">${escapeHtml(f.component || "")}${f.type ? ` · ${typeLabel[f.type]}` : ""}</div></div>
+        <div class="remain">If ${holders.map(escapeHtml).join(" and ")} left, <strong>${percent(f.remainingKnowledge || 0)}</strong> of the knowledge would remain.</div>
+        <div class="facts">
+          <div class="fact"><div class="label">Code Health</div><div class="value">${healthText(f.health)}</div></div>
+          <div class="fact"><div class="label">A year ago</div><div class="value">${f.healthYearAgo === null || f.healthYearAgo === undefined ? "—" : f.healthYearAgo.toFixed(2)}</div></div>
+          <div class="fact"><div class="label">Coverage</div><div class="value">${coverageText(f)}</div></div>
+          <div class="fact"><div class="label">Commits</div><div class="value">${formatInt(f.changes)}</div></div>
+        </div>
+        <p class="small secondary"><strong>Do:</strong> ${actions.join(", then ")}.</p>
+      </div>`;
+    }).join("")}</div>`;
+  }
+
+  const columns = [
+    { key: "name", label: "Person", text: true },
+    { key: "risks", label: "Off-boarding risks" },
+    { key: "tf1", label: "Truck factor 1 files" },
+    { key: "changes", label: "Commits" },
+    { key: "health", label: "Code Health" },
+    { key: "healthYearAgo", label: "A year ago" },
+    { key: "healthChange", label: "Change" },
+    { key: "coverage", label: "Coverage" },
+    { key: "componentCount", label: "Components led" },
+  ];
+  let peopleSort = { key: "risks", descending: true };
+
+  function peopleRows() {
+    const value = (p) => p[peopleSort.key];
+    const sorted = [...people].sort((a, b) => {
+      const va = value(a);
+      const vb = value(b);
+      if (va === null || va === undefined) return 1;
+      if (vb === null || vb === undefined) return -1;
+      const order = typeof va === "string" ? va.localeCompare(vb) : va - vb;
+      return (peopleSort.descending ? -order : order) || b.changes - a.changes;
+    });
+    return sorted.map((p) => `<tr>
+      <td class="name">${escapeHtml(p.name)}${p.isActive ? "" : ' <span class="flag">inactive</span>'}</td>
+      <td class="num ${p.risks ? "flag" : ""}">${p.risks}</td>
+      <td class="num">${p.tf1}</td>
+      <td class="num">${p.files.length ? formatInt(p.changes) : "—"}</td>
+      <td class="num">${p.health === null ? "—" : healthText(p.health)}</td>
+      <td class="num">${p.healthYearAgo === null ? "—" : p.healthYearAgo.toFixed(2)}</td>
+      <td class="num strong" style="color:${p.healthChange === null || Math.abs(p.healthChange) < 0.05 ? "var(--text-3)" : p.healthChange > 0 ? "var(--healthy-ink)" : "var(--unhealthy-ink)"}">
+        ${p.healthChange === null ? "—" : `${p.healthChange > 0 ? "+" : p.healthChange < 0 ? "−" : ""}${Math.abs(p.healthChange).toFixed(2)}`}</td>
+      <td class="num">${p.coverage === null ? (p.files.length ? "Unknown" : "—") : percent(p.coverage)}</td>
+      <td class="num" title="${escapeHtml(p.components.map((c) => c.name).join(", "))}">${p.componentCount || "—"}</td>
+    </tr>`).join("");
+  }
+
+  function peopleTable() {
+    const head = columns.map((c) => `<th class="sortable ${c.text ? "" : "num"}" data-sort="${c.key}">${c.label}${peopleSort.key === c.key ? ` <span class="arrow">${peopleSort.descending ? "▼" : "▲"}</span>` : ""}</th>`).join("");
+    return `<table id="people"><thead><tr>${head}</tr></thead><tbody>${peopleRows()}</tbody></table>`;
+  }
+
+  function bindPeople() {
+    document.querySelectorAll("#people th.sortable").forEach((th) => th.addEventListener("click", () => {
+      const key = th.dataset.sort;
+      peopleSort = peopleSort.key === key ? { key, descending: !peopleSort.descending } : { key, descending: key !== "name" };
+      document.getElementById("people").outerHTML = peopleTable();
+      bindPeople();
+    }));
+  }
+
+  function componentTable() {
+    const list = components.filter((c) => ledByOne(c) || c.offboardingRisks).sort(byChanges);
+    if (!list.length) return `<p class="empty">✓ No component is led by one person or holds off-boarding risks.</p>`;
+    const rows = list.map((c) => `<tr>
+      <td class="file">${escapeHtml(c.name)}</td>
+      <td>${ledByOne(c) ? '<span class="badge tf1">TF 1</span>' : ""}${c.offboardingRisks ? ` <span class="badge tf2">${c.offboardingRisks} off-boarding</span>` : ""}</td>
+      <td>${escapeHtml(c.owner.name)}${c.owner.isActive ? "" : ' <span class="flag">inactive</span>'}</td>
+      <td class="num ${ledByOne(c) ? "flag" : ""}">${percent(c.owner.ownership)}</td>
+      <td class="num">${c.authorCount ?? "—"}</td>
+      <td class="num">${healthText(c.health)}</td>
+      <td class="num">${formatInt(c.changes)}</td></tr>`).join("");
+    return `<div class="table-wrap"><table>
+      <thead><tr><th>Component</th><th>Risk</th><th>Main author</th><th class="num">Their share</th><th class="num">Authors</th><th class="num">Code Health</th><th class="num">Commits</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
+  }
+
+  function lostKnowledge() {
+    const lost = [
+      ...components.filter(isLost).map((c) => ({ kind: "Component", name: c.name, x: c })),
+      ...files.filter(isLost).map((f) => ({ kind: "File", name: fileName(f.path), x: f })),
+    ].sort((a, b) => b.x.changes - a.x.changes);
+    if (!lost.length) return `<p class="empty">✓ No knowledge lost yet: every main author is active, and nothing is mostly written by former contributors.</p>`;
+    const rows = lost.map(({ kind, name, x }) => `<tr>
+      <td class="file">${escapeHtml(name)}</td><td>${kind}</td>
+      <td class="num">${percent(x.formerContributorShare || 0)}</td>
+      <td>${escapeHtml(x.owner.name)}${x.owner.isActive ? "" : ' <span class="flag">inactive</span>'}</td>
+      <td class="num">${healthText(x.health)}</td>
+      <td class="num">${formatInt(x.changes)}</td></tr>`).join("");
+    return `<div class="table-wrap"><table>
+      <thead><tr><th>Name</th><th>Kind</th><th class="num">Written by former contributors</th><th>Main author</th><th class="num">Code Health</th><th class="num">Commits</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
+  }
+
+  // -------------------------------------------------------------------------
+  // Page
+  // -------------------------------------------------------------------------
+
+  document.title = `Key person risk · ${project.name}`;
+
+  root.innerHTML = `
+    <section class="hero">
+      <div class="eyebrow">CodeScene · Key person risk</div>
+      <h1>Truck factor: what leaves when someone leaves</h1>
+      <div class="intro"><strong>The idea</strong>The truck factor is the smallest number of people who could leave before a large part of the code
+        has no one who knows it. It matters most where that code is also hard to learn, unsafe to change and needed often. This report starts with
+        CodeScene's off-boarding risks, then the uplift targets that depend on one person.</div>
+    </section>
+
+    <section>
+      <h2>Summary</h2>
+      ${headline()}
+    </section>
+
+    <section>
+      <h2>What leaves with each person</h2>
+      <p class="small secondary">One row per person; one block per file they are the main author of, sized by commits.
+        <span class="strong" style="color:var(--unhealthy-ink)">Red</span>: off-boarding risks. Grey: other uplift targets at truck factor 1. Hover a block for details.</p>
+      ${leaveChart()}
+    </section>
+
+    <section>
+      <h2>Off-boarding risks</h2>
+      ${riskCards()}
+    </section>
+
+    <section>
+      <h2>People</h2>
+      <p class="small secondary">The main authors of the files above, and everyone who leads a component. Code Health and coverage cover their
+        truck factor 1 files and off-boarding risks, now and a year ago (lines-of-code-weighted, over files with a year of history). Click a column to sort.</p>
+      <div class="table-wrap">${peopleTable()}</div>
+    </section>
+
+    <section>
+      <h2>Components</h2>
+      <p class="small secondary">Components led by one person (truck factor 1), or holding off-boarding risks, most-changed first.</p>
+      ${componentTable()}
+    </section>
+
+    <section>
+      <h2>Knowledge already lost</h2>
+      ${lostKnowledge()}
+    </section>
+
+    <section>
+      <h2>How to read this report</h2>
+      <p class="small secondary"><strong>Truck factor 1</strong>: one person wrote ${percent(concentration)} or more of the code, so the knowledge leaves
+        with them. <strong>Truck factor 2</strong>: CodeScene's off-boarding risk, meaning little knowledge would remain if the two main contributors left.
+        <strong>Project truck factor</strong>: an estimate from main-author data; it counts how many of the active people who lead the most actively changed
+        components would have to leave before components with more than half of all commits are without their main author. Components whose main
+        author is already inactive count as lost from the start.</p>
+      <p class="small secondary"><strong>Coverage</strong>: only measured line coverage below ${percent(thinCoverage)} counts as untested; unknown coverage is shown as unknown.</p>
+      ${(report.notes || []).map((n) => `<p class="small secondary"><strong>Note</strong>: ${escapeHtml(n)}</p>`).join("")}
+      <p class="small tertiary">Source: ${escapeHtml(project.source)}${report.analysisDate ? `, analysis of ${escapeHtml(report.analysisDate)}` : ""}.</p>
+    </section>`;
+
+  bindLeaveChart(root.querySelector(".leave-chart"));
+  bindPeople();
+})();
+</script>
+</body>
+</html>

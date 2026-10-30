@@ -10,6 +10,7 @@ Everything here is generic: no project names, people or analysis numbers. Projec
 |---|---|
 | [architectural-hotspots](skills/architectural-hotspots/SKILL.md) | Components in PAID quadrants by change activity and Code Health, with outcomes and team ROI for uplifting the ones to address first. [Details](#architectural-hotspots) |
 | [refactoring-targets](skills/refactoring-targets/SKILL.md) | CodeScene's uplift targets as a prioritized refactoring backlog for an engineering manager: why each file, where to start, who to involve, the risks to plan for and the estimated outcome, plus a refactoring spec per primary and secondary target to hand to a coding agent. [Details](#refactoring-targets) |
+| [key-person-risk](skills/key-person-risk/SKILL.md) | The project's truck factor and what leaves with each key person: CodeScene's off-boarding risks, the uplift targets that depend on one person, and the Code Health and coverage of that code. [Details](#key-person-risk) |
 
 ## Adding a skill
 
@@ -73,3 +74,17 @@ Uplift targets are unhealthy files that the team changes often, so refactoring t
 - **A refactoring spec** for each primary and secondary target, behind a *Refactoring spec* button. It's a Markdown brief for a coding agent: the goal, the functions to refactor in CodeScene's priority order with their evidence and CodeScene's guidance per Code Health issue, what to check first, constraints, and when the work is done. Copy it or download it as a `.md` file. The spec also tells the agent to refresh the data with the CodeScene MCP server, propose a plan for approval, and check Code Health after every step.
 
 The risks are derived from the data. *Declining* means Code Health is getting worse, so the cost grows the longer it waits. *Knowledge risk* means most of the code would leave with its main author or already has. *Needs tests first* means line coverage is low or unknown, so add tests before refactoring.
+
+### Key person risk
+
+Answers a simple question in truck factor terms: what leaves when someone leaves?
+
+![Key person risk report](docs/images/key-person-risk.png)
+
+The truck factor is the smallest number of people who could leave before a large part of the code has no one who knows it. Knowledge concentrated in one person matters most where the code is also hard to learn (low Code Health), unsafe to change (low test coverage) and needed often. The report therefore stays with CodeScene's off-boarding risks and uplift targets. It contains:
+
+- **The project's truck factor:** an estimate from CodeScene's main-author data, naming the people it depends on.
+- **What leaves with each person:** one bar per person, one block per file they mainly know, sized by commits. Off-boarding risks stand out in red, labelled with how much knowledge would remain; everything else is muted.
+- **A card per off-boarding risk:** who holds the knowledge, how much would remain if they left, Code Health now and a year ago, coverage, and a concrete action, such as adding tests, then refactoring together with the next contributor.
+- **People:** a sortable table of off-boarding risks, truck factor 1 files, and the Code Health and coverage of the code each person mainly knows.
+- **Components** led by one person or holding off-boarding risks, and **knowledge already lost** to former contributors.

@@ -17,6 +17,15 @@
       "renderers": [
         "html"
       ]
+    },
+    {
+      "id": "key-person-risk",
+      "version": "1.0.0",
+      "path": "skills/key-person-risk",
+      "summary": "The project's truck factor and what leaves with each key person: CodeScene's off-boarding risks, the uplift targets that depend on one person, the components led by one person, and the knowledge already lost.",
+      "renderers": [
+        "html"
+      ]
     }
   ]
 }

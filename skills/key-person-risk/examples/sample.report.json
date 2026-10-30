@@ -1,0 +1,484 @@
+{
+  "project": {
+    "name": "Example system",
+    "source": "Example data",
+    "id": 1
+  },
+  "analysisDate": "2026-10-01",
+  "concentration": 0.5,
+  "notes": [],
+  "components": [
+    {
+      "name": "billing",
+      "owner": {
+        "name": "Developer A",
+        "ownership": 0.72,
+        "isActive": true
+      },
+      "authorCount": 6,
+      "formerContributorShare": 0.05,
+      "health": 6.4,
+      "trend": {
+        "direction": "steady",
+        "pace": null
+      },
+      "changes": 820,
+      "linesOfCode": 42000,
+      "offboardingRisks": 2,
+      "upliftTargets": 2
+    },
+    {
+      "name": "api-gateway",
+      "owner": {
+        "name": "Developer B",
+        "ownership": 0.31,
+        "isActive": true
+      },
+      "authorCount": 14,
+      "formerContributorShare": 0.05,
+      "health": 9.4,
+      "trend": {
+        "direction": "steady",
+        "pace": null
+      },
+      "changes": 540,
+      "linesOfCode": 18000,
+      "offboardingRisks": 0,
+      "upliftTargets": 0
+    },
+    {
+      "name": "payments",
+      "owner": {
+        "name": "Developer A",
+        "ownership": 0.64,
+        "isActive": true
+      },
+      "authorCount": 5,
+      "formerContributorShare": 0.05,
+      "health": 4.6,
+      "trend": {
+        "direction": "steady",
+        "pace": null
+      },
+      "changes": 410,
+      "linesOfCode": 26000,
+      "offboardingRisks": 1,
+      "upliftTargets": 2
+    },
+    {
+      "name": "web-ui",
+      "owner": {
+        "name": "Developer D",
+        "ownership": 0.28,
+        "isActive": true
+      },
+      "authorCount": 19,
+      "formerContributorShare": 0.05,
+      "health": 9.7,
+      "trend": {
+        "direction": "steady",
+        "pace": null
+      },
+      "changes": 300,
+      "linesOfCode": 55000,
+      "offboardingRisks": 0,
+      "upliftTargets": 1
+    },
+    {
+      "name": "accounts",
+      "owner": {
+        "name": "Developer B",
+        "ownership": 0.58,
+        "isActive": true
+      },
+      "authorCount": 7,
+      "formerContributorShare": 0.05,
+      "health": 8.1,
+      "trend": {
+        "direction": "steady",
+        "pace": null
+      },
+      "changes": 260,
+      "linesOfCode": 15000,
+      "offboardingRisks": 1,
+      "upliftTargets": 1
+    },
+    {
+      "name": "search",
+      "owner": {
+        "name": "Developer E",
+        "ownership": 0.45,
+        "isActive": true
+      },
+      "authorCount": 6,
+      "formerContributorShare": 0.05,
+      "health": 9.6,
+      "trend": {
+        "direction": "steady",
+        "pace": null
+      },
+      "changes": 120,
+      "linesOfCode": 9000,
+      "offboardingRisks": 0,
+      "upliftTargets": 0
+    },
+    {
+      "name": "notifications",
+      "owner": {
+        "name": "Developer C",
+        "ownership": 0.81,
+        "isActive": false
+      },
+      "authorCount": 3,
+      "formerContributorShare": 0.62,
+      "health": 7.2,
+      "trend": {
+        "direction": "steady",
+        "pace": null
+      },
+      "changes": 90,
+      "linesOfCode": 6000,
+      "offboardingRisks": 0,
+      "upliftTargets": 0
+    },
+    {
+      "name": "reporting",
+      "owner": {
+        "name": "Developer C",
+        "ownership": 0.77,
+        "isActive": false
+      },
+      "authorCount": 4,
+      "formerContributorShare": 0.62,
+      "health": 3.8,
+      "trend": {
+        "direction": "steady",
+        "pace": null
+      },
+      "changes": 70,
+      "linesOfCode": 21000,
+      "offboardingRisks": 1,
+      "upliftTargets": 1
+    },
+    {
+      "name": "auth",
+      "owner": {
+        "name": "Developer F",
+        "ownership": 0.52,
+        "isActive": true
+      },
+      "authorCount": 5,
+      "formerContributorShare": 0.05,
+      "health": 9.9,
+      "trend": {
+        "direction": "steady",
+        "pace": null
+      },
+      "changes": 60,
+      "linesOfCode": 4000,
+      "offboardingRisks": 0,
+      "upliftTargets": 0
+    },
+    {
+      "name": "admin-ui",
+      "owner": {
+        "name": "Developer D",
+        "ownership": 0.39,
+        "isActive": true
+      },
+      "authorCount": 8,
+      "formerContributorShare": 0.05,
+      "health": 8.6,
+      "trend": {
+        "direction": "steady",
+        "pace": null
+      },
+      "changes": 40,
+      "linesOfCode": 12000,
+      "offboardingRisks": 0,
+      "upliftTargets": 0
+    }
+  ],
+  "files": [
+    {
+      "path": "shop/billing/src/InvoiceCalculator.java",
+      "component": "billing",
+      "type": "primary",
+      "health": 2.43,
+      "healthYearAgo": 3.9,
+      "changes": 142,
+      "linesOfCode": 2310,
+      "coverage": 0.35,
+      "owner": {
+        "name": "Developer A",
+        "ownership": 0.81,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer A",
+          "ownership": 0.81,
+          "isActive": true
+        },
+        {
+          "name": "Developer D",
+          "ownership": 0.11,
+          "isActive": true
+        }
+      ],
+      "formerContributorShare": 0,
+      "offboardingRisk": true,
+      "remainingKnowledge": 0.12
+    },
+    {
+      "path": "shop/payments/src/PaymentProcessor.java",
+      "component": "payments",
+      "type": "primary",
+      "health": 1.41,
+      "healthYearAgo": 1.8,
+      "changes": 118,
+      "linesOfCode": 3020,
+      "coverage": null,
+      "owner": {
+        "name": "Developer A",
+        "ownership": 0.66,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer A",
+          "ownership": 0.66,
+          "isActive": true
+        },
+        {
+          "name": "Developer B",
+          "ownership": 0.21,
+          "isActive": true
+        },
+        {
+          "name": "Developer E",
+          "ownership": 0.08,
+          "isActive": true
+        }
+      ],
+      "formerContributorShare": 0,
+      "offboardingRisk": true,
+      "remainingKnowledge": 0.21
+    },
+    {
+      "path": "shop/accounts/src/AccountService.java",
+      "component": "accounts",
+      "type": "secondary",
+      "health": 3.36,
+      "healthYearAgo": 3.4,
+      "changes": 96,
+      "linesOfCode": 1480,
+      "coverage": 0.81,
+      "owner": {
+        "name": "Developer B",
+        "ownership": 0.48,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer B",
+          "ownership": 0.48,
+          "isActive": true
+        },
+        {
+          "name": "Developer A",
+          "ownership": 0.3,
+          "isActive": true
+        },
+        {
+          "name": "Developer D",
+          "ownership": 0.12,
+          "isActive": true
+        }
+      ],
+      "formerContributorShare": 0,
+      "offboardingRisk": true,
+      "remainingKnowledge": 0.27
+    },
+    {
+      "path": "shop/billing/src/TaxRules.java",
+      "component": "billing",
+      "type": "local",
+      "health": 5.9,
+      "healthYearAgo": 6.3,
+      "changes": 64,
+      "linesOfCode": 980,
+      "coverage": 0.7,
+      "owner": {
+        "name": "Developer A",
+        "ownership": 0.74,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer A",
+          "ownership": 0.74,
+          "isActive": true
+        },
+        {
+          "name": "Developer B",
+          "ownership": 0.15,
+          "isActive": true
+        }
+      ],
+      "formerContributorShare": 0,
+      "offboardingRisk": false,
+      "remainingKnowledge": 0.5
+    },
+    {
+      "path": "shop/web-ui/src/CheckoutForm.tsx",
+      "component": "web-ui",
+      "type": "local",
+      "health": 6.38,
+      "healthYearAgo": 7.2,
+      "changes": 74,
+      "linesOfCode": 690,
+      "coverage": 0.62,
+      "owner": {
+        "name": "Developer D",
+        "ownership": 0.55,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer D",
+          "ownership": 0.55,
+          "isActive": true
+        },
+        {
+          "name": "Developer E",
+          "ownership": 0.25,
+          "isActive": true
+        }
+      ],
+      "formerContributorShare": 0,
+      "offboardingRisk": false,
+      "remainingKnowledge": 0.5
+    },
+    {
+      "path": "shop/reporting/src/ReportBuilder.java",
+      "component": "reporting",
+      "type": "local",
+      "health": 2.72,
+      "healthYearAgo": 3.1,
+      "changes": 41,
+      "linesOfCode": 1870,
+      "coverage": 0.2,
+      "owner": {
+        "name": "Developer C",
+        "ownership": 0.66,
+        "isActive": false
+      },
+      "contributors": [
+        {
+          "name": "Developer C",
+          "ownership": 0.66,
+          "isActive": false
+        },
+        {
+          "name": "Developer B",
+          "ownership": 0.2,
+          "isActive": true
+        }
+      ],
+      "formerContributorShare": 0.66,
+      "offboardingRisk": true,
+      "remainingKnowledge": 0.08
+    },
+    {
+      "path": "shop/payments/src/RefundService.java",
+      "component": "payments",
+      "type": "local",
+      "health": 6.9,
+      "healthYearAgo": 7.5,
+      "changes": 38,
+      "linesOfCode": 760,
+      "coverage": 0.55,
+      "owner": {
+        "name": "Developer A",
+        "ownership": 0.58,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer A",
+          "ownership": 0.58,
+          "isActive": true
+        },
+        {
+          "name": "Developer E",
+          "ownership": 0.22,
+          "isActive": true
+        }
+      ],
+      "formerContributorShare": 0,
+      "offboardingRisk": false,
+      "remainingKnowledge": 0.5
+    },
+    {
+      "path": "shop/notifications/src/Dispatcher.py",
+      "component": "notifications",
+      "type": "local",
+      "health": 5.5,
+      "healthYearAgo": 5.4,
+      "changes": 27,
+      "linesOfCode": 540,
+      "coverage": null,
+      "owner": {
+        "name": "Developer C",
+        "ownership": 0.71,
+        "isActive": false
+      },
+      "contributors": [
+        {
+          "name": "Developer C",
+          "ownership": 0.71,
+          "isActive": false
+        },
+        {
+          "name": "Developer F",
+          "ownership": 0.16,
+          "isActive": true
+        }
+      ],
+      "formerContributorShare": 0.71,
+      "offboardingRisk": false,
+      "remainingKnowledge": 0.5
+    },
+    {
+      "path": "shop/accounts/src/ProfileMerger.java",
+      "component": "accounts",
+      "type": "local",
+      "health": 7.1,
+      "healthYearAgo": 7.9,
+      "changes": 22,
+      "linesOfCode": 420,
+      "coverage": 0.4,
+      "owner": {
+        "name": "Developer B",
+        "ownership": 0.62,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer B",
+          "ownership": 0.62,
+          "isActive": true
+        },
+        {
+          "name": "Developer A",
+          "ownership": 0.2,
+          "isActive": true
+        }
+      ],
+      "formerContributorShare": 0,
+      "offboardingRisk": false,
+      "remainingKnowledge": 0.5
+    }
+  ]
+}

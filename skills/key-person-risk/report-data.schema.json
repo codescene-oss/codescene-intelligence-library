@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "codescene://skills/key-person-risk/report-data.schema.json",
+  "title": "ReportData",
+  "type": "object",
+  "required": [
+    "project",
+    "components",
+    "files"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "project": {
+      "type": "object",
+      "required": [
+        "name",
+        "source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "analysisDate": {
+      "type": "string",
+      "description": "YYYY-MM-DD"
+    },
+    "concentration": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Main author share at which knowledge counts as concentrated. Default 0.5."
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/component"
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/file"
+      },
+      "description": "CodeScene's uplift targets and off-boarding risks."
+    }
+  },
+  "$defs": {
+    "person": {
+      "type": "object",
+      "required": [
+        "name",
+        "ownership",
+        "isActive"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "ownership": {
+          "type": "number"
+        },
+        "isActive": {
+          "type": "boolean"
+        }
+      }
+    },
+    "component": {
+      "type": "object",
+      "required": [
+        "name",
+        "owner",
+        "health",
+        "changes",
+        "linesOfCode"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "owner": {
+          "$ref": "#/$defs/person"
+        },
+        "authorCount": {
+          "type": "integer"
+        },
+        "formerContributorShare": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "health": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "trend": {
+          "type": "object",
+          "required": [
+            "direction",
+            "pace"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "direction": {
+              "enum": [
+                "improving",
+                "declining",
+                "steady"
+              ]
+            },
+            "pace": {
+              "enum": [
+                "slow",
+                "fast",
+                null
+              ]
+            }
+          }
+        },
+        "changes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "linesOfCode": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "offboardingRisks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "upliftTargets": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "file": {
+      "type": "object",
+      "required": [
+        "path",
+        "health",
+        "changes",
+        "linesOfCode",
+        "owner",
+        "offboardingRisk"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "component": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "enum": [
+            "primary",
+            "secondary",
+            "local",
+            null
+          ],
+          "description": "Uplift target type, or null when the file is only an off-boarding risk."
+        },
+        "health": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "healthYearAgo": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "changes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "linesOfCode": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "coverage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "owner": {
+          "$ref": "#/$defs/person"
+        },
+        "contributors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/person"
+          }
+        },
+        "formerContributorShare": {
+          "type": "number"
+        },
+        "offboardingRisk": {
+          "type": "boolean"
+        },
+        "remainingKnowledge": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}
