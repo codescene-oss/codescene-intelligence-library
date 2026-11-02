@@ -36,11 +36,13 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution rules and how to run
 
 ## Releases
 
-Each [GitHub release](https://github.com/codescene-oss/codescene-intelligence-library/releases) has a `codescene-intelligence-library-<version>.zip` with what clients need: `catalog.json`, `LICENSE`, `shared/` and `skills/`. Its `MANIFEST.json` lists the sha256 of every file, and the release carries the zip's checksum and a build provenance attestation. Verify a download with:
+Each [GitHub release](https://github.com/codescene-oss/codescene-intelligence-library/releases) has a `codescene-intelligence-library-<version>.zip` with what clients need: `catalog.json`, `LICENSE`, `shared/` and `skills/`. Its `MANIFEST.json` lists the sha256 of every file, and the release carries the zip's checksum. Check a download for corruption with:
 
 ```bash
-gh attestation verify codescene-intelligence-library-<version>.zip --repo codescene-oss/codescene-intelligence-library
+shasum -a 256 -c codescene-intelligence-library-<version>.zip.sha256
 ```
+
+The checksum sits next to the zip, so it can't prove where the zip came from. Clients that sync a release should pin the zip's sha256 next to the version they pin.
 
 ## Skill details
 
