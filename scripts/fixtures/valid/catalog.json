@@ -1,0 +1,13 @@
+{
+  "skills": [
+    {
+      "id": "demo",
+      "version": "1.0.0",
+      "path": "skills/demo",
+      "summary": "A minimal skill that passes every check.",
+      "renderers": [
+        "html"
+      ]
+    }
+  ]
+}

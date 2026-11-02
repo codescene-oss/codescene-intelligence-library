@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head><style>body { font-family: sans-serif; }</style></head>
+<body>
+<main id="report"></main>
+<!-- {{REPORT_DATA}}: replace with ReportData JSON. -->
+<script type="application/json" id="report-data">
+{ "project": "{{project-name}}", "files": [] }
+</script>
+<!-- {{/REPORT_DATA}} -->
+<script>
+  const data = JSON.parse(document.getElementById("report-data").textContent);
+  document.getElementById("report").textContent = data.project;
+</script>
+</body>
+</html>

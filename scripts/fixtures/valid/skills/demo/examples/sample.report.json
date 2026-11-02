@@ -1,0 +1,6 @@
+{
+  "project": "Sample project",
+  "files": [
+    { "path": "src/orders.js", "health": 4.2 }
+  ]
+}

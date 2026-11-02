@@ -1,0 +1,37 @@
+{
+  "id": "demo",
+  "version": "1.0.0",
+  "title": "Demo report",
+  "summary": "A minimal skill that passes every check.",
+  "audience": [
+    "tech-lead"
+  ],
+  "mcp_tools": [
+    "list_projects",
+    "explore_project_files"
+  ],
+  "inputs": [
+    {
+      "name": "project_id",
+      "required": true
+    }
+  ],
+  "skill": "SKILL.md",
+  "data_schema": "report-data.schema.json",
+  "renderers": [
+    {
+      "id": "html",
+      "file": "renderers/report.html",
+      "format": "text/html"
+    }
+  ],
+  "templates": [
+    "templates/project-notes.md"
+  ],
+  "shared": [
+    "../../shared/ground-rules.md"
+  ],
+  "examples": [
+    "examples/sample.report.json"
+  ]
+}

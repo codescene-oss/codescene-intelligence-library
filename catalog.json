@@ -13,7 +13,7 @@
       "id": "refactoring-targets",
       "version": "1.0.0",
       "path": "skills/refactoring-targets",
-      "summary": "Turns CodeScene's uplift targets into a prioritized refactoring backlog: why each file, where to start, who to involve, the risks to plan for, and the estimated outcome.",
+      "summary": "Turns CodeScene's uplift targets into a prioritized refactoring backlog: why each file, where to start, who to involve, the risks to plan for, the estimated outcome, and a refactoring spec to hand to a coding agent.",
       "renderers": [
         "html"
       ]

@@ -30,7 +30,9 @@ skills/<id>/
 
 1. Create `skills/<id>/` with the files above. List every MCP tool the skill calls in `skill.json`.
 2. Keep project specifics out: use `{{placeholders}}` in templates and the `{{REPORT_DATA}}` block in renderers.
-3. Add the skill to `catalog.json`, the table above and the details below.
+3. Add the skill to the table above and the details below, and run `python scripts/validate.py --fix` to add it to `catalog.json`.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution rules and how to run the checks locally.
 
 ## Skill details
 
