@@ -95,7 +95,7 @@ Maintainers release from `main`:
 1. In a pull request, set the top-level `version` in `catalog.json`. `--fix` keeps it when it regenerates the catalog.
 2. After it merges, tag that commit `v<version>` and push the tag.
 
-The release workflow then builds `codescene-intelligence-library-<version>.zip` with `catalog.json`, `LICENSE`, `shared/` and `skills/` at its root, plus a `MANIFEST.json` with the sha256 of every file. It attaches the zip, its `.sha256` and a build provenance attestation to the GitHub release. It runs no checks, since every pull request is validated before it merges. It stops only if the tag isn't `v` plus the catalog's version.
+The release workflow then builds `codescene-intelligence-library-<version>.zip` with `catalog.json`, `LICENSE`, `shared/` and `skills/` at its root, plus a `MANIFEST.json` with the sha256 of every file. It attaches the zip and its `.sha256` to the GitHub release. It runs no checks, since every pull request is validated before it merges. It stops only if the tag isn't `v` plus the catalog's version.
 
 To build the same zip locally from `HEAD`:
 
