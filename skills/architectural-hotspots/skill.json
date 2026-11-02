@@ -1,6 +1,7 @@
 {
   "id": "architectural-hotspots",
   "version": "1.0.0",
+  "min_server_version": "1.0.0",
   "title": "Architectural hotspots report",
   "summary": "Places each architectural component in a PAID quadrant by change activity and Code Health, and estimates the outcomes and team ROI of uplifting the components to address first.",
   "audience": [
@@ -17,14 +18,40 @@
   "inputs": [
     {
       "name": "project_id",
+      "description": "The CodeScene project to report on. Find it with list_projects.",
+      "type": "integer",
       "required": true
     },
     {
       "name": "target_code_health",
+      "description": "The Code Health to uplift the Address components to, from 1.0 to 10.0.",
+      "type": "number",
+      "minimum": 1,
+      "maximum": 10,
       "default": 10.0
     },
     {
       "name": "team",
+      "description": "The team the ROI is estimated for.",
+      "type": "object",
+      "properties": {
+        "developers": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of developers."
+        },
+        "hoursPerWeek": {
+          "type": "number",
+          "minimum": 1,
+          "description": "Working hours per developer and week."
+        },
+        "weeksPerYear": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 52,
+          "description": "Working weeks per year."
+        }
+      },
       "default": {
         "developers": 10,
         "hoursPerWeek": 40,
@@ -33,6 +60,11 @@
     },
     {
       "name": "excluded_components",
+      "description": "Names of architectural components to leave out of the report.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "default": []
     }
   ],

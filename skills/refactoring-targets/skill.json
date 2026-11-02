@@ -1,6 +1,7 @@
 {
   "id": "refactoring-targets",
   "version": "1.0.0",
+  "min_server_version": "1.0.0",
   "title": "Refactoring targets report",
   "summary": "Turns CodeScene's uplift targets into a prioritized refactoring backlog: why each file, where to start, who to involve, the risks to plan for, the estimated outcome, and a refactoring spec to hand to a coding agent.",
   "audience": [
@@ -17,18 +18,29 @@
   "inputs": [
     {
       "name": "project_id",
+      "description": "The CodeScene project to report on. Find it with list_projects.",
+      "type": "integer",
       "required": true
     },
     {
       "name": "target_code_health",
+      "description": "The Code Health to refactor each target to, from 1.0 to 10.0.",
+      "type": "number",
+      "minimum": 1,
+      "maximum": 10,
       "default": 9.0
     },
     {
       "name": "max_targets",
+      "description": "The maximum number of uplift targets in the report.",
+      "type": "integer",
+      "minimum": 1,
       "default": 10
     },
     {
       "name": "include_local_targets",
+      "description": "Whether to include local targets, the best candidates within each architectural component.",
+      "type": "boolean",
       "default": true
     }
   ],

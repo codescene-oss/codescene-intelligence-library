@@ -7,6 +7,8 @@ Runs the same checks locally and in CI:
     python scripts/validate.py --fix                 # regenerate catalog.json from the skill.json files
     python scripts/validate.py --changed-from REF    # scan only files changed since REF for project data
 
+The release workflow runs no checks: everything is checked here, in the pull request, before it reaches main.
+
 Each failure is printed as `path: rule: what to fix`, grouped by file. Exits 1 on any failure.
 """
 
@@ -53,6 +55,13 @@ PROJECT_DATA = [
 ]
 ALLOW_MARKER = re.compile(r"(?:<!--|//|/\*)\s*allow-specifics\b:?(?P<reason>.*?)(?:-->|\*/|$)")
 PLACEHOLDER = re.compile(r"\{\{[^}]+\}\}")
+# What a release ships, relative to the library root. Links may only point inside it.
+SHIPPED = ["catalog.json", "LICENSE", "shared", "skills"]
+SEMVER = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
+FENCE = re.compile(r"^\s*(```|~~~)")
+CODE_SPAN = re.compile(r"(`+)(.+?)\1")
+MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(\s*<?([^)\s>]*)>?(?:\s+[\"'(][^)]*)?\)")
+URI_SCHEME = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
 SECTION_HEADING = re.compile(r"^##\s+(.*?)\s*$")
 LIST_ITEM_WITH_VALUE = re.compile(r"^\s*[-*]\s+[^:]+:\s+\S")
 
@@ -175,6 +184,37 @@ def referenced_paths(meta):
             + meta["templates"] + meta["shared"] + meta["examples"])
 
 
+def input_schema(spec):
+    """The JSON Schema for one input's value, built from the subset skill.json allows.
+
+    Objects require every property they list and allow no others, so a typed input has one exact shape.
+    """
+    schema = {k: v for k, v in spec.items() if k in ("type", "enum", "minimum", "maximum", "description")}
+    if "items" in spec:
+        schema["items"] = input_schema(spec["items"])
+    if "properties" in spec:
+        schema["properties"] = {name: input_schema(p) for name, p in spec["properties"].items()}
+        schema["required"] = sorted(spec["properties"])
+        schema["additionalProperties"] = False
+    return schema
+
+
+def check_inputs(root, skill_dir, meta, report):
+    """Each input's default matches its type, and an input with a default isn't also required.
+
+    These become MCP prompt arguments, so a default the server can't accept would break the prompt.
+    """
+    path = rel(root, skill_dir / "skill.json")
+    for spec in meta["inputs"]:
+        name = spec["name"]
+        if "default" not in spec:
+            continue
+        if spec.get("required"):
+            report.fail(path, "inputs", f"{name}: has a default, so it can't be required")
+        for where, message in schema_errors(Draft202012Validator(input_schema(spec)), spec["default"]):
+            report.fail(path, "inputs", f"{name}: default {where}: {message}")
+
+
 def check_referenced_files(root, skill_dir, meta, report):
     """Every file the metadata names exists, so clients that follow skill.json never hit a dead path."""
     for ref in referenced_paths(meta):
@@ -266,6 +306,99 @@ def check_mcp_tools(root, skill_dir, meta, report):
                         f"{tool} is declared but never mentioned in {meta['skill']}; describe how it is used or remove it")
 
 
+def markdown_lines(path):
+    """Yields (line number, line) for prose only, skipping fenced code blocks, where links are just text."""
+    in_fence = False
+    for lineno, line in numbered_lines(path):
+        if FENCE.match(line):
+            in_fence = not in_fence
+        elif not in_fence:
+            yield lineno, line
+
+
+def links_in(line):
+    """The targets of the Markdown links and images on a line, ignoring any inside `code spans`."""
+    return MARKDOWN_LINK.findall(CODE_SPAN.sub("", line))
+
+
+def is_shipped(root, path):
+    """True for a file inside what a release ships, so it can be served as a codescene-library:// resource."""
+    try:
+        parts = path.relative_to(root).parts
+    except ValueError:
+        return False
+    return bool(parts) and parts[0] in SHIPPED and path.is_file()
+
+
+def link_problem(root, path, target):
+    """Why a link target breaks the link rule, or None when it is fine.
+
+    Fine means: an anchor in the same file, a web URL, or a relative path to a file that a release ships.
+    Returns (problem, resolved path) so callers can also check where a good link points.
+    """
+    if target.startswith("#") or re.match(r"^https?://", target):
+        return None, None
+    if URI_SCHEME.match(target) or target.startswith("/"):
+        return "use a relative link to a file in the library", None
+    resolved = (path.parent / target.split("#")[0].split("?")[0]).resolve()
+    if is_shipped(root, resolved):
+        return None, resolved
+    if not resolved.exists():
+        problem = "not found"
+    elif resolved.is_dir():
+        problem = "a folder, not a file"
+    else:
+        problem = "not shipped in a release"
+    return f"{problem}; link a file in {', '.join(SHIPPED)}", None
+
+
+def check_links(root, path, report, allowed=None):
+    """Links are relative Markdown links to shipped files, so they work on disk and as MCP resources.
+
+    The MCP server rewrites each link to a codescene-library:// URI, which only works if the target is in
+    the release. With `allowed`, a link must also point at a file the skill lists in its skill.json.
+    """
+    for lineno, line in markdown_lines(path):
+        where = f"{rel(root, path)}:{lineno}"
+        for target in links_in(line):
+            problem, resolved = link_problem(root, path, target)
+            if problem:
+                report.fail(where, "links", f"{target}: {problem}")
+            elif resolved and allowed is not None and resolved not in allowed:
+                report.fail(where, "links", f"{target}: not listed in skill.json; add it or remove the link")
+
+
+def check_code_span_paths(root, path, report):
+    """A library file named in a `code span` must be a link instead.
+
+    The MCP server rewrites only links, so an agent reading the skill through it can't open a path in plain
+    text. Paths in the user's workspace don't exist in the library, so they never match.
+    """
+    for lineno, line in markdown_lines(path):
+        for _, code in CODE_SPAN.findall(line):
+            if any(is_shipped(root, (base / code).resolve()) for base in (path.parent, root)):
+                report.fail(f"{rel(root, path)}:{lineno}", "links",
+                            f"`{code}` names a library file; write it as a link: [{code}]({code})")
+
+
+def check_skill_links(root, skill_dir, meta, report):
+    """Runs the link checks on a skill's SKILL.md, allowing links only to files its skill.json lists."""
+    path = skill_dir / meta["skill"]
+    if not path.is_file():
+        return
+    allowed = {(skill_dir / ref).resolve() for ref in referenced_paths(meta)}
+    check_links(root, path, report, allowed)
+    check_code_span_paths(root, path, report)
+
+
+def check_shared_docs(root, report):
+    """Runs the link checks on the shared docs every skill follows."""
+    shared = root / "shared"
+    for path in sorted(shared.glob("*.md")) if shared.is_dir() else []:
+        check_links(root, path, report)
+        check_code_span_paths(root, path, report)
+
+
 def is_table_value_row(line):
     """True for a Markdown table row that holds values: not the header row and not the |---| separator."""
     cells = [c.strip() for c in line.strip().strip("|").split("|")]
@@ -300,6 +433,9 @@ def check_templates(root, skill_dir, meta, report):
             continue
         section = None
         for lineno, line in numbered_lines(path):
+            if links_in(line):
+                report.fail(f"{rel(root, path)}:{lineno}", "links",
+                            "templates are copied into the user's workspace, where links break; remove the link")
             heading = SECTION_HEADING.match(line)
             if heading:
                 section = heading.group(1).lower()
@@ -318,12 +454,14 @@ def check_skill(root, skill_dir, skill_schema, report):
     if meta is None:
         return None
     check_referenced_files(root, skill_dir, meta, report)
+    check_inputs(root, skill_dir, meta, report)
     schema = check_data_schema(root, skill_dir, meta, report)
     if schema is not None:
         check_examples(root, skill_dir, meta, schema, report)
     check_renderers(root, skill_dir, meta, report)
     check_mcp_tools(root, skill_dir, meta, report)
     check_templates(root, skill_dir, meta, report)
+    check_skill_links(root, skill_dir, meta, report)
     return meta
 
 
@@ -349,8 +487,13 @@ def catalog_order(metas, current):
 
 
 def build_catalog(metas, current):
-    """The catalog generated from the skill.json files, which are its single source of truth."""
-    return {"skills": [catalog_entry(m) for m in catalog_order(metas, current)]}
+    """The catalog generated from the skill.json files, which are its single source of truth.
+
+    The library's own version is the one field not generated: maintainers set it, and regenerating keeps it.
+    """
+    version = (current or {}).get("version")
+    skills = [catalog_entry(m) for m in catalog_order(metas, current)]
+    return ({"version": version} if version is not None else {}) | {"skills": skills}
 
 
 def catalog_text(catalog):
@@ -364,6 +507,10 @@ def check_catalog(root, metas, report, fix):
     current = load_json(root, path, report) if path.is_file() else None
     if path.is_file() and current is None:
         return
+    version = (current or {}).get("version")
+    if not isinstance(version, str) or not SEMVER.match(version):
+        report.fail("catalog.json", "catalog version",
+                    'needs a top-level "version" in semver, such as "1.0.0"; maintainers set it at release time')
     expected = catalog_text(build_catalog(metas, current))
     actual = path.read_text(encoding="utf-8") if path.is_file() else None
     if actual == expected:
@@ -466,6 +613,7 @@ def validate(root, fix=False, changed_from=None):
     skill_schema = load_skill_schema()
     metas = [m for m in (check_skill(root, d, skill_schema, report) for d in skill_dirs(root)) if m]
     check_catalog(root, metas, report, fix)
+    check_shared_docs(root, report)
     check_project_data(root, report, changed_from)
     return report
 
