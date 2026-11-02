@@ -90,3 +90,7 @@ The truck factor is the smallest number of people who could leave before a large
 - **A card per off-boarding risk:** who holds the knowledge, how much would remain if they left, Code Health now and a year ago, coverage, and a concrete action, such as adding tests, then refactoring together with the next contributor.
 - **People:** a sortable table of off-boarding risks, truck factor 1 files, and the Code Health and coverage of the code each person mainly knows.
 - **Components** led by one person or holding off-boarding risks, and **knowledge already lost** to former contributors.
+
+## License
+
+Licensed under the [Apache License 2.0](LICENSE).
