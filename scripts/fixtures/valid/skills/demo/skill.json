@@ -1,6 +1,7 @@
 {
   "id": "demo",
   "version": "1.0.0",
+  "min_server_version": "1.0.0",
   "title": "Demo report",
   "summary": "A minimal skill that passes every check.",
   "audience": [
@@ -13,6 +14,8 @@
   "inputs": [
     {
       "name": "project_id",
+      "description": "The CodeScene project to report on. Find it with list_projects.",
+      "type": "integer",
       "required": true
     }
   ],

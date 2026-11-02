@@ -1,6 +1,7 @@
 {
   "id": "key-person-risk",
   "version": "1.0.0",
+  "min_server_version": "1.0.0",
   "title": "Key person risk report",
   "summary": "The project's truck factor and what leaves with each key person: CodeScene's off-boarding risks, the uplift targets that depend on one person, the components led by one person, and the knowledge already lost.",
   "audience": [
@@ -15,10 +16,16 @@
   "inputs": [
     {
       "name": "project_id",
+      "description": "The CodeScene project to report on. Find it with list_projects.",
+      "type": "integer",
       "required": true
     },
     {
       "name": "concentration_threshold",
+      "description": "The main author's share of a file's code, from 0 to 1, at or above which knowledge counts as concentrated in one person.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
       "default": 0.5
     }
   ],

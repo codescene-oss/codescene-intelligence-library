@@ -64,6 +64,51 @@ class ValidateTest(unittest.TestCase):
         (self.skill / "skill.json").write_text("{ not json")
         self.assert_fails("json")
 
+    def test_min_server_version_required(self):
+        self.edit_json(self.skill / "skill.json", lambda d: d.pop("min_server_version"))
+        self.assert_fails("skill.json schema")
+
+    def test_input_needs_description_and_type(self):
+        for field in ["description", "type"]:
+            with self.subTest(field=field):
+                self.edit_json(self.skill / "skill.json", lambda d: d["inputs"][0].pop(field))
+                self.assert_fails("skill.json schema")
+                shutil.copy(FIXTURE / "skills" / "demo" / "skill.json", self.skill / "skill.json")
+
+    def test_structured_input_needs_its_shape(self):
+        for spec in [{"type": "object"}, {"type": "array"}, {"type": "list", "items": {"type": "string"}}]:
+            with self.subTest(spec=spec):
+                self.edit_json(self.skill / "skill.json",
+                               lambda d: d["inputs"].append({"name": "extra", "description": "Extra.", **spec}))
+                self.assert_fails("skill.json schema")
+                shutil.copy(FIXTURE / "skills" / "demo" / "skill.json", self.skill / "skill.json")
+
+    def test_typed_inputs_pass(self):
+        team = {"name": "team", "description": "The team.", "type": "object",
+                "properties": {"developers": {"type": "integer", "minimum": 1}},
+                "default": {"developers": 10}}
+        names = {"name": "names", "description": "Names.", "type": "array",
+                 "items": {"type": "string"}, "default": []}
+        self.edit_json(self.skill / "skill.json", lambda d: d["inputs"].extend([team, names]))
+        self.assertEqual([], self.run_checks().failures)
+
+    def test_input_default_matches_type(self):
+        for spec in [{"type": "integer", "default": 1.5},
+                     {"type": "number", "maximum": 10, "default": 11},
+                     {"type": "object", "properties": {"developers": {"type": "integer"}}, "default": {}},
+                     {"type": "object", "properties": {"developers": {"type": "integer"}},
+                      "default": {"developers": 1, "other": 2}},
+                     {"type": "array", "items": {"type": "string"}, "default": [1]}]:
+            with self.subTest(spec=spec):
+                self.edit_json(self.skill / "skill.json",
+                               lambda d: d["inputs"].append({"name": "extra", "description": "Extra.", **spec}))
+                self.assert_fails("inputs")
+                shutil.copy(FIXTURE / "skills" / "demo" / "skill.json", self.skill / "skill.json")
+
+    def test_input_with_default_is_not_required(self):
+        self.edit_json(self.skill / "skill.json", lambda d: d["inputs"][0].update(default=1))
+        self.assert_fails("inputs")
+
     def test_referenced_files(self):
         self.edit_json(self.skill / "skill.json", lambda d: d.update(templates=["templates/missing.md"]))
         self.assert_fails("referenced files")
@@ -78,6 +123,18 @@ class ValidateTest(unittest.TestCase):
         self.assertEqual([], self.run_checks().failures)
         catalog = json.loads((self.root / "catalog.json").read_text())
         self.assertEqual("A new summary.", catalog["skills"][0]["summary"])
+
+    def test_catalog_fix_keeps_version(self):
+        self.edit_json(self.root / "catalog.json", lambda d: d.update(version="2.3.4", skills=[]))
+        self.run_checks(fix=True)
+        self.assertEqual("2.3.4", json.loads((self.root / "catalog.json").read_text())["version"])
+
+    def test_catalog_version(self):
+        for version in [None, "1.0"]:
+            with self.subTest(version=version):
+                self.edit_json(self.root / "catalog.json",
+                               lambda d: d.pop("version") if version is None else d.update(version=version))
+                self.assert_fails("catalog version")
 
     def test_catalog_missing_skill(self):
         self.edit_json(self.root / "catalog.json", lambda d: d.update(skills=[]))
@@ -134,6 +191,40 @@ class ValidateTest(unittest.TestCase):
         report = self.run_checks()
         self.assertEqual([], report.failures)
         self.assertEqual(["templates are templates"], [w.rule for w in report.warnings])
+
+    def test_links(self):
+        (self.root / "README.md").write_text("# Readme\n")
+        (self.skill / "notes.md").write_text("# Notes\n")
+        for link in ["missing.md", "renderers/", "/etc/hosts", "file:///etc/hosts",
+                     "../../README.md", "../../../outside.md", "notes.md"]:
+            with self.subTest(link=link):
+                original = (self.skill / "SKILL.md").read_text()
+                self.append(self.skill / "SKILL.md", f"See [this]({link}).\n")
+                self.assert_fails("links")
+                (self.skill / "SKILL.md").write_text(original)
+
+    def test_links_that_pass(self):
+        self.append(self.skill / "SKILL.md",
+                    "See [the docs](https://example.com/docs), [rules](../../shared/ground-rules.md#top), "
+                    "![chart](renderers/report.html) and `[not a link](missing.md)`.\n"
+                    "```\n[also not a link](missing.md)\n```\n")
+        self.assertEqual([], self.run_checks().failures)
+
+    def test_code_span_naming_a_library_file(self):
+        for code in ["renderers/report.html", "shared/ground-rules.md", "../../shared/ground-rules.md"]:
+            with self.subTest(code=code):
+                original = (self.skill / "SKILL.md").read_text()
+                self.append(self.skill / "SKILL.md", f"Open `{code}`.\n")
+                self.assert_fails("links")
+                (self.skill / "SKILL.md").write_text(original)
+
+    def test_shared_doc_links(self):
+        self.append(self.root / "shared" / "ground-rules.md", "See [the guide](guide.md).\n")
+        self.assert_fails("links")
+
+    def test_template_links(self):
+        self.append(self.skill / "templates" / "project-notes.md", "See [the rules](../../../shared/ground-rules.md).\n")
+        self.assert_fails("links")
 
     # --- No-project-specifics guard ---
 

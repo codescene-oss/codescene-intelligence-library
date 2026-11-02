@@ -34,6 +34,14 @@ skills/<id>/
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution rules and how to run the checks locally.
 
+## Releases
+
+Each [GitHub release](https://github.com/codescene-oss/codescene-intelligence-library/releases) has a `codescene-intelligence-library-<version>.zip` with what clients need: `catalog.json`, `LICENSE`, `shared/` and `skills/`. Its `MANIFEST.json` lists the sha256 of every file, and the release carries the zip's checksum and a build provenance attestation. Verify a download with:
+
+```bash
+gh attestation verify codescene-intelligence-library-<version>.zip --repo codescene-oss/codescene-intelligence-library
+```
+
 ## Skill details
 
 ### Architectural hotspots

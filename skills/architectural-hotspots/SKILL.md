@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Produces a one-page report: a bubble chart of components (X = commits, Y = average Code Health, size = lines of code) split into PAID quadrants, trend lines per component, the components to address first, the estimated outcomes of uplifting them to the target, and what that means in hours for a team.
 
-The report data has one shape, defined in [report-data.schema.json](report-data.schema.json). Renderers in [renderers/](renderers/) turn it into a report; each has a `{{REPORT_DATA}}` block that is the only part you fill in. Per-project inputs and decisions go in the user's workspace, not in this library, as `codescene/projects/{{project-slug}}.md`, created from [templates/project-notes.md](templates/project-notes.md).
+The report data has one shape, defined in [report-data.schema.json](report-data.schema.json). The renderers listed under [Renderers](#renderers) turn it into a report; each has a `{{REPORT_DATA}}` block that is the only part you fill in. Per-project inputs and decisions go in the user's workspace, not in this library, as `codescene/projects/{{project-slug}}.md`, created from [templates/project-notes.md](templates/project-notes.md).
 
 Follow [../../shared/ground-rules.md](../../shared/ground-rules.md) throughout.
 
