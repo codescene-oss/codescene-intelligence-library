@@ -702,7 +702,7 @@
   document.title = `Architectural hotspots · ${project.name}`;
   root.innerHTML = `
     <section class="hero">
-      <div class="eyebrow">CodeScene · Architectural debt</div>
+      <div class="eyebrow">CodeScene · Architectural debt · ${escapeHtml(project.name)}</div>
       <h1>Architectural hotspots: where to pay down technical debt</h1>
       <div class="intro"><strong>The idea</strong>Code Health per architectural component shows where the technical debt sits.
         Change activity across a component's files shows how much of the team's work runs through it. Together they show which parts
