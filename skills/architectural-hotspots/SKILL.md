@@ -18,7 +18,7 @@ Collect these before starting. Use the project notes if they exist; otherwise as
 
 | Input | Default |
 |---|---|
-| Project id | required; find it with `list_projects` |
+| Project | required: its name or its id. Resolve a name to the id with `list_projects`; if several projects match, ask the user which one |
 | Display name for the title | the project name from `list_projects` |
 | Target Code Health for Address components | 10.0 |
 | Team for ROI: developers, hours per week, weeks per year | 10, 40, 46 |
