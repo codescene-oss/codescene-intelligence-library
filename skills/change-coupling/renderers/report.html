@@ -607,13 +607,6 @@
     const badges = [`<span class="badge problem">Problematic</span>`, `<span class="badge ${v}">${verdictText[v]}</span>`];
     if (crossOwnerDominates(e)) badges.push(`<span class="xdev" title="${percent(e.crossOwnerShare)} of the co-changes cross from one person's code to another's">⇄ Cross-developer dependency <span class="share">${percent(e.crossOwnerShare)}</span></span>`);
     if (e.inactive.size) badges.push('<span class="badge gap">Knowledge gap</span>');
-    const pairRows = e.pairs.slice(0, 4).map((p) => `<tr>
-      <td><span class="file">${escapeHtml(fileName(p.a))}</span> ⇄ <span class="file">${escapeHtml(fileName(p.b))}</span></td>
-      <td class="num">${p.degree}%</td>
-      <td class="num">${formatInt(p.shared)}</td>
-      <td class="num"><span style="color:${inkColour(p.fa.health)}">${formatHealth(p.fa.health)}</span> · <span style="color:${inkColour(p.fb.health)}">${formatHealth(p.fb.health)}</span></td>
-      <td>${p.fa.owner ? escapeHtml(p.fa.owner.name) : "—"}${ownerOf(p.fa) !== ownerOf(p.fb) ? ` ⇄ ${p.fb.owner ? escapeHtml(p.fb.owner.name) : "—"}` : ""}</td>
-    </tr>`).join("");
     return `<div class="dep" id="dep-${i}">
       <div class="dep-head"><span class="rank">${i + 1}</span>
         <span class="title">${unitLabel(e.u)}<span class="arrow">⇄</span>${unitLabel(e.v)}</span>${badges.join(" ")}
@@ -627,9 +620,6 @@
         <div class="fact"><div class="label">Who knows ${escapeHtml(e.v)}</div><div class="value" style="font-size:13px">${knowledgeOnSide(e, e.v)}</div></div>
       </div>
       <p class="advice">${adviceFor(e)}</p>
-      <div class="table-wrap"><table class="data">
-        <thead><tr><th>Strongest file pairs</th><th class="num">Coupling</th><th class="num">Co-changes</th><th class="num">Code Health</th><th>Main authors</th></tr></thead>
-        <tbody>${pairRows}</tbody></table></div>
     </div>`;
   }
 
@@ -646,44 +636,6 @@
     </tr>`).join("");
     return `<div class="table-wrap"><table class="data">
       <thead><tr><th>${noun === "team" ? "Teams" : "People"} whose code changes together</th><th class="num">Co-changes</th><th class="num">File pairs</th><th>Where</th></tr></thead>
-      <tbody>${rows}</tbody></table></div>`;
-  }
-
-  // Change magnets: files whose changes keep pulling in files from several other components.
-  // Often the messenger of a God Class that has accumulated too many responsibilities.
-  const minMagnetReach = 3;
-  function changeMagnets() {
-    const byFile = new Map();
-    couplings.forEach((c) => {
-      [[c.a, c.b], [c.b, c.a]].forEach(([self, other]) => {
-        const fs = files.get(self);
-        const fo = files.get(other);
-        if (unitOf(fs) === unitOf(fo)) return;
-        if (!byFile.has(self)) byFile.set(self, { file: fs, units: new Map(), shared: 0, partners: 0 });
-        const m = byFile.get(self);
-        const shared = sharedOf(c);
-        m.units.set(unitOf(fo), (m.units.get(unitOf(fo)) || 0) + shared);
-        m.shared += shared;
-        m.partners += 1;
-      });
-    });
-    return [...byFile.values()].filter((m) => m.units.size >= minMagnetReach)
-      .sort((a, b) => b.shared - a.shared).slice(0, 8);
-  }
-
-  function magnetSection() {
-    const magnets = changeMagnets();
-    if (!magnets.length) return `<p class="empty">No file is coupled to ${minMagnetReach} or more other components.</p>`;
-    const rows = magnets.map((m) => `<tr>
-      <td><span class="file">${escapeHtml(fileName(m.file.path))}</span><div class="small tertiary">${escapeHtml(m.file.component)}</div></td>
-      <td class="num strong" style="color:${inkColour(m.file.health)}">${formatHealth(m.file.health)}</td>
-      <td class="num">${m.units.size}</td>
-      <td>${[...m.units.entries()].sort((a, b) => b[1] - a[1]).map(([u]) => unitLabel(u)).join(", ")}</td>
-      <td class="num">${formatInt(m.shared)}</td>
-      <td>${m.file.owner ? escapeHtml(m.file.owner.name) : "—"}</td>
-    </tr>`).join("");
-    return `<div class="table-wrap"><table class="data">
-      <thead><tr><th>File</th><th class="num">Code Health</th><th class="num">Components reached</th><th>Changes with</th><th class="num">Co-changes</th><th>Main author</th></tr></thead>
       <tbody>${rows}</tbody></table></div>`;
   }
 
@@ -719,11 +671,11 @@
       <td class="num strong" style="color:${inkColour(e.health)}">${formatHealth(e.health)}</td>
       <td>${escapeHtml(assessmentOf(e).reason)}</td>
     </tr>`).join("");
-    return `<h2 style="margin-top:12px">Expected coupling</h2>
+    return `<section><h2>Expected coupling</h2>
       <p class="small secondary">Dependencies that follow the architecture or that change together by design. Keep them in view, but they don't drive the cost of change.</p>
       <div class="table-wrap"><table class="data">
         <thead><tr><th>Components</th><th class="num">Co-changes</th><th class="num">Code Health</th><th>Why it's expected</th></tr></thead>
-        <tbody>${rows}</tbody></table></div>`;
+        <tbody>${rows}</tbody></table></div></section>`;
   }
   const notes = (report.notes || []).map((n) => `<p class="small secondary">${escapeHtml(n)}</p>`).join("");
 
@@ -746,7 +698,7 @@
         </section>
 
         <section>
-          <h2>Where change doesn't stay local</h2>
+          <h2>Architectural impact: Where change doesn't stay local</h2>
           <p class="small secondary">Each cell counts the co-changes between files in two components: how often a file in one changed in the
             same commit as a file in the other. Off-diagonal cells are logical dependencies between components; the diagonal is coupling within
             one. Hover a cell for the file pairs behind it, and click an off-diagonal cell to jump to its details.</p>
@@ -754,20 +706,11 @@
         </section>
 
         <section>
-          <h2>Dependencies to manage</h2>
+          <h2>Suggested actions: Dependencies to manage</h2>
           <p class="small secondary">Each of these widens the blast radius of a change: a change in one component drags the other along.
             Strongest first. Breaking them keeps changes local.</p>
           ${topCross.length ? topCross.map(dependencyCard).join("") : '<p class="empty">No problematic coupling crosses a component boundary.</p>'}
           ${problematicCross.length > topCross.length ? `<p class="small tertiary">${problematicCross.length - topCross.length} weaker problematic dependencies are in the matrix above.</p>` : ""}
-          ${expectedSection()}
-        </section>
-
-        <section>
-          <h2>Change magnets</h2>
-          <p class="small secondary">Files whose changes keep pulling in files from ${minMagnetReach} or more other components. When coupling
-            shows no pattern, it is often the messenger of a God Class: a file that has accumulated too many responsibilities, so every change
-            ends up there and it grows more complicated and fragile over time.</p>
-          ${magnetSection()}
         </section>
 
         <section>
@@ -783,7 +726,9 @@
           <p class="small secondary">The strongest file pairs inside one component. Expected to some degree; strong coupling between unhealthy
             files is a refactoring candidate in its own right.</p>
           ${internalSection()}
-        </section>`}
+        </section>
+
+        ${expectedSection()}`}
 
     <section>
       <h2>How to read this report</h2>

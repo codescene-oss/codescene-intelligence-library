@@ -111,8 +111,7 @@ Shows the cost of change: where a change refuses to stay local, and what it take
 Complexity comes in two shapes: code that is hard to understand on its own, which Code Health measures, and code that looks simple but behaves anything but because of its dependencies. Static dependency graphs list every dependency and miss the logical ones. Change coupling comes from developer behaviour instead: files that keep co-evolving in the same commits. The report lifts CodeScene's file-level change coupling to the architecture. It contains:
 
 - **A component matrix** of co-changes. Problematic dependencies between components stand out in red; expected ones stay muted. The agent running the skill judges which is which from the architecture, and gives a reason for each.
-- **A card per problematic dependency** with its co-changes, the Code Health of the coupled files, who knows each side, the strongest file pairs and a verdict: *Refactor first* where both kinds of complexity meet, *Decouple* where the code is healthy enough to restore locality of change.
-- **Change magnets:** files coupled to several other components, often the messenger of a God Class.
+- **A card per problematic dependency** with its co-changes, the Code Health of the coupled files, who knows each side, a verdict and a decoupling plan to hand to a coding agent. The verdict is *Refactor first* where both kinds of complexity meet, *Decouple* where the code is healthy enough to restore locality of change.
 - **Coordination:** pairs of people whose code changes together, from each file's knowledge distribution. Code that logically belongs together but is maintained by different people; Conway's law, measured.
 
 Change coupling is neither good nor bad, so the report separates the expected from the expensive: tests that co-evolve with their code are left out, and files outside any architectural component are left out with a footnote saying how much.
