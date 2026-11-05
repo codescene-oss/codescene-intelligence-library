@@ -27,6 +27,15 @@
       "renderers": [
         "html"
       ]
+    },
+    {
+      "id": "change-coupling",
+      "version": "1.0.0",
+      "path": "skills/change-coupling",
+      "summary": "The architecture the commit history reveals: implicit dependencies between components, the coordination they force between people, and how hard each is to break given the Code Health of the coupled code.",
+      "renderers": [
+        "html"
+      ]
     }
   ]
 }

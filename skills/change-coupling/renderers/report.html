@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Change coupling</title>
+<style>
+  /* CodeScene theme colours. The pastel fills match the app's Code Health bubbles; the -ink variants keep
+     numbers and labels readable on white, and fall back to the pastels on dark backgrounds. */
+  :root {
+    --unhealthy: #ef8290;
+    --problematic: #f6d991;
+    --healthy: #8ddec8;
+    --unhealthy-ink: #c8475a;
+    --problematic-ink: #9a7213;
+    --healthy-ink: #1f8569;
+    --primary: #2f7b7a;
+    --navy: #0f2d57;
+    --address-tint: #ef829026;
+    --plan-tint: #8ddec826;
+    --brand-tint: #2f7b7a14;
+    --page: #eef2f8;
+    --bg: #ffffff;
+    --text: #323a4e;
+    --text-2: #4f5866;
+    --text-3: #7d8694;
+    --stroke-2: #d5dbe3;
+    --stroke-3: #eceff4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --unhealthy-ink: #ef8290;
+      --problematic-ink: #f6d991;
+      --healthy-ink: #8ddec8;
+      --primary: #62d5de;
+      --page: #0a1424;
+      --bg: #12223a;
+      --text: #eceef1;
+      --text-2: #b4bac2;
+      --text-3: #848b95;
+      --stroke-2: #2e3d52;
+      --stroke-3: #1d2a3d;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; }
+  section { display: flex; flex-direction: column; gap: 8px; background: var(--bg); border-radius: 10px; padding: 20px 24px;
+    box-shadow: 0 1px 2px rgba(15, 45, 87, 0.06), 0 2px 8px rgba(15, 45, 87, 0.05); }
+  /* The header follows the app's navy-to-teal sidebar. */
+  section.hero { background: linear-gradient(120deg, #0f2d57 0%, #0b3a5e 55%, #075062 100%); color: #ffffff; gap: 12px; padding: 28px 24px; }
+  section.hero .eyebrow { color: #62d5de; }
+  section.hero .intro { background: rgba(255, 255, 255, 0.07); border-left-color: #62d5de; color: #dfe8f2; }
+  section.hero .intro strong { color: #62d5de; }
+  h1 { font-size: 24px; margin: 0; line-height: 1.25; }
+  h2 { font-size: 17px; margin: 0; }
+  p { margin: 0; }
+  .eyebrow { color: var(--primary); font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; }
+  .small { font-size: 12px; }
+  .secondary { color: var(--text-2); }
+  .tertiary { color: var(--text-3); }
+  .strong { font-weight: 600; }
+  .intro { background: var(--brand-tint); border-left: 3px solid var(--primary); border-radius: 4px; padding: 12px 16px; }
+  .intro strong { color: var(--primary); display: block; margin-bottom: 4px; }
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .kpi { border: 1px solid var(--stroke-2); border-radius: 6px; padding: 12px 14px; }
+  .kpi .value .of { font-size: 14px; font-weight: 600; color: var(--text-3); }
+  .kpi .value { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--navy); }
+  .kpi .label { font-size: 12px; color: var(--text-2); }
+  .kpi .detail { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; font-size: 12px; color: var(--text-2); }
+  .legend span { display: inline-flex; gap: 6px; align-items: center; }
+  .swatch { width: 14px; height: 14px; border-radius: 3px; display: inline-block; border: 1px solid var(--stroke-2); }
+
+  /* Matrix */
+  .matrix-wrap { position: relative; overflow-x: auto; }
+  table.matrix { border-collapse: separate; border-spacing: 2px; font-size: 11px; border: none; width: auto; }
+  table.matrix th { font-weight: 600; color: var(--text-2); padding: 2px 6px; background: none; white-space: nowrap; }
+  table.matrix th.row { text-align: right; }
+  table.matrix th.col { height: 120px; vertical-align: bottom; padding: 0; }
+  table.matrix th.col div { writing-mode: vertical-rl; transform: rotate(180deg); padding: 4px 0; text-align: left; max-height: 120px;
+    overflow: hidden; text-overflow: ellipsis; }
+  table.matrix td { width: 40px; min-width: 40px; height: 32px; text-align: center; font-variant-numeric: tabular-nums; border-radius: 3px;
+    padding: 0; border: none; cursor: default; color: var(--text); }
+  table.matrix td.has { cursor: pointer; }
+  table.matrix td.has:hover { outline: 2px solid var(--navy); }
+  table.matrix td.diag { background-image: repeating-linear-gradient(135deg, transparent 0 4px, rgba(127, 127, 127, 0.12) 4px 5px); }
+  table.matrix td.owners { box-shadow: inset 0 -3px 0 var(--navy); }
+  .tooltip { position: fixed; pointer-events: none; background: var(--bg); border: 1px solid var(--stroke-2); border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); padding: 8px 12px; min-width: 240px; max-width: 360px; z-index: 2; font-size: 11px;
+    line-height: 17px; display: none; }
+  .tooltip .name { font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+  .tooltip .sub { color: var(--text-3); margin-bottom: 6px; }
+  .tooltip .row { display: flex; justify-content: space-between; gap: 16px; }
+  .tooltip .row span:first-child { color: var(--text-2); }
+
+  /* Dependency cards */
+  .dep { border: 1px solid var(--stroke-2); border-radius: 8px; padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; }
+  .dep.flash { outline: 2px solid var(--primary); }
+  .dep-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .dep-head .rank { font-size: 18px; font-weight: 700; color: var(--navy); min-width: 24px; }
+  .dep-head .title { font-size: 15px; font-weight: 700; }
+  .dep-head .title .arrow { color: var(--text-3); font-weight: 400; margin: 0 4px; }
+  .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .fact .label { font-size: 11px; color: var(--text-3); }
+  .fact .value { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .fact .detail { font-size: 11px; color: var(--text-3); }
+  .badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; border-radius: 10px;
+    padding: 1px 8px; white-space: nowrap; }
+  .badge.refactor { background: var(--address-tint); color: var(--unhealthy-ink); border: 1px solid var(--unhealthy-ink); }
+  .badge.decouple { background: var(--plan-tint); color: var(--healthy-ink); border: 1px solid var(--healthy-ink); }
+  .badge.problem { background: var(--unhealthy-ink); color: #ffffff; }
+  .xdev { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #ffffff; background: var(--navy);
+    border-radius: 12px; padding: 3px 10px; white-space: nowrap; }
+  .xdev .share { font-weight: 400; opacity: 0.85; }
+  .badge.gap { background: #f6d99140; color: var(--problematic-ink); border: 1px solid var(--problematic-ink); }
+  .advice { font-size: 13px; color: var(--text-2); }
+
+  table.data { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--stroke-2); border-radius: 6px; overflow: hidden; font-size: 12px; }
+  table.data th { background: var(--brand-tint); color: var(--text-2); font-size: 11px; font-weight: 600; text-align: left; padding: 6px 10px; }
+  table.data td { padding: 7px 10px; border-top: 1px solid var(--stroke-3); color: var(--text-2); overflow-wrap: anywhere; vertical-align: top; }
+  table.data td .file { color: var(--text); font-weight: 600; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .table-wrap { overflow-x: auto; }
+  .bar { display: inline-block; height: 8px; border-radius: 4px; background: var(--primary); vertical-align: middle; margin-right: 6px; }
+  .error { border: 1px solid var(--unhealthy-ink); border-radius: 6px; padding: 12px 16px; color: var(--unhealthy-ink); }
+  .empty { padding: 16px; text-align: center; color: var(--text-3); }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+  @media (max-width: 720px) {
+    .kpis, .facts, .grid2 { grid-template-columns: minmax(0, 1fr); }
+    section, section.hero { padding: 16px; }
+  }
+  @media print {
+    main { max-width: none; padding: 0; }
+    section, .dep { break-inside: avoid; box-shadow: none; }
+    body { background: #ffffff; }
+  }
+</style>
+</head>
+<body>
+<main id="report"></main>
+<div class="tooltip" id="tooltip" role="tooltip"></div>
+
+<!-- {{REPORT_DATA}}: replace the placeholder object with ReportData JSON that validates against report-data.schema.json.
+     Keep everything outside this block unchanged. -->
+<script type="application/json" id="report-data">
+{
+  "project": { "name": "{{project-name}}", "source": "{{source}}" },
+  "files": [],
+  "couplings": []
+}
+</script>
+<!-- {{/REPORT_DATA}} -->
+
+<script>
+// ---------------------------------------------------------------------------
+// Generic layout below: no project-specific values.
+// ---------------------------------------------------------------------------
+(function () {
+  const root = document.getElementById("report");
+  const tooltip = document.getElementById("tooltip");
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+  }
+
+  let report;
+  try {
+    report = JSON.parse(document.getElementById("report-data").textContent);
+  } catch (e) {
+    root.innerHTML = `<p class="error">The report data is not valid JSON: ${escapeHtml(e.message)}</p>`;
+    return;
+  }
+
+  const { project } = report;
+  const files = new Map((report.files || []).map((f) => [f.path, f]));
+  const known = (report.couplings || []).filter((c) => files.has(c.a) && files.has(c.b) && c.a !== c.b);
+  // Only coupling between files in architectural components counts; pairs with a file outside any component are left out.
+  const inComponents = (c) => files.get(c.a).component && files.get(c.b).component;
+  // Code that co-evolves with its tests is expected, healthy coupling: separate the expected from the expensive.
+  const isTest = (path) => /(^|\/)(tests?|specs?|__tests__)\/|[._-](test|spec)s?\.[^/]+$|Tests?\.[^/.]+$/i.test(path);
+  const isTestPair = (c) => isTest(c.a) || isTest(c.b);
+  // Files whose coupling is expected bookkeeping, such as a version file every release touches; named by the report data.
+  const expectedFiles = new Map((report.expectedFiles || []).map((x) => [x.path, x.reason]));
+  const isExpectedFilePair = (c) => expectedFiles.has(c.a) || expectedFiles.has(c.b);
+  const couplings = known.filter((c) => inComponents(c) && !isTestPair(c) && !isExpectedFilePair(c));
+  const leftOut = known.filter((c) => !inComponents(c));
+  const testPairs = known.filter((c) => inComponents(c) && isTestPair(c));
+  const expectedFilePairs = known.filter((c) => inComponents(c) && !isTestPair(c) && isExpectedFilePair(c));
+  const healthyThreshold = 9;
+  const unhealthyThreshold = 4;
+  const maxMatrixUnits = 14;
+  const maxDependencies = 8;
+
+  const healthClass = (h) => (h >= healthyThreshold ? "healthy" : h >= unhealthyThreshold ? "problematic" : "unhealthy");
+  const inkColour = (h) => (h === null || h === undefined ? "var(--text-3)" : `var(--${healthClass(h)}-ink)`);
+  const formatHealth = (h) => (h === null || h === undefined ? "—" : h.toFixed(2));
+  const formatInt = (n) => Math.round(n).toLocaleString("en-US");
+  const percent = (x) => `${Math.round(x * 100)}%`;
+  const fileName = (path) => path.split("/").pop();
+
+  const unitOf = (f) => f.component;
+  const unitLabel = (unit) => escapeHtml(unit);
+
+  // CodeScene's coupling degree is shared commits relative to the pair's average commits, so shared commits ≈ degree × average.
+  const sharedOf = (c) => (c.degree / 100) * c.averageRevisions;
+  const ownerOf = (f) => (f.owner ? f.owner.name : null);
+
+  // Each file's knowledge as shares per person: its contributors, normalised to sum to 1, or the main author alone.
+  function knowledgeOf(f) {
+    const list = f.contributors && f.contributors.length ? f.contributors : f.owner ? [f.owner] : [];
+    const total = list.reduce((s, p) => s + p.ownership, 0);
+    return total > 0 ? list.map((p) => ({ name: p.name, share: p.ownership / total })) : null;
+  }
+  // The expected share of a coupled change that crosses from one person's code to another's:
+  // 1 − Σ share_a(p) × share_b(p). 0 when one person holds both files, 1 when no one knows both.
+  function personPairs(fa, fb) {
+    const ka = knowledgeOf(fa);
+    const kb = knowledgeOf(fb);
+    if (!ka || !kb) return null;
+    const out = [];
+    ka.forEach((a) => kb.forEach((b) => out.push({ a: a.name, b: b.name, weight: a.share * b.share })));
+    return out;
+  }
+  const teamOf = (f) => f.team || null;
+
+  // -------------------------------------------------------------------------
+  // Aggregation
+  // -------------------------------------------------------------------------
+
+  const edges = new Map();
+  const edgeKey = (u, v) => (u < v ? `${u}\u0000${v}` : `${v}\u0000${u}`);
+
+  couplings.forEach((c) => {
+    const fa = files.get(c.a);
+    const fb = files.get(c.b);
+    const ua = unitOf(fa);
+    const ub = unitOf(fb);
+    const key = edgeKey(ua, ub);
+    if (!edges.has(key)) {
+      const [u, v] = ua < ub ? [ua, ub] : [ub, ua];
+      edges.set(key, { u, v, internal: ua === ub, shared: 0, pairs: [], ownerKnown: 0, crossOwner: 0, healthWeight: 0, healthSum: 0,
+        inactive: new Set() });
+    }
+    const e = edges.get(key);
+    const shared = sharedOf(c);
+    e.shared += shared;
+    e.pairs.push({ ...c, shared, fa, fb });
+    const pp = personPairs(fa, fb);
+    if (pp) {
+      e.ownerKnown += shared;
+      pp.forEach((x) => { if (x.a !== x.b) e.crossOwner += shared * x.weight; });
+    }
+    [fa, fb].forEach((f) => { if (f.owner && f.owner.isActive === false) e.inactive.add(f.owner.name); });
+    const hs = [fa.health, fb.health].filter((h) => typeof h === "number");
+    if (hs.length) {
+      e.healthSum += (hs.reduce((s, h) => s + h, 0) / hs.length) * shared;
+      e.healthWeight += shared;
+    }
+  });
+
+  const edgeList = [...edges.values()].map((e) => ({
+    ...e,
+    health: e.healthWeight ? e.healthSum / e.healthWeight : null,
+    crossOwnerShare: e.ownerKnown ? e.crossOwner / e.ownerKnown : null,
+    pairs: e.pairs.sort((a, b) => b.shared - a.shared),
+  }));
+  const edgeByKey = new Map(edgeList.map((e) => [edgeKey(e.u, e.v), e]));
+
+  // Problematic or expected: the report data's assessment of a pair of components, written by whoever knows the architecture.
+  // Without one, coupling in code below Healthy counts as problematic: that is where the coupling makes change expensive.
+  const assessments = new Map((report.assessments || []).map((a) => [edgeKey(a.units[0], a.units[1]), a]));
+  function assessmentOf(e) {
+    const a = assessments.get(edgeKey(e.u, e.v));
+    if (a) return { problematic: a.verdict === "problematic", reason: a.reason, assessed: true };
+    const problematic = e.health === null || e.health < healthyThreshold;
+    return { problematic, assessed: false,
+      reason: problematic ? `Not assessed; flagged because the coupled code is below Code Health ${healthyThreshold.toFixed(1)}.` : "Not assessed; the coupled code is healthy." };
+  }
+  const isProblematic = (e) => assessmentOf(e).problematic;
+  const cross = edgeList.filter((e) => !e.internal).sort((a, b) => b.shared - a.shared);
+  const internal = edgeList.filter((e) => e.internal).sort((a, b) => b.shared - a.shared);
+  const totalShared = edgeList.reduce((s, e) => s + e.shared, 0);
+  const crossShared = cross.reduce((s, e) => s + e.shared, 0);
+
+  const unitTotals = new Map();
+  edgeList.forEach((e) => {
+    unitTotals.set(e.u, (unitTotals.get(e.u) || 0) + e.shared);
+    if (!e.internal) unitTotals.set(e.v, (unitTotals.get(e.v) || 0) + e.shared);
+  });
+  const units = [...unitTotals.entries()].sort((a, b) => b[1] - a[1]).map(([u]) => u);
+  const matrixUnits = units.slice(0, maxMatrixUnits);
+
+  // Verdict: unhealthy coupled code has to be refactored before it can be pulled apart safely.
+  const verdictOf = (e) => (e.health !== null && e.health < unhealthyThreshold ? "refactor" : "decouple");
+  const verdictText = { refactor: "Refactor first", decouple: "Decouple" };
+  const coordinationThreshold = 1 / 3;
+  const crossOwnerDominates = (e) => e.crossOwnerShare !== null && e.crossOwnerShare >= coordinationThreshold;
+
+  // Coordination: the part of the shared commits that crosses from one person's (or team's) code to another's.
+  // pairsOf(fa, fb) returns weighted pairs of keys whose weights sum to 1.
+  function coordination(pairsOf) {
+    const m = new Map();
+    let known = 0;
+    let crossKey = 0;
+    couplings.forEach((c) => {
+      const fa = files.get(c.a);
+      const fb = files.get(c.b);
+      const pairs = pairsOf(fa, fb);
+      if (!pairs) return;
+      const shared = sharedOf(c);
+      known += shared;
+      pairs.forEach(({ a, b, weight }) => {
+        if (a === b || weight <= 0) return;
+        const amount = shared * weight;
+        crossKey += amount;
+        const [x, y] = [a, b].sort();
+        const pk = `${x}\u0000${y}`;
+        if (!m.has(pk)) m.set(pk, { a: x, b: y, shared: 0, pairs: new Set(), units: new Set() });
+        const entry = m.get(pk);
+        entry.shared += amount;
+        entry.pairs.add(`${c.a}\u0000${c.b}`);
+        entry.units.add(unitOf(fa));
+        entry.units.add(unitOf(fb));
+      });
+    });
+    return {
+      pairs: [...m.values()].map((x) => ({ ...x, pairs: x.pairs.size })).filter((x) => x.shared >= 0.5).sort((a, b) => b.shared - a.shared),
+      known,
+      cross: crossKey,
+    };
+  }
+  const people = coordination(personPairs);
+  const hasTeams = [...files.values()].some((f) => f.team);
+  const teams = hasTeams
+    ? coordination((fa, fb) => (teamOf(fa) && teamOf(fb) ? [{ a: teamOf(fa), b: teamOf(fb), weight: 1 }] : null))
+    : null;
+
+  // -------------------------------------------------------------------------
+  // Tooltip
+  // -------------------------------------------------------------------------
+
+  function showTooltip(html, event) {
+    tooltip.innerHTML = html;
+    tooltip.style.display = "block";
+    const pad = 14;
+    const rect = tooltip.getBoundingClientRect();
+    let x = event.clientX + pad;
+    let y = event.clientY + pad;
+    if (x + rect.width > window.innerWidth - 8) x = event.clientX - rect.width - pad;
+    if (y + rect.height > window.innerHeight - 8) y = event.clientY - rect.height - pad;
+    tooltip.style.left = `${Math.max(8, x)}px`;
+    tooltip.style.top = `${Math.max(8, y)}px`;
+  }
+  const hideTooltip = () => (tooltip.style.display = "none");
+
+  function edgeTooltip(e) {
+    const rows = [
+      ["Assessment", assessmentOf(e).problematic ? '<span style="color:var(--unhealthy-ink);font-weight:600">Problematic</span>' : "Expected"],
+      ["Co-changes", formatInt(e.shared)],
+      ["Coupled file pairs", String(e.pairs.length)],
+      ["Code Health of coupled files", `<span style="color:${inkColour(e.health)};font-weight:600">${formatHealth(e.health)}</span>`],
+      ["Crosses between people", e.crossOwnerShare === null ? "—" : percent(e.crossOwnerShare)],
+    ];
+    const top = e.pairs.slice(0, 3).map((p) => `<div class="row"><span>${escapeHtml(fileName(p.a))} ⇄ ${escapeHtml(fileName(p.b))}</span><span>${p.degree}%</span></div>`).join("");
+    return `<div class="name">${e.internal ? `Inside ${escapeHtml(e.u)}` : `${escapeHtml(e.u)} ⇄ ${escapeHtml(e.v)}`}</div>
+      <div class="sub">${e.internal ? "Coupling within the component" : "Logical dependency between components"}</div>
+      ${rows.map(([l, v]) => `<div class="row"><span>${l}</span><span>${v}</span></div>`).join("")}
+      <div class="sub" style="margin:6px 0 2px">${escapeHtml(assessmentOf(e).reason)}</div>
+      <div class="sub" style="margin:6px 0 2px">Strongest file pairs</div>${top}
+      ${e.internal || !isProblematic(e) ? "" : '<div class="sub" style="margin:6px 0 0">Click to jump to the details</div>'}`;
+  }
+
+  // -------------------------------------------------------------------------
+  // Sections
+  // -------------------------------------------------------------------------
+
+  function summary() {
+    const unhealthyShared = cross.filter((e) => e.health !== null && e.health < unhealthyThreshold).reduce((s, e) => s + e.shared, 0);
+    const kpis = [
+      [percent(totalShared ? crossShared / totalShared : 0), "of co-changes cross a boundary", "file pairs changing together across two components"],
+      [`${cross.filter(isProblematic).length} <span class="of">of ${cross.length}</span>`, "Problematic dependencies", "logical dependencies between components that make change expensive"],
+      [percent(people.known ? people.cross / people.known : 0), "needs coordination", "of coupled work crosses from one person's code to another's"],
+      [percent(crossShared ? unhealthyShared / crossShared : 0), "in unhealthy code", `cross-boundary coupling where the files average below ${unhealthyThreshold.toFixed(1)}`],
+    ];
+    return `<div class="kpis">${kpis.map(([v, l, d]) => `<div class="kpi"><div class="value">${v}</div><div class="label">${l}</div><div class="detail">${d}</div></div>`).join("")}</div>`;
+  }
+
+  function matrix() {
+    // Shade by the strongest dependency between components; the diagonal has its own, neutral scale.
+    const inMatrix = edgeList.filter((e) => matrixUnits.includes(e.u) && matrixUnits.includes(e.v));
+    const max = Math.max(1, ...inMatrix.filter((e) => !e.internal).map((e) => e.shared));
+    const maxInternal = Math.max(1, ...inMatrix.filter((e) => e.internal).map((e) => e.shared));
+    const head = `<tr><th></th>${matrixUnits.map((u) => `<th class="col"><div title="${escapeHtml(u)}">${unitLabel(u)}</div></th>`).join("")}</tr>`;
+    const rows = matrixUnits.map((ru) => `<tr><th class="row">${unitLabel(ru)}</th>${matrixUnits.map((cu) => {
+      const e = edgeByKey.get(edgeKey(ru, cu));
+      const diag = ru === cu;
+      if (!e) return `<td class="${diag ? "diag" : ""}"></td>`;
+      // Problematic coupling stands out in red, stronger the more co-changes; expected coupling stays muted.
+      const alpha = 0.12 + 0.88 * Math.sqrt(e.shared / (diag ? maxInternal : max));
+      const problematic = !diag && isProblematic(e);
+      const bg = problematic ? `rgba(200, 71, 90, ${alpha.toFixed(2)})` : `rgba(127, 127, 127, ${(alpha * 0.4).toFixed(2)})`;
+      const fg = problematic && alpha > 0.5 ? "#ffffff" : "var(--text)";
+      const cls = ["has", diag ? "diag" : "", !diag && crossOwnerDominates(e) ? "owners" : ""].join(" ");
+      return `<td class="${cls}" data-edge="${edgeList.indexOf(e)}" style="background-color:${bg};color:${fg}">${formatInt(e.shared)}</td>`;
+    }).join("")}</tr>`).join("");
+    const left = units.length - matrixUnits.length;
+    return `<div class="legend">
+        <span><i class="swatch" style="background:rgba(200,71,90,0.9)"></i>Problematic coupling: darker means more co-changes</span>
+        <span><i class="swatch" style="background:rgba(127,127,127,0.35)"></i>Expected coupling</span>
+        <span><i class="swatch diag-swatch" style="background-image:repeating-linear-gradient(135deg,transparent 0 4px,rgba(127,127,127,0.3) 4px 5px)"></i>Within a component</span>
+        <span><i class="swatch" style="box-shadow:inset 0 -3px 0 var(--navy)"></i>Cross-developer dependency: a third or more crosses between people</span></div>
+      <div class="matrix-wrap"><table class="matrix"><thead>${head}</thead><tbody>${rows}</tbody></table></div>
+      ${left > 0 ? `<p class="small tertiary">${left} more ${left === 1 ? "unit has" : "units have"} weaker coupling and ${left === 1 ? "is" : "are"} left out of the matrix; the lists below include them.</p>` : ""}`;
+  }
+
+  // Who knows the coupled code on one side: contributors' shares, weighted by co-changes.
+  function knowledgeOnSide(e, side) {
+    const counts = new Map();
+    e.pairs.forEach((p) => {
+      [p.fa, p.fb].forEach((f) => {
+        if (unitOf(f) !== side) return;
+        (knowledgeOf(f) || []).forEach((k) => counts.set(k.name, (counts.get(k.name) || 0) + p.shared * k.share));
+      });
+    });
+    const total = [...counts.values()].reduce((s, x) => s + x, 0) || 1;
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([n, x]) => `${escapeHtml(n)} ${percent(x / total)}`).join(", ") || "—";
+  }
+
+  function adviceFor(e) {
+    const v = verdictOf(e);
+    const assessment = assessmentOf(e);
+    const parts = assessment.assessed ? [`<strong>Why it's a problem:</strong> ${escapeHtml(assessment.reason)}`] : [];
+    if (v === "refactor") {
+      parts.push(`Both kinds of complexity meet here: a dependency that drives the cost of change, in code that averages Code Health ${formatHealth(e.health)}. Refactor the coupled files first; moving complex code across a boundary only moves the complexity with it.`);
+    } else {
+      parts.push(`Check the architectural fit: if the design expects these components to change together, the coupling is fine. If not, the code is healthy enough to restore locality of change now: move the code to the component that drives the change, extract what both sides change for, or merge the two if they are one concept.`);
+    }
+    if (crossOwnerDominates(e)) parts.push(`${percent(e.crossOwnerShare)} of the co-changes cross from one person's code to another's, so this code belongs together logically but is maintained by different people, and each change needs coordination.`);
+    if (e.inactive.size) parts.push(`Main authors no longer active: ${[...e.inactive].map(escapeHtml).join(", ")}.`);
+    return parts.join(" ");
+  }
+
+  function dependencyCard(e, i) {
+    const v = verdictOf(e);
+    const badges = [`<span class="badge problem">Problematic</span>`, `<span class="badge ${v}">${verdictText[v]}</span>`];
+    if (crossOwnerDominates(e)) badges.push(`<span class="xdev" title="${percent(e.crossOwnerShare)} of the co-changes cross from one person's code to another's">⇄ Cross-developer dependency <span class="share">${percent(e.crossOwnerShare)}</span></span>`);
+    if (e.inactive.size) badges.push('<span class="badge gap">Knowledge gap</span>');
+    const pairRows = e.pairs.slice(0, 4).map((p) => `<tr>
+      <td><span class="file">${escapeHtml(fileName(p.a))}</span> ⇄ <span class="file">${escapeHtml(fileName(p.b))}</span></td>
+      <td class="num">${p.degree}%</td>
+      <td class="num">${formatInt(p.shared)}</td>
+      <td class="num"><span style="color:${inkColour(p.fa.health)}">${formatHealth(p.fa.health)}</span> · <span style="color:${inkColour(p.fb.health)}">${formatHealth(p.fb.health)}</span></td>
+      <td>${p.fa.owner ? escapeHtml(p.fa.owner.name) : "—"}${ownerOf(p.fa) !== ownerOf(p.fb) ? ` ⇄ ${p.fb.owner ? escapeHtml(p.fb.owner.name) : "—"}` : ""}</td>
+    </tr>`).join("");
+    return `<div class="dep" id="dep-${i}">
+      <div class="dep-head"><span class="rank">${i + 1}</span>
+        <span class="title">${unitLabel(e.u)}<span class="arrow">⇄</span>${unitLabel(e.v)}</span>${badges.join(" ")}</div>
+      <div class="facts">
+        <div class="fact"><div class="label">Co-changes</div><div class="value">${formatInt(e.shared)}</div>
+          <div class="detail">${e.pairs.length} coupled file ${e.pairs.length === 1 ? "pair" : "pairs"}</div></div>
+        <div class="fact"><div class="label">Code Health of coupled files</div><div class="value" style="color:${inkColour(e.health)}">${formatHealth(e.health)}</div>
+          <div class="detail">weighted by co-changes</div></div>
+        <div class="fact"><div class="label">Who knows ${escapeHtml(e.u)}</div><div class="value" style="font-size:13px">${knowledgeOnSide(e, e.u)}</div></div>
+        <div class="fact"><div class="label">Who knows ${escapeHtml(e.v)}</div><div class="value" style="font-size:13px">${knowledgeOnSide(e, e.v)}</div></div>
+      </div>
+      <p class="advice">${adviceFor(e)}</p>
+      <div class="table-wrap"><table class="data">
+        <thead><tr><th>Strongest file pairs</th><th class="num">Coupling</th><th class="num">Co-changes</th><th class="num">Code Health</th><th>Main authors</th></tr></thead>
+        <tbody>${pairRows}</tbody></table></div>
+    </div>`;
+  }
+
+  function coordinationSection(result, noun) {
+    if (!result.pairs.length) {
+      return `<p class="empty">Every coupled change stays within one ${noun}'s code.</p>`;
+    }
+    const max = result.pairs[0].shared;
+    const rows = result.pairs.slice(0, 12).map((x) => `<tr>
+      <td><span class="file">${escapeHtml(x.a)}</span> ⇄ <span class="file">${escapeHtml(x.b)}</span></td>
+      <td class="num"><span class="bar" style="width:${Math.max(4, (x.shared / max) * 80)}px"></span>${formatInt(x.shared)}</td>
+      <td class="num">${x.pairs}</td>
+      <td>${[...x.units].map(unitLabel).join(", ")}</td>
+    </tr>`).join("");
+    return `<div class="table-wrap"><table class="data">
+      <thead><tr><th>${noun === "team" ? "Teams" : "People"} whose code changes together</th><th class="num">Co-changes</th><th class="num">File pairs</th><th>Where</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
+  }
+
+  // Change magnets: files whose changes keep pulling in files from several other components.
+  // Often the messenger of a God Class that has accumulated too many responsibilities.
+  const minMagnetReach = 3;
+  function changeMagnets() {
+    const byFile = new Map();
+    couplings.forEach((c) => {
+      [[c.a, c.b], [c.b, c.a]].forEach(([self, other]) => {
+        const fs = files.get(self);
+        const fo = files.get(other);
+        if (unitOf(fs) === unitOf(fo)) return;
+        if (!byFile.has(self)) byFile.set(self, { file: fs, units: new Map(), shared: 0, partners: 0 });
+        const m = byFile.get(self);
+        const shared = sharedOf(c);
+        m.units.set(unitOf(fo), (m.units.get(unitOf(fo)) || 0) + shared);
+        m.shared += shared;
+        m.partners += 1;
+      });
+    });
+    return [...byFile.values()].filter((m) => m.units.size >= minMagnetReach)
+      .sort((a, b) => b.shared - a.shared).slice(0, 8);
+  }
+
+  function magnetSection() {
+    const magnets = changeMagnets();
+    if (!magnets.length) return `<p class="empty">No file is coupled to ${minMagnetReach} or more other components.</p>`;
+    const rows = magnets.map((m) => `<tr>
+      <td><span class="file">${escapeHtml(fileName(m.file.path))}</span><div class="small tertiary">${escapeHtml(m.file.component)}</div></td>
+      <td class="num strong" style="color:${inkColour(m.file.health)}">${formatHealth(m.file.health)}</td>
+      <td class="num">${m.units.size}</td>
+      <td>${[...m.units.entries()].sort((a, b) => b[1] - a[1]).map(([u]) => unitLabel(u)).join(", ")}</td>
+      <td class="num">${formatInt(m.shared)}</td>
+      <td>${m.file.owner ? escapeHtml(m.file.owner.name) : "—"}</td>
+    </tr>`).join("");
+    return `<div class="table-wrap"><table class="data">
+      <thead><tr><th>File</th><th class="num">Code Health</th><th class="num">Components reached</th><th>Changes with</th><th class="num">Co-changes</th><th>Main author</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
+  }
+
+  function internalSection() {
+    const pairs = internal.flatMap((e) => e.pairs.map((p) => ({ ...p, unit: e.u }))).sort((a, b) => b.shared - a.shared).slice(0, 10);
+    if (!pairs.length) return '<p class="empty">No coupling within components.</p>';
+    const rows = pairs.map((p) => `<tr>
+      <td>${unitLabel(p.unit)}</td>
+      <td><span class="file">${escapeHtml(fileName(p.a))}</span> ⇄ <span class="file">${escapeHtml(fileName(p.b))}</span></td>
+      <td class="num">${p.degree}%</td>
+      <td class="num">${formatInt(p.shared)}</td>
+      <td class="num"><span style="color:${inkColour(p.fa.health)}">${formatHealth(p.fa.health)}</span> · <span style="color:${inkColour(p.fb.health)}">${formatHealth(p.fb.health)}</span></td>
+    </tr>`).join("");
+    return `<div class="table-wrap"><table class="data">
+      <thead><tr><th>Component</th><th>File pair</th><th class="num">Coupling</th><th class="num">Co-changes</th><th class="num">Code Health</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
+  }
+
+  // -------------------------------------------------------------------------
+  // Page
+  // -------------------------------------------------------------------------
+
+  document.title = `Change coupling · ${project.name}`;
+  const problematicCross = cross.filter(isProblematic);
+  const expectedCross = cross.filter((e) => !isProblematic(e));
+  const topCross = problematicCross.slice(0, maxDependencies);
+
+  function expectedSection() {
+    if (!expectedCross.length) return "";
+    const rows = expectedCross.map((e) => `<tr>
+      <td><span class="file">${escapeHtml(e.u)}</span> ⇄ <span class="file">${escapeHtml(e.v)}</span></td>
+      <td class="num">${formatInt(e.shared)}</td>
+      <td class="num strong" style="color:${inkColour(e.health)}">${formatHealth(e.health)}</td>
+      <td>${escapeHtml(assessmentOf(e).reason)}</td>
+    </tr>`).join("");
+    return `<h2 style="margin-top:12px">Expected coupling</h2>
+      <p class="small secondary">Dependencies that follow the architecture or that change together by design. Keep them in view, but they don't drive the cost of change.</p>
+      <div class="table-wrap"><table class="data">
+        <thead><tr><th>Components</th><th class="num">Co-changes</th><th class="num">Code Health</th><th>Why it's expected</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>`;
+  }
+  const notes = (report.notes || []).map((n) => `<p class="small secondary">${escapeHtml(n)}</p>`).join("");
+
+  root.innerHTML = `
+    <section class="hero">
+      <div class="eyebrow">CodeScene · Change coupling · ${escapeHtml(project.name)}</div>
+      <h1>Change coupling: the cost of change in ${escapeHtml(project.name)}</h1>
+      <div class="intro"><strong>The idea</strong>Complexity comes in two shapes: code that is hard to understand on its own, measured by
+        Code Health, and code that looks simple but behaves anything but, because of its dependencies. Static dependency graphs show every
+        dependency and miss the logical ones. Change coupling comes from how developers actually work: files that keep co-evolving in the same
+        commits. It separates the expected dependencies from the expensive ones, reveals logical dependencies no static analysis sees, and
+        shows where a change refuses to stay local.</div>
+    </section>
+
+    ${couplings.length === 0
+      ? `<section><p class="empty">No change coupling found in ${escapeHtml(project.name)}'s latest analysis.</p></section>`
+      : `<section>
+          <h2>Summary</h2>
+          ${summary()}
+        </section>
+
+        <section>
+          <h2>Where change doesn't stay local</h2>
+          <p class="small secondary">Each cell counts the co-changes between files in two components: how often a file in one changed in the
+            same commit as a file in the other. Off-diagonal cells are logical dependencies between components; the diagonal is coupling within
+            one. Hover a cell for the file pairs behind it, and click an off-diagonal cell to jump to its details.</p>
+          ${matrix()}
+        </section>
+
+        <section>
+          <h2>Dependencies to manage</h2>
+          <p class="small secondary">Each of these widens the blast radius of a change: a change in one component drags the other along.
+            Strongest first. Breaking them keeps changes local.</p>
+          ${topCross.length ? topCross.map(dependencyCard).join("") : '<p class="empty">No problematic coupling crosses a component boundary.</p>'}
+          ${problematicCross.length > topCross.length ? `<p class="small tertiary">${problematicCross.length - topCross.length} weaker problematic dependencies are in the matrix above.</p>` : ""}
+          ${expectedSection()}
+        </section>
+
+        <section>
+          <h2>Change magnets</h2>
+          <p class="small secondary">Files whose changes keep pulling in files from ${minMagnetReach} or more other components. When coupling
+            shows no pattern, it is often the messenger of a God Class: a file that has accumulated too many responsibilities, so every change
+            ends up there and it grows more complicated and fragile over time.</p>
+          ${magnetSection()}
+        </section>
+
+        <section>
+          <h2>Coordination: who depends on whom</h2>
+          <p class="small secondary">Pairs of developers whose code changes in the same commits: code that logically belongs together but is
+            maintained by different people. Each is a coordination need the organisation didn't plan; Conway's law at work. ${people.known ? `${percent(people.cross / people.known)} of the coupled work crosses from one person's code to another's.` : ""}</p>
+          ${coordinationSection(people, "person")}
+          ${teams ? `<h2 style="margin-top:12px">Between teams</h2>${coordinationSection(teams, "team")}` : ""}
+        </section>
+
+        <section>
+          <h2>Coupling within components</h2>
+          <p class="small secondary">The strongest file pairs inside one component. Expected to some degree; strong coupling between unhealthy
+            files is a refactoring candidate in its own right.</p>
+          ${internalSection()}
+        </section>`}
+
+    <section>
+      <h2>How to read this report</h2>
+      <p class="small secondary"><strong>Coupling</strong> is CodeScene's degree of change coupling: the share of the pair's commits that
+        changed both files. A pair's <strong>co-changes</strong> are the commits that changed both files, estimated as the degree times
+        the pair's average number of commits, and summed per pair of components. A commit that touches several coupled files counts once per
+        file pair, so co-changes measure how much coupled work there is, not how many commits. Only files that change often enough for CodeScene to measure coupling are included.</p>
+      <p class="small secondary"><strong>Code Health of coupled files</strong> is the average Code Health of the files in each pair, weighted by
+        co-changes: unhealthy (below ${unhealthyThreshold.toFixed(1)}), problematic (below ${healthyThreshold.toFixed(1)}) or healthy.</p>
+      <p class="small secondary"><strong>Coordination</strong> uses each file's knowledge distribution: the share of its code written by each
+        contributor. For a coupled pair, the part of the co-changes that crosses between people is 1 − Σ share<sub>a</sub>(p) × share<sub>b</sub>(p):
+        0 when one person wrote both files, close to 1 when different people did. Summed per pair of people, it shows who depends on whom.</p>
+      <p class="small secondary"><strong>Units</strong> are CodeScene's architectural components.</p>
+      ${leftOut.length ? `<p class="small secondary"><strong>Left out:</strong> ${formatInt(leftOut.length)} coupled file ${leftOut.length === 1 ? "pair" : "pairs"}
+        (${formatInt(leftOut.reduce((s, c) => s + sharedOf(c), 0))} co-changes) with a file outside any architectural component.
+        Define components for that code in CodeScene to include it.</p>` : ""}
+      ${testPairs.length ? `<p class="small secondary"><strong>Expected coupling:</strong> ${formatInt(testPairs.length)} coupled file
+        ${testPairs.length === 1 ? "pair" : "pairs"} between code and its tests ${testPairs.length === 1 ? "is" : "are"} left out. Tests that co-evolve with
+        the code are healthy coupling; their absence would be the concern.</p>` : ""}
+      ${expectedFilePairs.length ? `<p class="small secondary"><strong>Expected bookkeeping:</strong> ${formatInt(expectedFilePairs.length)} coupled file
+        ${expectedFilePairs.length === 1 ? "pair" : "pairs"} with ${[...new Set(expectedFilePairs.flatMap((c) => [c.a, c.b]).filter((p) => expectedFiles.has(p)))]
+          .map((p) => `${escapeHtml(fileName(p))} (${escapeHtml(expectedFiles.get(p))})`).join(", ")} ${expectedFilePairs.length === 1 ? "is" : "are"} left out.</p>` : ""}
+      ${notes}
+      <p class="small tertiary">Source: ${escapeHtml(project.source)}${report.analysisDate ? `, analysis of ${escapeHtml(report.analysisDate)}` : ""}.</p>
+    </section>`;
+
+  // Matrix interaction
+  const crossIndex = new Map(topCross.map((e, i) => [edgeKey(e.u, e.v), i]));
+  root.querySelectorAll("td[data-edge]").forEach((cell) => {
+    const e = edgeList[Number(cell.dataset.edge)];
+    const key = edgeKey(e.u, e.v);
+    cell.addEventListener("mousemove", (event) => showTooltip(edgeTooltip(e), event));
+    cell.addEventListener("mouseleave", hideTooltip);
+    cell.addEventListener("click", () => {
+      if (!crossIndex.has(key)) return;
+      const card = document.getElementById(`dep-${crossIndex.get(key)}`);
+      card.scrollIntoView({ behavior: "smooth", block: "center" });
+      card.classList.add("flash");
+      setTimeout(() => card.classList.remove("flash"), 1500);
+    });
+  });
+})();
+</script>
+</body>
+</html>

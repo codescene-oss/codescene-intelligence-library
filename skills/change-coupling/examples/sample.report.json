@@ -1,0 +1,590 @@
+{
+  "project": {
+    "name": "{{project-name}}",
+    "source": "CodeScene analysis, project {{project-id}}"
+  },
+  "analysisDate": "2026-01-15",
+  "notes": [
+    "Coupling covers the 500 most frequently changed files."
+  ],
+  "files": [
+    {
+      "path": "app/src/orders/OrderService.java",
+      "component": "orders",
+      "health": 2.1,
+      "changes": 61,
+      "linesOfCode": 817,
+      "owner": {
+        "name": "Developer A",
+        "ownership": 0.7,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer A",
+          "ownership": 0.7,
+          "isActive": true
+        },
+        {
+          "name": "Developer B",
+          "ownership": 0.3,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/orders/OrderRepository.java",
+      "component": "orders",
+      "health": 3.4,
+      "changes": 70,
+      "linesOfCode": 2866,
+      "owner": {
+        "name": "Developer A",
+        "ownership": 0.7,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer A",
+          "ownership": 0.7,
+          "isActive": true
+        },
+        {
+          "name": "Developer B",
+          "ownership": 0.3,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/orders/OrderValidator.java",
+      "component": "orders",
+      "health": 5.8,
+      "changes": 26,
+      "linesOfCode": 496,
+      "owner": {
+        "name": "Developer A",
+        "ownership": 0.7,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer A",
+          "ownership": 0.7,
+          "isActive": true
+        },
+        {
+          "name": "Developer B",
+          "ownership": 0.3,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/orders/PricingRules.java",
+      "component": "orders",
+      "health": 2.9,
+      "changes": 125,
+      "linesOfCode": 2394,
+      "owner": {
+        "name": "Developer A",
+        "ownership": 0.7,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer A",
+          "ownership": 0.7,
+          "isActive": true
+        },
+        {
+          "name": "Developer B",
+          "ownership": 0.3,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/payments/PaymentGateway.java",
+      "component": "payments",
+      "health": 6.2,
+      "changes": 32,
+      "linesOfCode": 1697,
+      "owner": {
+        "name": "Developer C",
+        "ownership": 0.8,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer C",
+          "ownership": 0.8,
+          "isActive": true
+        },
+        {
+          "name": "Developer A",
+          "ownership": 0.2,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/payments/RefundHandler.java",
+      "component": "payments",
+      "health": 4.4,
+      "changes": 94,
+      "linesOfCode": 437,
+      "owner": {
+        "name": "Developer C",
+        "ownership": 0.8,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer C",
+          "ownership": 0.8,
+          "isActive": true
+        },
+        {
+          "name": "Developer A",
+          "ownership": 0.2,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/payments/InvoiceBuilder.java",
+      "component": "payments",
+      "health": 7.9,
+      "changes": 136,
+      "linesOfCode": 2278,
+      "owner": {
+        "name": "Developer C",
+        "ownership": 0.8,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer C",
+          "ownership": 0.8,
+          "isActive": true
+        },
+        {
+          "name": "Developer A",
+          "ownership": 0.2,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/web/checkout/CheckoutPage.java",
+      "component": "web/checkout",
+      "health": 3.1,
+      "changes": 47,
+      "linesOfCode": 353,
+      "owner": {
+        "name": "Developer D",
+        "ownership": 0.65,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer D",
+          "ownership": 0.65,
+          "isActive": true
+        },
+        {
+          "name": "Developer B",
+          "ownership": 0.35,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/web/checkout/CartView.java",
+      "component": "web/checkout",
+      "health": 4.9,
+      "changes": 31,
+      "linesOfCode": 1976,
+      "owner": {
+        "name": "Developer D",
+        "ownership": 0.65,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer D",
+          "ownership": 0.65,
+          "isActive": true
+        },
+        {
+          "name": "Developer B",
+          "ownership": 0.35,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/web/checkout/AddressForm.java",
+      "component": "web/checkout",
+      "health": 8.8,
+      "changes": 73,
+      "linesOfCode": 486,
+      "owner": {
+        "name": "Developer D",
+        "ownership": 0.65,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer D",
+          "ownership": 0.65,
+          "isActive": true
+        },
+        {
+          "name": "Developer B",
+          "ownership": 0.35,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/shared/model/Order.java",
+      "component": "shared/model",
+      "health": 9.6,
+      "changes": 50,
+      "linesOfCode": 571,
+      "owner": {
+        "name": "Developer A",
+        "ownership": 0.5,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer A",
+          "ownership": 0.5,
+          "isActive": true
+        },
+        {
+          "name": "Developer C",
+          "ownership": 0.5,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/shared/model/Customer.java",
+      "component": "shared/model",
+      "health": 9.8,
+      "changes": 90,
+      "linesOfCode": 1938,
+      "owner": {
+        "name": "Developer A",
+        "ownership": 0.5,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer A",
+          "ownership": 0.5,
+          "isActive": true
+        },
+        {
+          "name": "Developer C",
+          "ownership": 0.5,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/shared/model/Money.java",
+      "component": "shared/model",
+      "health": 10.0,
+      "changes": 27,
+      "linesOfCode": 2516,
+      "owner": {
+        "name": "Developer A",
+        "ownership": 0.5,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer A",
+          "ownership": 0.5,
+          "isActive": true
+        },
+        {
+          "name": "Developer C",
+          "ownership": 0.5,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/notifications/EmailSender.java",
+      "component": "notifications",
+      "health": 9.1,
+      "changes": 35,
+      "linesOfCode": 1114,
+      "owner": {
+        "name": "Developer E",
+        "ownership": 1.0,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer E",
+          "ownership": 1.0,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/notifications/TemplateRenderer.java",
+      "component": "notifications",
+      "health": 8.4,
+      "changes": 100,
+      "linesOfCode": 2769,
+      "owner": {
+        "name": "Developer E",
+        "ownership": 1.0,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer E",
+          "ownership": 1.0,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/reporting/SalesReport.java",
+      "component": "reporting",
+      "health": 6.7,
+      "changes": 94,
+      "linesOfCode": 453,
+      "owner": {
+        "name": "Developer F",
+        "ownership": 0.9,
+        "isActive": false
+      },
+      "contributors": [
+        {
+          "name": "Developer F",
+          "ownership": 0.9,
+          "isActive": false
+        },
+        {
+          "name": "Developer A",
+          "ownership": 0.1,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/src/reporting/ExportJob.java",
+      "component": "reporting",
+      "health": 9.3,
+      "changes": 93,
+      "linesOfCode": 2598,
+      "owner": {
+        "name": "Developer F",
+        "ownership": 0.9,
+        "isActive": false
+      },
+      "contributors": [
+        {
+          "name": "Developer F",
+          "ownership": 0.9,
+          "isActive": false
+        },
+        {
+          "name": "Developer A",
+          "ownership": 0.1,
+          "isActive": true
+        }
+      ],
+      "team": null
+    },
+    {
+      "path": "app/scripts/build-release.sh",
+      "component": null,
+      "health": 7.0,
+      "changes": 60,
+      "linesOfCode": 120,
+      "owner": {
+        "name": "Developer B",
+        "ownership": 1.0,
+        "isActive": true
+      },
+      "contributors": [
+        {
+          "name": "Developer B",
+          "ownership": 1.0,
+          "isActive": true
+        }
+      ],
+      "team": null
+    }
+  ],
+  "couplings": [
+    {
+      "a": "app/src/orders/OrderService.java",
+      "b": "app/src/payments/PaymentGateway.java",
+      "degree": 68,
+      "averageRevisions": 90
+    },
+    {
+      "a": "app/src/orders/OrderService.java",
+      "b": "app/src/web/checkout/CheckoutPage.java",
+      "degree": 61,
+      "averageRevisions": 110
+    },
+    {
+      "a": "app/src/orders/PricingRules.java",
+      "b": "app/src/web/checkout/CartView.java",
+      "degree": 55,
+      "averageRevisions": 70
+    },
+    {
+      "a": "app/src/orders/OrderRepository.java",
+      "b": "app/src/orders/OrderService.java",
+      "degree": 72,
+      "averageRevisions": 100
+    },
+    {
+      "a": "app/src/payments/PaymentGateway.java",
+      "b": "app/src/payments/RefundHandler.java",
+      "degree": 48,
+      "averageRevisions": 60
+    },
+    {
+      "a": "app/src/orders/OrderRepository.java",
+      "b": "app/src/shared/model/Order.java",
+      "degree": 44,
+      "averageRevisions": 80
+    },
+    {
+      "a": "app/src/payments/InvoiceBuilder.java",
+      "b": "app/src/shared/model/Money.java",
+      "degree": 40,
+      "averageRevisions": 50
+    },
+    {
+      "a": "app/src/web/checkout/CartView.java",
+      "b": "app/src/web/checkout/CheckoutPage.java",
+      "degree": 66,
+      "averageRevisions": 95
+    },
+    {
+      "a": "app/src/notifications/EmailSender.java",
+      "b": "app/src/orders/OrderService.java",
+      "degree": 35,
+      "averageRevisions": 85
+    },
+    {
+      "a": "app/src/orders/OrderRepository.java",
+      "b": "app/src/reporting/SalesReport.java",
+      "degree": 38,
+      "averageRevisions": 45
+    },
+    {
+      "a": "app/src/payments/InvoiceBuilder.java",
+      "b": "app/src/reporting/ExportJob.java",
+      "degree": 33,
+      "averageRevisions": 40
+    },
+    {
+      "a": "app/src/orders/PricingRules.java",
+      "b": "app/src/payments/PaymentGateway.java",
+      "degree": 42,
+      "averageRevisions": 65
+    },
+    {
+      "a": "app/src/shared/model/Customer.java",
+      "b": "app/src/web/checkout/AddressForm.java",
+      "degree": 37,
+      "averageRevisions": 40
+    },
+    {
+      "a": "app/src/orders/OrderValidator.java",
+      "b": "app/src/web/checkout/CheckoutPage.java",
+      "degree": 45,
+      "averageRevisions": 75
+    },
+    {
+      "a": "app/scripts/build-release.sh",
+      "b": "app/src/orders/OrderService.java",
+      "degree": 40,
+      "averageRevisions": 60
+    }
+  ],
+  "assessments": [
+    {
+      "units": [
+        "orders",
+        "web/checkout"
+      ],
+      "verdict": "problematic",
+      "reason": "Order processing and the checkout views change together, so business rules leak into the UI."
+    },
+    {
+      "units": [
+        "orders",
+        "payments"
+      ],
+      "verdict": "problematic",
+      "reason": "Pricing and order logic co-evolve with the payment gateway; the two should meet only through a narrow interface."
+    },
+    {
+      "units": [
+        "notifications",
+        "orders"
+      ],
+      "verdict": "problematic",
+      "reason": "Email sending changes with the order service; notifications should react to events instead."
+    },
+    {
+      "units": [
+        "orders",
+        "shared/model"
+      ],
+      "verdict": "expected",
+      "reason": "Order logic builds on the shared domain model."
+    },
+    {
+      "units": [
+        "payments",
+        "shared/model"
+      ],
+      "verdict": "expected",
+      "reason": "Invoices build on the shared Money type."
+    },
+    {
+      "units": [
+        "shared/model",
+        "web/checkout"
+      ],
+      "verdict": "expected",
+      "reason": "Forms bind to the shared domain model."
+    }
+  ],
+  "expectedFiles": []
+}

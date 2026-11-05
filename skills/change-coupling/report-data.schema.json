@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "codescene://skills/change-coupling/report-data.schema.json",
+  "title": "ReportData",
+  "type": "object",
+  "required": [
+    "project",
+    "files",
+    "couplings"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "project": {
+      "type": "object",
+      "required": [
+        "name",
+        "source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "analysisDate": {
+      "type": "string",
+      "description": "YYYY-MM-DD"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/file"
+      },
+      "description": "Every file that appears in a coupled pair."
+    },
+    "couplings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/coupling"
+      },
+      "description": "Each coupled pair of files once."
+    },
+    "expectedFiles": {
+      "type": "array",
+      "description": "Files whose coupling is expected bookkeeping, such as a version file every release touches. Pairs with them are left out.",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "assessments": {
+      "type": "array",
+      "description": "The judgement of whether the coupling between two components is problematic or expected, with the reason.",
+      "items": {
+        "type": "object",
+        "required": [
+          "units",
+          "verdict",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "units": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "verdict": {
+            "enum": [
+              "problematic",
+              "expected"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "person": {
+      "type": "object",
+      "required": [
+        "name",
+        "ownership",
+        "isActive"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "ownership": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "isActive": {
+          "type": "boolean"
+        }
+      }
+    },
+    "file": {
+      "type": "object",
+      "required": [
+        "path",
+        "component"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "component": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "health": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 10
+        },
+        "changes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "linesOfCode": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "owner": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/person"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contributors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/person"
+          }
+        },
+        "team": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "coupling": {
+      "type": "object",
+      "required": [
+        "a",
+        "b",
+        "degree",
+        "averageRevisions"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "a": {
+          "type": "string"
+        },
+        "b": {
+          "type": "string"
+        },
+        "degree": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "CodeScene's coupling degree: shared commits as a percentage of the pair's average commits."
+        },
+        "averageRevisions": {
+          "type": "number",
+          "minimum": 0,
+          "description": "The pair's average number of commits, from averageChangeFrequency."
+        }
+      }
+    }
+  }
+}
