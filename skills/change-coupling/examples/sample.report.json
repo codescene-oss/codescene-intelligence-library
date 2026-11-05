@@ -543,7 +543,8 @@
         "web/checkout"
       ],
       "verdict": "problematic",
-      "reason": "Order processing and the checkout views change together, so business rules leak into the UI."
+      "reason": "Order processing and the checkout views change together, so business rules leak into the UI.",
+      "hypothesis": "Order validation rules are implemented in the checkout views instead of the orders component."
     },
     {
       "units": [
@@ -551,7 +552,8 @@
         "payments"
       ],
       "verdict": "problematic",
-      "reason": "Pricing and order logic co-evolve with the payment gateway; the two should meet only through a narrow interface."
+      "reason": "Pricing and order logic co-evolve with the payment gateway; the two should meet only through a narrow interface.",
+      "hypothesis": "The order model exposes gateway-specific fields, so payment changes reach order logic."
     },
     {
       "units": [

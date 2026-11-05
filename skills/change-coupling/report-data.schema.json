@@ -101,6 +101,10 @@
           },
           "reason": {
             "type": "string"
+          },
+          "hypothesis": {
+            "type": "string",
+            "description": "What probably drives the coupling, from the file names and the architecture: a starting point the decoupling plan asks a coding agent to confirm or reject."
           }
         }
       }

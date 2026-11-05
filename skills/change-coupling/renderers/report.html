@@ -115,6 +115,20 @@
   .xdev .share { font-weight: 400; opacity: 0.85; }
   .badge.gap { background: #f6d99140; color: var(--problematic-ink); border: 1px solid var(--problematic-ink); }
   .advice { font-size: 13px; color: var(--text-2); }
+  .spec-btn { font: inherit; font-size: 12px; font-weight: 600; color: var(--primary); background: var(--brand-tint); border: 1px solid var(--primary);
+    border-radius: 4px; padding: 4px 10px; margin-left: auto; cursor: pointer; white-space: nowrap; }
+  .spec-btn:hover { background: var(--primary); color: #ffffff; }
+  dialog.spec { width: min(860px, calc(100vw - 32px)); max-height: calc(100vh - 48px); border: none; border-radius: 10px; padding: 0;
+    background: var(--bg); color: var(--text); box-shadow: 0 12px 40px rgba(15, 45, 87, 0.35); }
+  dialog.spec::backdrop { background: rgba(15, 45, 87, 0.45); }
+  .spec-head { display: flex; align-items: center; gap: 8px; padding: 14px 18px; border-bottom: 1px solid var(--stroke-2); }
+  .spec-head h2 { flex: 1; font-size: 15px; }
+  .spec-head button { font: inherit; font-size: 12px; font-weight: 600; border-radius: 4px; padding: 5px 12px; cursor: pointer;
+    border: 1px solid var(--primary); background: var(--bg); color: var(--primary); }
+  .spec-head button.primary-action { background: var(--primary); color: #ffffff; }
+  .spec-intro { padding: 10px 18px 0; font-size: 12px; color: var(--text-2); }
+  .spec pre { margin: 12px 18px 18px; padding: 14px 16px; background: var(--page); border-radius: 6px; overflow: auto; max-height: calc(100vh - 220px);
+    font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; color: var(--text); }
 
   table.data { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--stroke-2); border-radius: 6px; overflow: hidden; font-size: 12px; }
   table.data th { background: var(--brand-tint); color: var(--text-2); font-size: 11px; font-weight: 600; text-align: left; padding: 6px 10px; }
@@ -272,7 +286,7 @@
   const assessments = new Map((report.assessments || []).map((a) => [edgeKey(a.units[0], a.units[1]), a]));
   function assessmentOf(e) {
     const a = assessments.get(edgeKey(e.u, e.v));
-    if (a) return { problematic: a.verdict === "problematic", reason: a.reason, assessed: true };
+    if (a) return { problematic: a.verdict === "problematic", reason: a.reason, hypothesis: a.hypothesis || null, assessed: true };
     const problematic = e.health === null || e.health < healthyThreshold;
     return { problematic, assessed: false,
       reason: problematic ? `Not assessed; flagged because the coupled code is below Code Health ${healthyThreshold.toFixed(1)}.` : "Not assessed; the coupled code is healthy." };
@@ -431,14 +445,161 @@
     const v = verdictOf(e);
     const assessment = assessmentOf(e);
     const parts = assessment.assessed ? [`<strong>Why it's a problem:</strong> ${escapeHtml(assessment.reason)}`] : [];
-    if (v === "refactor") {
-      parts.push(`Both kinds of complexity meet here: a dependency that drives the cost of change, in code that averages Code Health ${formatHealth(e.health)}. Refactor the coupled files first; moving complex code across a boundary only moves the complexity with it.`);
-    } else {
-      parts.push(`Check the architectural fit: if the design expects these components to change together, the coupling is fine. If not, the code is healthy enough to restore locality of change now: move the code to the component that drives the change, extract what both sides change for, or merge the two if they are one concept.`);
-    }
-    if (crossOwnerDominates(e)) parts.push(`${percent(e.crossOwnerShare)} of the co-changes cross from one person's code to another's, so this code belongs together logically but is maintained by different people, and each change needs coordination.`);
+    parts.push(v === "refactor"
+      ? `The coupled code averages Code Health ${formatHealth(e.health)}: refactor it before pulling it apart.`
+      : "The coupled code is healthy enough to decouple now.");
+    if (crossOwnerDominates(e)) parts.push("Different people maintain the two sides, so every change needs coordination.");
     if (e.inactive.size) parts.push(`Main authors no longer active: ${[...e.inactive].map(escapeHtml).join(", ")}.`);
     return parts.join(" ");
+  }
+
+  // -------------------------------------------------------------------------
+  // Decoupling plan: a Markdown brief for a coding agent, built only from the report data
+  // -------------------------------------------------------------------------
+
+  const maxPlanPairs = 6;
+
+  // The people who know one side of a dependency, by their share of its coupled code.
+  function peopleOnSide(e, side) {
+    const counts = new Map();
+    e.pairs.forEach((p) => [p.fa, p.fb].forEach((f) => {
+      if (unitOf(f) === side) (knowledgeOf(f) || []).forEach((k) => counts.set(k.name, (counts.get(k.name) || 0) + p.shared * k.share));
+    }));
+    const total = [...counts.values()].reduce((s, x) => s + x, 0) || 1;
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]).filter(([, x]) => x / total >= 0.1).map(([n]) => n);
+  }
+
+  function buildPlan(e) {
+    const v = verdictOf(e);
+    const assessment = assessmentOf(e);
+    const pairs = e.pairs.slice(0, maxPlanPairs);
+    const files = [...new Map(pairs.flatMap((p) => [p.fa, p.fb]).map((f) => [f.path, f])).values()];
+    const unhealthy = files.filter((f) => typeof f.health === "number" && f.health < unhealthyThreshold);
+    const lines = [];
+    const push = (...xs) => lines.push(...xs);
+
+    push(`# Decoupling plan: ${e.u} ⇄ ${e.v}`, "",
+      `- Source: ${project.source}${report.analysisDate ? `, analysis of ${report.analysisDate}` : ""}. Change coupling comes from the commit history up to then.`,
+      "- File paths are as CodeScene reports them and may start with the repository's name; drop that part if the repository root has no such folder.", "");
+
+    push("## Goal", "",
+      `Reduce the blast radius of change between the components ${e.u} and ${e.v}: a change in one should stop dragging the other along.`,
+      `Files in the two components changed together about ${formatInt(e.shared)} times across ${e.pairs.length} coupled file ${e.pairs.length === 1 ? "pair" : "pairs"}.`);
+    if (assessment.assessed) push("", `Why it's a problem: ${assessment.reason}`);
+    if (assessment.hypothesis) push("", `Hypothesis, to confirm or reject: ${assessment.hypothesis}`);
+    push("");
+
+    push("## Evidence", "",
+      "The strongest coupled file pairs. Coupling is the share of commits that changed both files; co-changes estimate how many.", "",
+      "| Files | Coupling | Co-changes | Code Health | Main authors |",
+      "|---|---|---|---|---|",
+      ...pairs.map((p) => `| \`${p.a}\` ⇄ \`${p.b}\` | ${p.degree}% | ${formatInt(p.shared)} | ${formatHealth(p.fa.health)} · ${formatHealth(p.fb.health)} | ${ownerOf(p.fa) === ownerOf(p.fb) ? ownerOf(p.fa) || "unknown" : `${ownerOf(p.fa) || "unknown"} · ${ownerOf(p.fb) || "unknown"}`} |`));
+    if (e.pairs.length > pairs.length) push("", `${e.pairs.length - pairs.length} weaker pairs are left out.`);
+    push("");
+
+    push("## 1. Diagnose before changing code", "",
+      "CodeScene shows that these files change together, not why. Find out from the history:", "",
+      "1. For each pair above, list the commits that changed both files, for example:",
+      "   `comm -12 <(git log --format=%H -- <file a> | sort) <(git log --format=%H -- <file b> | sort)`",
+      "2. Read a sample of those diffs, the most recent first, and classify why the files change together:",
+      "   - **Shared contract:** a type, interface or protocol that both sides follow keeps changing.",
+      "   - **Duplication:** the same logic is edited in both places.",
+      "   - **Misplaced responsibility:** code in one component belongs to the other.",
+      "   - **Cross-cutting feature:** features naturally touch both components.",
+      "   - **Bookkeeping:** renames, formatting, version bumps or mass edits.",
+      "3. Write the diagnosis down: the cause per pair, with two or three example commits each. Stop and ask for review before changing code.", "");
+
+    push("## 2. Choose a strategy", "");
+    if (v === "refactor") {
+      push(`The coupled code is unhealthy (average Code Health ${formatHealth(e.health)}). Refactor first: moving complex code across a boundary only moves the complexity.`,
+        `${unhealthy.length ? `Start with ${unhealthy.map((f) => `\`${f.path}\` (${formatHealth(f.health)})`).join(", ")}: ` : ""}get CodeScene's guidance with \`list_prioritized_refactorings\` and \`review_analyzed_file\`, simplify the code the coupled changes go through, then decouple.`, "");
+    }
+    push(`${v === "refactor" ? "Then pick" : "Pick"} the strategy that fits the diagnosis:`, "",
+      "- **Shared contract:** make the contract explicit and stable, in the component that owns it, so changes behind it stay local.",
+      "- **Duplication:** extract the shared logic into one place that both sides use.",
+      "- **Misplaced responsibility:** move the code to the component that drives its changes.",
+      "- **Cross-cutting feature:** if the two components are really one concept, consider merging them; otherwise accept and document it.",
+      "- **Bookkeeping, or coupling the design expects:** don't change the code. Record it as expected coupling for the next report.", "");
+
+    const left = peopleOnSide(e, e.u);
+    const right = peopleOnSide(e, e.v);
+    push("## People", "",
+      `- Who knows ${e.u}: ${left.join(", ") || "unknown"}.`,
+      `- Who knows ${e.v}: ${right.join(", ") || "unknown"}.`);
+    if (crossOwnerDominates(e)) push(`- ${percent(e.crossOwnerShare)} of the co-changes cross from one person's code to another's. Ask the main authors of both sides to review the diagnosis and the change; they are the ones who coordinate today.`);
+    if (e.inactive.size) push(`- No longer active: ${[...e.inactive].join(", ")}. Their code has no one to ask; read its history and tests with extra care.`);
+    push("");
+
+    push("## Constraints", "",
+      "- Preserve behaviour. The tests must pass before and after every step; add tests for the coupled code first where it has none.",
+      "- One dependency per change, in small pull requests that can be reviewed and reverted on their own.",
+      "- Keep public APIs unchanged unless the diagnosis shows the contract itself is the problem, and then agree on the change first.", "");
+
+    push("## How to work", "",
+      `1. Get a fresh view from the CodeScene MCP server: \`explore_project_files\`${project.id ? ` in project ${project.id}` : ""} for the files above, to check that the coupling still holds. The analysis may have moved on.`,
+      "2. Diagnose (step 1) and wait for approval.",
+      "3. Propose the strategy and a step-by-step plan, and wait for approval.",
+      "4. After each step, run the tests and check the touched files with CodeScene's local Code Health tool (the IDE extension or CLI), which sees uncommitted changes.", "");
+
+    push("## Done when", "",
+      "- The diagnosis is written down and reviewed.",
+      "- The chosen change is merged, with all tests passing and no drop in Code Health for the touched files.",
+      "- Change coupling comes from history, so its drop shows only after some weeks of new commits. Check the pairs above in a later CodeScene analysis.");
+    return lines.join("\n") + "\n";
+  }
+
+  function specDialog() {
+    let dialog = document.getElementById("spec-dialog");
+    if (dialog) return dialog;
+    dialog = document.createElement("dialog");
+    dialog.id = "spec-dialog";
+    dialog.className = "spec";
+    dialog.innerHTML = `<div class="spec-head"><h2></h2>
+        <button class="primary-action" data-action="copy">Copy</button>
+        <button data-action="download">Download .md</button>
+        <button data-action="close" aria-label="Close">✕</button></div>
+      <p class="spec-intro">Give this plan to your coding agent. It asks the agent to refresh the data with the CodeScene MCP server,
+        find out from the history why the components change together, and wait for approval before changing code.</p>
+      <pre></pre>`;
+    document.body.appendChild(dialog);
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+      const action = event.target.dataset && event.target.dataset.action;
+      const text = dialog.querySelector("pre").textContent;
+      if (action === "close") dialog.close();
+      if (action === "copy") {
+        const done = () => { event.target.textContent = "Copied"; setTimeout(() => (event.target.textContent = "Copy"), 1500); };
+        const fallback = () => { selectSpec(dialog); event.target.textContent = "Selected: press Ctrl/⌘+C"; setTimeout(() => (event.target.textContent = "Copy"), 3000); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+        else fallback();
+      }
+      if (action === "download") {
+        const url = URL.createObjectURL(new Blob([text], { type: "text/markdown" }));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = dialog.dataset.filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    });
+    return dialog;
+  }
+
+  // Clipboard access can be blocked in some viewers; select the text so the user can copy it by hand.
+  function selectSpec(dialog) {
+    const range = document.createRange();
+    range.selectNodeContents(dialog.querySelector("pre"));
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
+  function openPlan(e) {
+    const dialog = specDialog();
+    dialog.querySelector("h2").textContent = `Decoupling plan: ${e.u} ⇄ ${e.v}`;
+    dialog.querySelector("pre").textContent = buildPlan(e);
+    dialog.dataset.filename = `decoupling-plan-${`${e.u}-${e.v}`.replace(/[^A-Za-z0-9._-]+/g, "-")}.md`;
+    dialog.showModal();
   }
 
   function dependencyCard(e, i) {
@@ -455,7 +616,8 @@
     </tr>`).join("");
     return `<div class="dep" id="dep-${i}">
       <div class="dep-head"><span class="rank">${i + 1}</span>
-        <span class="title">${unitLabel(e.u)}<span class="arrow">⇄</span>${unitLabel(e.v)}</span>${badges.join(" ")}</div>
+        <span class="title">${unitLabel(e.u)}<span class="arrow">⇄</span>${unitLabel(e.v)}</span>${badges.join(" ")}
+        <button class="spec-btn" data-plan="${i}">Decoupling plan</button></div>
       <div class="facts">
         <div class="fact"><div class="label">Co-changes</div><div class="value">${formatInt(e.shared)}</div>
           <div class="detail">${e.pairs.length} coupled file ${e.pairs.length === 1 ? "pair" : "pairs"}</div></div>
@@ -647,6 +809,11 @@
       ${notes}
       <p class="small tertiary">Source: ${escapeHtml(project.source)}${report.analysisDate ? `, analysis of ${escapeHtml(report.analysisDate)}` : ""}.</p>
     </section>`;
+
+  root.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-plan]");
+    if (button) openPlan(topCross[Number(button.dataset.plan)]);
+  });
 
   // Matrix interaction
   const crossIndex = new Map(topCross.map((e, i) => [edgeKey(e.u, e.v), i]));
