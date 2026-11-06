@@ -11,7 +11,7 @@ Everything here is generic: no project names, people or analysis numbers. Projec
 | [architectural-hotspots](skills/architectural-hotspots/SKILL.md) | Components in PAID quadrants by change activity and Code Health, with outcomes and team ROI for uplifting the ones to address first. [Details](#architectural-hotspots) |
 | [refactoring-targets](skills/refactoring-targets/SKILL.md) | CodeScene's uplift targets as a prioritized refactoring backlog for an engineering manager: why each file, where to start, who to involve, the risks to plan for and the estimated outcome, plus a refactoring spec per primary and secondary target to hand to a coding agent. [Details](#refactoring-targets) |
 | [key-person-risk](skills/key-person-risk/SKILL.md) | The project's truck factor and what leaves with each key person: CodeScene's off-boarding risks, the uplift targets that depend on one person, and the Code Health and coverage of that code. [Details](#key-person-risk) |
-| [change-coupling](skills/change-coupling/SKILL.md) | The cost of change for software architects: logical dependencies between components mined from change coupling, the coordination they force between people, and how hard each is to break given the Code Health of the coupled code. [Details](#change-coupling) |
+| [change-coupling](skills/change-coupling/SKILL.md) | The cost of change for software architects: logical dependencies between components mined from change coupling, the coordination they force between people, and how hard each is to break given the Code Health of the coupled code. [Details](#architecture-change-coupling) |
 | [portfolio-overview](skills/portfolio-overview/SKILL.md) | A one-page summary of every project you can access, for technical leaders and managers: what works well, where attention is needed, and how much of the code is AI-optimal, by hotspot Code Health. [Details](#portfolio-overview) |
 | [mcp-safeguard-insights](skills/mcp-safeguard-insights/SKILL.md) | How a project's developers use the local Code Health MCP: safeguard checks, degradations prevented before commit, uplifts, the trend over a year, the most active users and out-of-date installations. [Details](#mcp-safeguard-insights) |
 
@@ -104,11 +104,11 @@ The truck factor is the smallest number of people who could leave before a large
 - **People:** a sortable table of off-boarding risks, truck factor 1 files, and the Code Health and coverage of the code each person mainly knows.
 - **Components** led by one person or holding off-boarding risks, and **knowledge already lost** to former contributors.
 
-### Change coupling
+### Architecture: Change coupling
 
 Shows the cost of change: where a change refuses to stay local, and what it takes to fix that.
 
-![Change coupling report](docs/images/change-coupling.png)
+![Architecture: Change coupling report](docs/images/change-coupling.png)
 
 Complexity comes in two shapes: code that is hard to understand on its own, which Code Health measures, and code that looks simple but behaves anything but because of its dependencies. Static dependency graphs list every dependency and miss the logical ones. Change coupling comes from developer behaviour instead: files that keep co-evolving in the same commits. The report lifts CodeScene's file-level change coupling to the architecture. It contains:
 

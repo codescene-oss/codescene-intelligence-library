@@ -1,6 +1,6 @@
 {
   "project": {
-    "name": "{{project-name}}",
+    "name": "Example system",
     "source": "CodeScene analysis, project {{project-id}}"
   },
   "analysisDate": "2026-01-15",
