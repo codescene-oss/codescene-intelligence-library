@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio overview</title>
+<style>
+  /* CodeScene theme colours. The pastel fills match the app's Code Health bubbles; the -ink variants keep
+     numbers and labels readable on white, and fall back to the pastels on dark backgrounds. */
+  :root {
+    --unhealthy: #ef8290;
+    --problematic: #f6d991;
+    --healthy: #8ddec8;
+    --unhealthy-ink: #c8475a;
+    --problematic-ink: #9a7213;
+    --healthy-ink: #1f8569;
+    --primary: #2f7b7a;
+    --navy: #0f2d57;
+    --address-tint: #ef829026;
+    --plan-tint: #8ddec826;
+    --brand-tint: #2f7b7a14;
+    --page: #eef2f8;
+    --bg: #ffffff;
+    --text: #323a4e;
+    --text-2: #4f5866;
+    --text-3: #7d8694;
+    --stroke-2: #d5dbe3;
+    --stroke-3: #eceff4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --unhealthy-ink: #ef8290;
+      --problematic-ink: #f6d991;
+      --healthy-ink: #8ddec8;
+      --primary: #62d5de;
+      --page: #0a1424;
+      --bg: #12223a;
+      --text: #eceef1;
+      --text-2: #b4bac2;
+      --text-3: #848b95;
+      --stroke-2: #2e3d52;
+      --stroke-3: #1d2a3d;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; }
+  section { display: flex; flex-direction: column; gap: 8px; background: var(--bg); border-radius: 10px; padding: 20px 24px;
+    box-shadow: 0 1px 2px rgba(15, 45, 87, 0.06), 0 2px 8px rgba(15, 45, 87, 0.05); }
+  /* The header follows the app's navy-to-teal sidebar. */
+  section.hero { background: linear-gradient(120deg, #0f2d57 0%, #0b3a5e 55%, #075062 100%); color: #ffffff; gap: 12px; padding: 28px 24px; }
+  section.hero .eyebrow { color: #62d5de; }
+  section.hero .intro { background: rgba(255, 255, 255, 0.07); border-left-color: #62d5de; color: #dfe8f2; }
+  section.hero .intro strong { color: #62d5de; }
+  h1 { font-size: 24px; margin: 0; line-height: 1.25; }
+  h2 { font-size: 17px; margin: 0; }
+  p { margin: 0; }
+  .eyebrow { color: var(--primary); font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; }
+  .small { font-size: 12px; }
+  .secondary { color: var(--text-2); }
+  .tertiary { color: var(--text-3); }
+  .intro { background: var(--brand-tint); border-left: 3px solid var(--primary); border-radius: 4px; padding: 12px 16px; }
+  .intro strong { color: var(--primary); display: block; margin-bottom: 4px; }
+  .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+  .kpi { border: 1px solid var(--stroke-2); border-radius: 6px; padding: 12px 14px; }
+  .kpi .value { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--navy); }
+  .kpi .value .of { font-size: 14px; font-weight: 600; color: var(--text-3); }
+  .kpi .label { font-size: 12px; color: var(--text-2); }
+  .kpi .detail { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; font-size: 12px; color: var(--text-2); }
+  .legend span { display: inline-flex; gap: 6px; align-items: center; }
+  .chart { position: relative; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart svg text { font-family: inherit; }
+  .dot { cursor: pointer; }
+  .tooltip { position: absolute; pointer-events: none; background: var(--bg); border: 1px solid var(--stroke-2); border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); padding: 8px 12px; min-width: 250px; z-index: 1; font-size: 11px; line-height: 17px; display: none; }
+  .tooltip .name { font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+  .tooltip .sub { color: var(--text-3); margin-bottom: 6px; }
+  .tooltip .row { display: flex; justify-content: space-between; gap: 16px; }
+  .tooltip .row span:first-child { color: var(--text-2); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--stroke-2); border-radius: 6px; overflow: hidden; font-size: 12px; }
+  th { background: var(--brand-tint); color: var(--text-2); font-size: 11px; font-weight: 600; text-align: left; padding: 6px 10px; white-space: nowrap; }
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover { color: var(--primary); }
+  th .arrow { color: var(--primary); }
+  td { padding: 8px 10px; border-top: 1px solid var(--stroke-3); color: var(--text-2); vertical-align: top; }
+  td.name { color: var(--text); font-weight: 600; white-space: nowrap; }
+  td.file { color: var(--text); font-weight: 600; min-width: 160px; overflow-wrap: break-word; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .strong { font-weight: 600; }
+  .flag { color: var(--unhealthy-ink); font-weight: 600; }
+  .empty { text-align: center; padding: 16px; color: var(--healthy-ink); font-weight: 600; }
+  .error { border: 1px solid var(--unhealthy-ink); border-radius: 6px; padding: 12px 16px; color: var(--unhealthy-ink); }
+  @media (max-width: 720px) {
+    .kpis { grid-template-columns: minmax(0, 1fr); }
+    section, section.hero { padding: 16px; }
+  }
+  @media print {
+    main { max-width: none; padding: 0; }
+    section, .card { break-inside: avoid; box-shadow: none; }
+    body { background: #ffffff; }
+  }
+</style>
+<style>
+  :root { --optimal: #2f7b7a; --optimal-tint: #2f7b7a26; }
+  @media (prefers-color-scheme: dark) { :root { --optimal: #62d5de; --optimal-tint: #62d5de26; } }
+  .badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; border-radius: 10px;
+    padding: 1px 8px; white-space: nowrap; }
+  .badge.action { background: var(--unhealthy-ink); color: #ffffff; }
+  .badge.attention { background: #f6d99140; color: var(--problematic-ink); border: 1px solid var(--problematic-ink); }
+  .badge.healthy { background: var(--plan-tint); color: var(--healthy-ink); border: 1px solid var(--healthy-ink); }
+  .badge.optimal { background: var(--optimal); color: #ffffff; }
+  .badge.none { background: var(--stroke-3); color: var(--text-3); }
+  .flags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .flag-chip { font-size: 11px; border-radius: 4px; padding: 0 6px; white-space: nowrap; background: var(--stroke-3); color: var(--text-2); }
+  .flag-chip.warn { background: var(--address-tint); color: var(--unhealthy-ink); font-weight: 600; }
+  .flag-chip.good { background: var(--plan-tint); color: var(--healthy-ink); font-weight: 600; }
+  .kpi.optimal .value { color: var(--optimal); }
+  .kpi.attention .value { color: var(--problematic-ink); }
+  .kpi.action .value { color: var(--unhealthy-ink); }
+  .meter { height: 8px; border-radius: 4px; background: var(--stroke-3); overflow: hidden; margin-top: 6px; }
+  .meter span { display: block; height: 100%; background: var(--optimal); }
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .card { border: 1px solid var(--stroke-2); border-left: 4px solid var(--stroke-2); border-radius: 8px; padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 8px; }
+  .card.action { border-left-color: var(--unhealthy-ink); }
+  .card.attention { border-left-color: var(--problematic-ink); }
+  .card.watch { border-left-color: var(--primary); }
+  .card.optimal { border-left-color: var(--optimal); }
+  .card.healthy { border-left-color: var(--healthy-ink); }
+  .card h3 { margin: 0; font-size: 15px; color: var(--text); overflow-wrap: anywhere; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .card .score { font-size: 13px; color: var(--text-2); }
+  .card .score strong { font-size: 20px; font-variant-numeric: tabular-nums; }
+  .card .next { font-size: 12px; color: var(--text-2); background: var(--brand-tint); border-radius: 4px; padding: 6px 10px; }
+  .card .next strong { color: var(--primary); }
+  .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .fact .label { font-size: 11px; color: var(--text-3); }
+  .fact .value { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  h3.sub { margin: 8px 0 0; font-size: 14px; color: var(--navy); }
+  @media (prefers-color-scheme: dark) { h3.sub { color: var(--text); } }
+  .strengths { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+  .strengths li { color: var(--text-2); }
+  .strengths strong { color: var(--text); }
+  .lollipop text { font-size: 11px; fill: var(--text-2); }
+  .lollipop .pname { font-size: 12px; fill: var(--text); font-weight: 600; }
+  .lollipop .row:hover .pname { fill: var(--primary); }
+  @media (max-width: 720px) {
+    .cards, .kpis { grid-template-columns: minmax(0, 1fr); }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>
+</head>
+<body>
+<main id="report"></main>
+
+<!-- {{REPORT_DATA}}: replace the placeholder object with ReportData JSON that validates against report-data.schema.json.
+     Keep everything outside this block unchanged. -->
+<script type="application/json" id="report-data">
+{
+  "scope": { "name": "{{portfolio-name}}", "source": "{{source}}" },
+  "projects": []
+}
+</script>
+<!-- {{/REPORT_DATA}} -->
+
+<script>
+// ---------------------------------------------------------------------------
+// Generic layout below: no project-specific values.
+// ---------------------------------------------------------------------------
+(function () {
+  const root = document.getElementById("report");
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+  }
+
+  let report;
+  try {
+    report = JSON.parse(document.getElementById("report-data").textContent);
+  } catch (e) {
+    root.innerHTML = `<p class="error">The report data is not valid JSON: ${escapeHtml(e.message)}</p>`;
+    return;
+  }
+  const all = report.projects || [];
+  if (all.length === 0) {
+    root.innerHTML = `<p class="error">The report has no projects. Fill the {{REPORT_DATA}} block with data from CodeScene.</p>`;
+    return;
+  }
+
+  // Tiers by hotspot Code Health. 9.5 is where code becomes AI-optimal: a strength and a common goal.
+  const ACTION = 4.0, HEALTHY = 9.0, AI_OPTIMAL = 9.5;
+  const TREND = 0.1; // change over twelve months that counts as improving or declining
+  const TIERS = {
+    action: { label: "Call to action", rank: 0 },
+    attention: { label: "Needs attention", rank: 1 },
+    healthy: { label: "Healthy", rank: 2 },
+    optimal: { label: "AI-optimal", rank: 3 },
+  };
+
+  const fmt = (v, d = 1) => (v == null ? "–" : Number(v).toFixed(d));
+  const int = (v) => (v == null ? "–" : Number(v).toLocaleString("en-US"));
+  const pct = (v) => `${Math.round(v * 100)}%`;
+  const plural = (n, word) => `${int(n)} ${word}${n === 1 ? "" : "s"}`;
+
+  function tierOf(score) {
+    if (score == null) return null;
+    if (score < ACTION) return "action";
+    if (score < HEALTHY) return "attention";
+    if (score < AI_OPTIMAL) return "healthy";
+    return "optimal";
+  }
+  function inkOf(tier) {
+    return { action: "var(--unhealthy-ink)", attention: "var(--problematic-ink)", healthy: "var(--healthy-ink)", optimal: "var(--optimal)" }[tier]
+      || "var(--text-3)";
+  }
+
+  // Derive the score, tier and flags of each project.
+  const projects = all.filter((p) => p.available).map((p) => {
+    const noHotspots = p.hotspotHealth == null || p.hotspotHealth <= 0;
+    const score = noHotspots ? p.averageHealth : p.hotspotHealth;
+    const yearAgo = noHotspots ? p.averageHealthYearAgo : p.hotspotHealthYearAgo;
+    const change = score != null && yearAgo != null ? score - yearAgo : null;
+    const unhealthyHotspots = p.hotspots != null && p.healthyHotspots != null ? Math.max(0, p.hotspots - p.healthyHotspots) : null;
+    const dormant = p.staleness === "dormant" || p.commits12m === 0;
+    const flags = [];
+    if (change != null && change <= -TREND) flags.push({ id: "declining", text: `Declining ${fmt(change, 2)}`, kind: "warn" });
+    if (p.upliftTargets) flags.push({ id: "uplift", text: plural(p.upliftTargets, "uplift target"), kind: "warn" });
+    if (unhealthyHotspots) flags.push({ id: "unhealthy", text: `${plural(unhealthyHotspots, "hotspot")} below 9.0`, kind: "warn" });
+    if (p.offboardingRisks) flags.push({ id: "offboarding", text: plural(p.offboardingRisks, "off-boarding risk"), kind: "warn" });
+    if (p.alerts) flags.push({ id: "alerts", text: plural(p.alerts, "alert"), kind: "warn" });
+    if (change != null && change >= TREND) flags.push({ id: "improving", text: `Improving +${fmt(change, 2)}`, kind: "good" });
+    if (dormant) flags.push({ id: "dormant", text: "Dormant", kind: "" });
+    if (noHotspots) flags.push({ id: "nohotspots", text: "No active hotspots", kind: "" });
+    const warnings = flags.filter((f) => f.kind === "warn").length;
+    return { ...p, score, yearAgo, change, unhealthyHotspots, dormant, noHotspots, flags, warnings, tier: tierOf(score) };
+  });
+  const missing = all.filter((p) => !p.available);
+  const byTier = (t) => projects.filter((p) => p.tier === t);
+
+  // Within a tier: more warnings first, then the most active, then the lowest score.
+  const rank = (a, b) => (TIERS[a.tier].rank - TIERS[b.tier].rank) || (b.warnings - a.warnings)
+    || ((b.commits12m || 0) - (a.commits12m || 0)) || (a.score - b.score);
+
+  const attention = projects.filter((p) => p.tier === "action" || p.tier === "attention").sort(rank);
+  const watch = projects.filter((p) => (p.tier === "healthy" || p.tier === "optimal") && p.warnings > 0).sort(rank);
+  const strong = projects.filter((p) => p.tier === "healthy" || p.tier === "optimal")
+    .sort((a, b) => (TIERS[b.tier].rank - TIERS[a.tier].rank) || ((b.commits12m || 0) - (a.commits12m || 0)));
+
+  const totalLoc = projects.reduce((s, p) => s + (p.linesOfCode || 0), 0);
+  const optimalLoc = byTier("optimal").reduce((s, p) => s + (p.linesOfCode || 0), 0);
+  const optimalShare = totalLoc ? optimalLoc / totalLoc : 0;
+  const improving = projects.filter((p) => p.change != null && p.change >= TREND).length;
+  const declining = projects.filter((p) => p.change != null && p.change <= -TREND).length;
+
+  function badge(tier) {
+    return tier ? `<span class="badge ${tier}">${TIERS[tier].label}</span>` : `<span class="badge none">No data</span>`;
+  }
+  function flagChips(p, skip = []) {
+    const shown = p.flags.filter((f) => !skip.includes(f.id));
+    return shown.length ? `<div class="flags">${shown.map((f) => `<span class="flag-chip ${f.kind}">${escapeHtml(f.text)}</span>`).join("")}</div>` : "";
+  }
+
+  // The next step for a project, pointing at the library's deeper reports.
+  function nextSteps(p) {
+    const steps = [];
+    if (p.upliftTargets) steps.push(`Run the <strong>Refactoring targets</strong> report: CodeScene picked ${plural(p.upliftTargets, "uplift target")} where refactoring pays back first.`);
+    else if (p.unhealthyHotspots && !p.dormant) steps.push(`Run the <strong>Architectural hotspots</strong> report to see which components hold the ${plural(p.unhealthyHotspots, "unhealthy hotspot")}.`);
+    if (p.change != null && p.change <= -TREND) steps.push(`Hotspot Code Health fell ${fmt(-p.change, 2)} in a year. Stop the decline before it spreads: review the hotspots that changed most recently and gate pull requests on Code Health.`);
+    if (p.offboardingRisks) steps.push(`Run the <strong>Key person risk</strong> report: ${plural(p.offboardingRisks, "file")} would lose most of their knowledge if two people left.`);
+    if (p.dormant && (p.tier === "action" || p.tier === "attention")) steps.push(`Little or no development in the last year. Decide whether to invest before work resumes, or to retire it; the cost stays low while nobody changes it.`);
+    if (!steps.length && (p.tier === "action" || p.tier === "attention")) steps.push(`Run the <strong>Refactoring targets</strong> report for the files to improve first.`);
+    return steps;
+  }
+
+  function card(p, kind) {
+    const gap = p.score != null && p.score < AI_OPTIMAL ? `<span class="tertiary"> · ${fmt(AI_OPTIMAL - p.score, 2)} to AI-optimal</span>` : "";
+    const steps = nextSteps(p);
+    return `<div class="card ${kind}">
+      <h3>${escapeHtml(p.name)} ${badge(p.tier)}</h3>
+      <div class="score">${p.noHotspots ? "Average" : "Hotspot"} Code Health <strong style="color:${inkOf(p.tier)}">${fmt(p.score, 2)}</strong>${gap}</div>
+      ${flagChips(p)}
+      <div class="facts">
+        <div class="fact"><div class="label">A year ago</div><div class="value">${fmt(p.yearAgo, 2)}</div></div>
+        <div class="fact"><div class="label">Commits, 12 months</div><div class="value">${int(p.commits12m)}</div></div>
+        <div class="fact"><div class="label">Hotspots below 9.0</div><div class="value">${p.unhealthyHotspots == null ? "–" : `${int(p.unhealthyHotspots)} of ${int(p.hotspots)}`}</div></div>
+        <div class="fact"><div class="label">Lines of code</div><div class="value">${int(p.linesOfCode)}</div></div>
+      </div>
+      ${steps.map((s) => `<div class="next"><strong>Next step</strong>: ${s}</div>`).join("")}
+    </div>`;
+  }
+
+  function kpis() {
+    const k = (cls, value, label, detail) => `<div class="kpi ${cls}"><div class="value">${value}</div><div class="label">${label}</div>${detail ? `<div class="detail">${detail}</div>` : ""}</div>`;
+    const actionCount = byTier("action").length;
+    return `<div class="kpis">
+      ${k("", `${projects.length}<span class="of"> of ${int(report.projectCount ?? all.length)}</span>`, "Projects with Code Health data", missing.length ? `${plural(missing.length, "project")} without data` : "")}
+      ${k("optimal", byTier("optimal").length, "AI-optimal", `hotspot Code Health ${AI_OPTIMAL} or higher`)}
+      ${k("", byTier("healthy").length, "Healthy", `${HEALTHY} to below ${AI_OPTIMAL}`)}
+      ${k(actionCount ? "action" : "attention", attention.length, "Need attention", `below ${HEALTHY}; ${actionCount} below ${ACTION}, a call to action`)}
+      <div class="kpi optimal"><div class="value">${pct(optimalShare)}</div><div class="label">Code in AI-optimal projects</div>
+        <div class="meter"><span style="width:${(optimalShare * 100).toFixed(1)}%"></span></div>
+        <div class="detail">${int(optimalLoc)} of ${int(totalLoc)} lines</div></div>
+    </div>`;
+  }
+
+  function headline() {
+    const parts = [];
+    const opt = byTier("optimal").length;
+    parts.push(`<strong>${opt} of ${projects.length}</strong> projects have AI-optimal hotspots, holding <strong>${pct(optimalShare)}</strong> of the code.`);
+    if (attention.length) {
+      const act = byTier("action").length;
+      parts.push(`<strong>${attention.length}</strong> ${attention.length === 1 ? "needs" : "need"} attention${act ? `, <strong style="color:var(--unhealthy-ink)">${act} of them a call to action</strong>` : ""}.`);
+    } else parts.push(`No project has hotspots below ${HEALTHY}.`);
+    if (watch.length) parts.push(`<strong>${watch.length}</strong> healthy ${watch.length === 1 ? "project shows" : "projects show"} early warning signs.`);
+    parts.push(`Over twelve months, ${improving} improved and ${declining} declined.`);
+    return `<p style="font-size:15px">${parts.join(" ")}</p>`;
+  }
+
+  // One row per project: Code Health now (dot) and a year ago (ring), over the four tier bands.
+  function lollipop() {
+    const rows = [...projects].sort((a, b) => (a.score ?? 0) - (b.score ?? 0));
+    const W = 1000, left = 220, right = 70, rowH = 30, top = 28, H = top + rows.length * rowH + 14;
+    // Piecewise scale: most projects sit between 9 and 10, so that range gets half the width. The ticks mark every break.
+    const STOPS = [[1, 0], [ACTION, 0.2], [HEALTHY, 0.5], [AI_OPTIMAL, 0.75], [10, 1]];
+    const x = (v) => {
+      const c = Math.max(1, Math.min(10, v));
+      for (let i = 1; i < STOPS.length; i++) {
+        const [v0, f0] = STOPS[i - 1], [v1, f1] = STOPS[i];
+        if (c <= v1) return left + (f0 + ((c - v0) / (v1 - v0)) * (f1 - f0)) * (W - left - right);
+      }
+      return W - right;
+    };
+    const bands = [[1, ACTION, "var(--address-tint)", "Call to action"], [ACTION, HEALTHY, "#f6d99130", "Needs attention"],
+      [HEALTHY, AI_OPTIMAL, "var(--plan-tint)", "Healthy"], [AI_OPTIMAL, 10, "var(--optimal-tint)", "AI-optimal"]];
+    let svg = `<svg class="lollipop" viewBox="0 0 ${W} ${H}" role="img" aria-label="Hotspot Code Health by project">`;
+    for (const [a, b, fill, label] of bands) {
+      svg += `<rect x="${x(a)}" y="${top - 6}" width="${x(b) - x(a)}" height="${H - top}" fill="${fill}"/>`;
+      svg += `<text x="${(x(a) + x(b)) / 2}" y="14" text-anchor="middle">${label}</text>`;
+    }
+    for (const t of [1, ACTION, HEALTHY, AI_OPTIMAL, 10]) svg += `<text x="${x(t)}" y="${H}" text-anchor="middle">${t}</text>`;
+    rows.forEach((p, i) => {
+      const y = top + i * rowH + rowH / 2;
+      const ink = inkOf(p.tier);
+      svg += `<g class="row"><title>${escapeHtml(p.name)}: ${fmt(p.score, 2)}${p.yearAgo != null ? `, a year ago ${fmt(p.yearAgo, 2)}` : ""}</title>`;
+      svg += `<text class="pname" x="${left - 12}" y="${y + 4}" text-anchor="end">${escapeHtml(p.name.length > 30 ? p.name.slice(0, 29) + "…" : p.name)}</text>`;
+      svg += `<line x1="${x(1)}" x2="${x(10)}" y1="${y}" y2="${y}" stroke="var(--stroke-2)" stroke-width="1"/>`;
+      if (p.yearAgo != null && Math.abs(p.yearAgo - p.score) > 0.005) {
+        svg += `<line x1="${x(p.yearAgo)}" x2="${x(p.score)}" y1="${y}" y2="${y}" stroke="${ink}" stroke-width="2"/>`;
+        svg += `<circle cx="${x(p.yearAgo)}" cy="${y}" r="4.5" fill="var(--bg)" stroke="var(--text-3)" stroke-width="1.5"/>`;
+      }
+      svg += `<circle cx="${x(p.score)}" cy="${y}" r="6.5" fill="${ink}"/>`;
+      svg += `<text x="${W - right + 10}" y="${y + 4}" style="font-weight:700;fill:${ink}">${fmt(p.score, 2)}</text></g>`;
+    });
+    return svg + `</svg>`;
+  }
+
+  function attentionSection() {
+    let html = attention.length
+      ? `<div class="cards">${attention.map((p) => card(p, p.tier)).join("")}</div>`
+      : `<p class="empty">Every project has hotspot Code Health of ${HEALTHY} or higher.</p>`;
+    if (watch.length) {
+      html += `<h3 class="sub">Watch list: healthy today, with warning signs</h3>
+        <p class="small secondary">These projects are at ${HEALTHY} or higher, so they stay in their tier, but carry a decline, uplift targets, unhealthy
+        hotspots, off-boarding risks or alerts. Acting now is cheaper than recovering later.</p>
+        <div class="cards">${watch.map((p) => card(p, "watch")).join("")}</div>`;
+    }
+    return html;
+  }
+
+  function worksWell() {
+    if (!strong.length) return `<p class="secondary">No project reaches hotspot Code Health ${HEALTHY} yet.</p>`;
+    const items = strong.map((p) => {
+      const facts = [`${p.noHotspots ? "average" : "hotspot"} Code Health <strong style="color:${inkOf(p.tier)}">${fmt(p.score, 2)}</strong>`];
+      if (p.tier === "healthy") facts.push(`${fmt(AI_OPTIMAL - p.score, 2)} from AI-optimal`);
+      if (p.change != null && p.change >= TREND) facts.push(`improved ${fmt(p.change, 2)} in a year`);
+      if (p.commits12m) facts.push(`${plural(p.commits12m, "commit")} in 12 months`);
+      if (p.dormant) facts.push("dormant");
+      return `<li><strong>${escapeHtml(p.name)}</strong> ${badge(p.tier)} ${facts.join(" · ")}</li>`;
+    });
+    const busyOptimal = byTier("optimal").filter((p) => !p.dormant);
+    const lead = busyOptimal.length
+      ? `<p class="secondary">${plural(busyOptimal.length, "actively developed project")} ${busyOptimal.length === 1 ? "keeps" : "keep"} hotspots AI-optimal under active development: proof that the practices work. Share them with the teams below ${HEALTHY}.</p>`
+      : "";
+    return `${lead}<ul class="strengths">${items.join("")}</ul>`;
+  }
+
+  // Sortable table of every project.
+  const COLUMNS = [
+    { key: "name", label: "Project", get: (p) => p.name, cell: (p) => `<td class="name">${escapeHtml(p.name)}</td>` },
+    { key: "tier", label: "Tier", get: (p) => (p.tier ? TIERS[p.tier].rank : -1), cell: (p) => `<td>${badge(p.tier)}</td>` },
+    { key: "score", label: "Hotspot CH", num: true, get: (p) => p.score ?? -1, cell: (p) => `<td class="num strong" style="color:${inkOf(p.tier)}">${fmt(p.score, 2)}</td>` },
+    { key: "change", label: "12-month change", num: true, get: (p) => p.change ?? 0, cell: (p) => `<td class="num">${p.change == null ? "–" : (p.change >= 0 ? "+" : "") + fmt(p.change, 2)}</td>` },
+    { key: "avg", label: "Average CH", num: true, get: (p) => p.averageHealth ?? -1, cell: (p) => `<td class="num">${fmt(p.averageHealth, 2)}</td>` },
+    { key: "commits", label: "Commits, 12 mo", num: true, get: (p) => p.commits12m ?? -1, cell: (p) => `<td class="num">${int(p.commits12m)}</td>` },
+    { key: "loc", label: "Lines of code", num: true, get: (p) => p.linesOfCode ?? -1, cell: (p) => `<td class="num">${int(p.linesOfCode)}</td>` },
+    { key: "uplift", label: "Uplift targets", num: true, get: (p) => p.upliftTargets ?? -1, cell: (p) => `<td class="num">${int(p.upliftTargets)}</td>` },
+    { key: "flags", label: "Flags", get: (p) => p.warnings, cell: (p) => `<td>${flagChips(p, ["uplift"])}</td>` },
+  ];
+  let sortKey = "tier", sortDir = 1;
+  function table() {
+    const col = COLUMNS.find((c) => c.key === sortKey);
+    const rows = [...projects].sort((a, b) => {
+      const va = col.get(a), vb = col.get(b);
+      const c = typeof va === "string" ? va.localeCompare(vb) : va - vb;
+      return (c * sortDir) || rank(a, b);
+    });
+    return `<table><thead><tr>${COLUMNS.map((c) => `<th class="sortable${c.num ? " num" : ""}" data-key="${c.key}">${c.label}${c.key === sortKey ? ` <span class="arrow">${sortDir > 0 ? "▲" : "▼"}</span>` : ""}</th>`).join("")}</tr></thead>
+      <tbody>${rows.map((p) => `<tr>${COLUMNS.map((c) => c.cell(p)).join("")}</tr>`).join("")}</tbody></table>`;
+  }
+  function bindTable() {
+    const wrap = root.querySelector("#project-table");
+    wrap.addEventListener("click", (e) => {
+      const th = e.target.closest("th[data-key]");
+      if (!th) return;
+      const key = th.dataset.key;
+      if (key === sortKey) sortDir = -sortDir; else { sortKey = key; sortDir = key === "name" ? 1 : -1; }
+      wrap.innerHTML = table();
+    });
+  }
+
+  function coverage() {
+    const lines = [];
+    if (missing.length) {
+      lines.push(`<p class="small secondary">${plural(missing.length, "project")} had no Code Health data and ${missing.length === 1 ? "is" : "are"} left out of the tiers:</p>
+        <ul class="small secondary">${missing.map((p) => `<li><strong>${escapeHtml(p.name)}</strong>: ${escapeHtml(p.error || "no data")}</li>`).join("")}</ul>`);
+    } else lines.push(`<p class="small secondary">Every listed project had Code Health data.</p>`);
+    if (report.projectCount != null && report.projectCount > all.length)
+      lines.push(`<p class="small secondary">${int(report.projectCount - all.length)} more projects were left out by the maximum number of projects.</p>`);
+    const noHot = projects.filter((p) => p.noHotspots);
+    if (noHot.length) lines.push(`<p class="small secondary">${plural(noHot.length, "project")} had no active hotspots, so ${noHot.length === 1 ? "its" : "their"} average Code Health sets the tier: ${noHot.map((p) => escapeHtml(p.name)).join(", ")}.</p>`);
+    return lines.join("");
+  }
+
+  root.innerHTML = `
+    <section class="hero">
+      <div class="eyebrow">CodeScene · Portfolio overview · ${escapeHtml(report.scope.name)}</div>
+      <h1>What works well, and where your attention is needed</h1>
+      <div class="intro"><strong>The idea</strong>Hotspots are the code your teams change most, so their Code Health decides how fast and safely
+        you deliver. Each project is placed in a tier by its hotspot Code Health: below ${ACTION} is a call to action, below ${HEALTHY} needs attention,
+        and ${AI_OPTIMAL} or higher is AI-optimal, where AI assistants and people both work at their best.</div>
+    </section>
+
+    <section>
+      <h2>Summary</h2>
+      ${headline()}
+      ${kpis()}
+    </section>
+
+    <section>
+      <h2>Hotspot Code Health by project</h2>
+      <p class="small secondary">Filled dot: hotspot Code Health now. Ring: a year ago. The scale widens above 9, where most of the difference lies. Hover a row for the values.</p>
+      <div class="chart">${lollipop()}</div>
+    </section>
+
+    <section>
+      <h2>Where your attention is needed</h2>
+      <p class="small secondary">Projects with hotspot Code Health below ${HEALTHY}, calls to action first, then by warning signs and activity:
+        unhealthy code that changes often costs the most.</p>
+      ${attentionSection()}
+    </section>
+
+    <section>
+      <h2>What works well</h2>
+      ${worksWell()}
+    </section>
+
+    <section>
+      <h2>All projects</h2>
+      <p class="small secondary">CH is Code Health. Click a column to sort.</p>
+      <div class="table-wrap" id="project-table">${table()}</div>
+    </section>
+
+    <section>
+      <h2>Coverage</h2>
+      ${coverage()}
+    </section>
+
+    <section>
+      <h2>How to read this report</h2>
+      <p class="small secondary"><strong>Hotspot Code Health</strong>: the Code Health of the files with the most development activity, on CodeScene's
+        scale from 1 to 10. A project without active hotspots is placed by its average Code Health.</p>
+      <p class="small secondary"><strong>Tiers</strong>: <strong>Call to action</strong> below ${ACTION}; <strong>Needs attention</strong> ${ACTION} to below
+        ${HEALTHY}; <strong>Healthy</strong> ${HEALTHY} to below ${AI_OPTIMAL}; <strong>AI-optimal</strong> ${AI_OPTIMAL} and up.</p>
+      <p class="small secondary"><strong>Flags</strong> never change a tier; they rank projects within one. <em>Declining</em> and <em>Improving</em>: hotspot
+        Code Health moved ${TREND} or more over twelve months. <em>Uplift targets</em>: unhealthy files CodeScene recommends refactoring first.
+        <em>Off-boarding risks</em>: files that would lose most of their knowledge if two people left. <em>Dormant</em>: no development for months.</p>
+      ${(report.notes || []).map((n) => `<p class="small secondary"><strong>Note</strong>: ${escapeHtml(n)}</p>`).join("")}
+      <p class="small tertiary">Source: ${escapeHtml(report.scope.source)}${report.analysisDate ? `, ${escapeHtml(report.analysisDate)}` : ""}.</p>
+    </section>`;
+
+  bindTable();
+})();
+</script>
+</body>
+</html>

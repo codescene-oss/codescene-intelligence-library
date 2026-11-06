@@ -12,6 +12,7 @@ Everything here is generic: no project names, people or analysis numbers. Projec
 | [refactoring-targets](skills/refactoring-targets/SKILL.md) | CodeScene's uplift targets as a prioritized refactoring backlog for an engineering manager: why each file, where to start, who to involve, the risks to plan for and the estimated outcome, plus a refactoring spec per primary and secondary target to hand to a coding agent. [Details](#refactoring-targets) |
 | [key-person-risk](skills/key-person-risk/SKILL.md) | The project's truck factor and what leaves with each key person: CodeScene's off-boarding risks, the uplift targets that depend on one person, and the Code Health and coverage of that code. [Details](#key-person-risk) |
 | [change-coupling](skills/change-coupling/SKILL.md) | The cost of change for software architects: logical dependencies between components mined from change coupling, the coordination they force between people, and how hard each is to break given the Code Health of the coupled code. [Details](#change-coupling) |
+| [portfolio-overview](skills/portfolio-overview/SKILL.md) | A one-page summary of every project you can access, for technical leaders and managers: what works well, where attention is needed, and how much of the code is AI-optimal, by hotspot Code Health. [Details](#portfolio-overview) |
 
 ## Adding a skill
 
@@ -115,6 +116,31 @@ Complexity comes in two shapes: code that is hard to understand on its own, whic
 - **Coordination:** pairs of people whose code changes together, from each file's knowledge distribution. Code that logically belongs together but is maintained by different people; Conway's law, measured.
 
 Change coupling is neither good nor bad, so the report separates the expected from the expensive: tests that co-evolve with their code are left out, and files outside any architectural component are left out with a footnote saying how much.
+
+### Portfolio overview
+
+Answers two questions a technical leader asks across all projects: what works well, and where is my attention needed?
+
+![Portfolio overview report](docs/images/portfolio-overview.png)
+
+Hotspots are the code the teams change most, so their Code Health decides how fast and safely a project delivers. The report places every project in one tier by hotspot Code Health:
+
+| Tier | Hotspot Code Health |
+|---|---|
+| **Call to action** | below 4.0 |
+| **Needs attention** | 4.0 to below 9.0 |
+| **Healthy** | 9.0 to below 9.5 |
+| **AI-optimal** | 9.5 and up: where AI assistants and people both work at their best, and a common goal |
+
+It contains:
+
+- **A summary** with the projects per tier and the share of all code that sits in AI-optimal projects.
+- **A chart** of every project's hotspot Code Health, now and a year ago, over the four tier bands.
+- **Where your attention is needed:** a card per project below 9.0, calls to action first, with its flags and a next step that points to the deeper report: *Refactoring targets*, *Architectural hotspots* or *Key person risk*. A **watch list** adds healthy projects with warning signs.
+- **What works well:** the AI-optimal and healthy projects, and how far each healthy one is from 9.5.
+- **All projects** in a sortable table, and the projects without Code Health data.
+
+Flags never change a tier; they rank projects within one. They cover a twelve-month decline or improvement, uplift targets, unhealthy hotspots, off-boarding risks, Code Health alerts and dormant projects.
 
 ## License
 

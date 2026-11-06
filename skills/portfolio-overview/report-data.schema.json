@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "codescene://skills/portfolio-overview/report-data.schema.json",
+  "title": "ReportData",
+  "type": "object",
+  "required": [
+    "scope",
+    "projects"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "scope": {
+      "type": "object",
+      "required": [
+        "name",
+        "source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "What the portfolio is, for the title, for example the organization or the CodeScene instance."
+        },
+        "source": {
+          "type": "string",
+          "description": "Where the data came from, for the footer."
+        }
+      }
+    },
+    "analysisDate": {
+      "type": "string",
+      "description": "YYYY-MM-DD: the date the report was built."
+    },
+    "projectCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Projects that list_projects returned, including those left out by the maximum."
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "projects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Project"
+      }
+    }
+  },
+  "$defs": {
+    "nullableNumber": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "nullableCount": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "Project": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "available"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "available": {
+          "type": "boolean",
+          "description": "False when assess_project_code_health returned no data."
+        },
+        "error": {
+          "type": "string",
+          "description": "The error message when the project has no data."
+        },
+        "hotspotHealth": {
+          "$ref": "#/$defs/nullableNumber",
+          "description": "hotspotCodeHealth.value; null when its classification is null (no active hotspots)."
+        },
+        "averageHealth": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "hotspotHealthYearAgo": {
+          "$ref": "#/$defs/nullableNumber",
+          "description": "The last hotspot Code Health point on or before a year before the analysis; null without a year of history."
+        },
+        "averageHealthYearAgo": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "staleness": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "codeHealth.staleness.classification, for example fresh or dormant."
+        },
+        "codeAgeDays": {
+          "$ref": "#/$defs/nullableCount"
+        },
+        "linesOfCode": {
+          "$ref": "#/$defs/nullableCount"
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "linesOfCode"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "linesOfCode": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "files": {
+          "$ref": "#/$defs/nullableCount"
+        },
+        "hotspots": {
+          "$ref": "#/$defs/nullableCount"
+        },
+        "healthyHotspots": {
+          "$ref": "#/$defs/nullableCount"
+        },
+        "upliftTargets": {
+          "$ref": "#/$defs/nullableCount"
+        },
+        "offboardingRisks": {
+          "$ref": "#/$defs/nullableCount"
+        },
+        "commits12m": {
+          "$ref": "#/$defs/nullableCount",
+          "description": "Commits in the twelve months before the analysis."
+        },
+        "alerts": {
+          "$ref": "#/$defs/nullableCount",
+          "description": "Code Health alerts; null when list_code_health_alerts is unavailable."
+        }
+      }
+    }
+  }
+}
