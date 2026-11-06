@@ -11,6 +11,7 @@ Everything here is generic: no project names, people or analysis numbers. Projec
 | [architectural-hotspots](skills/architectural-hotspots/SKILL.md) | Components in PAID quadrants by change activity and Code Health, with outcomes and team ROI for uplifting the ones to address first. [Details](#architectural-hotspots) |
 | [refactoring-targets](skills/refactoring-targets/SKILL.md) | CodeScene's uplift targets as a prioritized refactoring backlog for an engineering manager: why each file, where to start, who to involve, the risks to plan for and the estimated outcome, plus a refactoring spec per primary and secondary target to hand to a coding agent. [Details](#refactoring-targets) |
 | [key-person-risk](skills/key-person-risk/SKILL.md) | The project's truck factor and what leaves with each key person: CodeScene's off-boarding risks, the uplift targets that depend on one person, and the Code Health and coverage of that code. [Details](#key-person-risk) |
+| [change-coupling](skills/change-coupling/SKILL.md) | The cost of change for software architects: logical dependencies between components mined from change coupling, the coordination they force between people, and how hard each is to break given the Code Health of the coupled code. [Details](#change-coupling) |
 
 ## Adding a skill
 
@@ -100,6 +101,20 @@ The truck factor is the smallest number of people who could leave before a large
 - **A card per off-boarding risk:** who holds the knowledge, how much would remain if they left, Code Health now and a year ago, coverage, and a concrete action, such as adding tests, then refactoring together with the next contributor.
 - **People:** a sortable table of off-boarding risks, truck factor 1 files, and the Code Health and coverage of the code each person mainly knows.
 - **Components** led by one person or holding off-boarding risks, and **knowledge already lost** to former contributors.
+
+### Change coupling
+
+Shows the cost of change: where a change refuses to stay local, and what it takes to fix that.
+
+![Change coupling report](docs/images/change-coupling.png)
+
+Complexity comes in two shapes: code that is hard to understand on its own, which Code Health measures, and code that looks simple but behaves anything but because of its dependencies. Static dependency graphs list every dependency and miss the logical ones. Change coupling comes from developer behaviour instead: files that keep co-evolving in the same commits. The report lifts CodeScene's file-level change coupling to the architecture. It contains:
+
+- **A component matrix** of co-changes. Problematic dependencies between components stand out in red; expected ones stay muted. The agent running the skill judges which is which from the architecture, and gives a reason for each.
+- **A card per problematic dependency** with its co-changes, the Code Health of the coupled files, who knows each side, a verdict and a decoupling plan to hand to a coding agent. The verdict is *Refactor first* where both kinds of complexity meet, *Decouple* where the code is healthy enough to restore locality of change.
+- **Coordination:** pairs of people whose code changes together, from each file's knowledge distribution. Code that logically belongs together but is maintained by different people; Conway's law, measured.
+
+Change coupling is neither good nor bad, so the report separates the expected from the expensive: tests that co-evolve with their code are left out, and files outside any architectural component are left out with a footnote saying how much.
 
 ## License
 
