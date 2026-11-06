@@ -45,6 +45,15 @@
       "renderers": [
         "html"
       ]
+    },
+    {
+      "id": "mcp-safeguard-insights",
+      "version": "1.0.0",
+      "path": "skills/mcp-safeguard-insights",
+      "summary": "How a project's developers use the local Code Health MCP: safeguard checks, degradations prevented, Code Health uplifts, the trend over a year, the most active users, which tools they rely on, and which installations are out of date.",
+      "renderers": [
+        "html"
+      ]
     }
   ]
 }

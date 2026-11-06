@@ -13,6 +13,7 @@ Everything here is generic: no project names, people or analysis numbers. Projec
 | [key-person-risk](skills/key-person-risk/SKILL.md) | The project's truck factor and what leaves with each key person: CodeScene's off-boarding risks, the uplift targets that depend on one person, and the Code Health and coverage of that code. [Details](#key-person-risk) |
 | [change-coupling](skills/change-coupling/SKILL.md) | The cost of change for software architects: logical dependencies between components mined from change coupling, the coordination they force between people, and how hard each is to break given the Code Health of the coupled code. [Details](#change-coupling) |
 | [portfolio-overview](skills/portfolio-overview/SKILL.md) | A one-page summary of every project you can access, for technical leaders and managers: what works well, where attention is needed, and how much of the code is AI-optimal, by hotspot Code Health. [Details](#portfolio-overview) |
+| [mcp-safeguard-insights](skills/mcp-safeguard-insights/SKILL.md) | How a project's developers use the local Code Health MCP: safeguard checks, degradations prevented before commit, uplifts, the trend over a year, the most active users and out-of-date installations. [Details](#mcp-safeguard-insights) |
 
 ## Adding a skill
 
@@ -141,6 +142,20 @@ It contains:
 - **All projects** in a sortable table, and the projects without Code Health data.
 
 Flags never change a tier; they rank projects within one. They cover a twelve-month decline or improvement, uplift targets, unhealthy hotspots, off-boarding risks, Code Health alerts and dormant projects.
+
+### MCP safeguard insights
+
+Shows what the local Code Health MCP does for a project: how often developers and their AI assistants check Code Health while they code, and what those checks catch.
+
+![MCP safeguard insights report](docs/images/mcp-safeguard-insights.png)
+
+The data is live product telemetry, so it reflects use as of the moment the report is built, not the latest analysis. The report contains:
+
+- **A summary** of the last week or month against the one before: active users, degradations prevented before commit and Code Health uplifts.
+- **The year at a glance:** active users and impact per period.
+- **The most active users**, by safeguard checks, with each person's previous period, who is new and who stopped. Names only: the report never shows email addresses.
+- **How much each developer uses it**, as a distribution, and **which MCP tools** the checks come from.
+- **Installations** per version, so outdated ones stand out, and **totals**: safeguard checks and all-time figures.
 
 ## License
 
