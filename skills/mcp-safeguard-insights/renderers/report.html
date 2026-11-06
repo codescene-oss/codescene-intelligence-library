@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCP safeguard insights</title>
+<style>
+  /* CodeScene theme colours. The pastel fills match the app's Code Health bubbles; the -ink variants keep
+     numbers and labels readable on white, and fall back to the pastels on dark backgrounds. */
+  :root {
+    --unhealthy: #ef8290;
+    --problematic: #f6d991;
+    --healthy: #8ddec8;
+    --unhealthy-ink: #c8475a;
+    --problematic-ink: #9a7213;
+    --healthy-ink: #1f8569;
+    --primary: #2f7b7a;
+    --navy: #0f2d57;
+    --address-tint: #ef829026;
+    --plan-tint: #8ddec826;
+    --brand-tint: #2f7b7a14;
+    --page: #eef2f8;
+    --bg: #ffffff;
+    --text: #323a4e;
+    --text-2: #4f5866;
+    --text-3: #7d8694;
+    --stroke-2: #d5dbe3;
+    --stroke-3: #eceff4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --unhealthy-ink: #ef8290;
+      --problematic-ink: #f6d991;
+      --healthy-ink: #8ddec8;
+      --primary: #62d5de;
+      --page: #0a1424;
+      --bg: #12223a;
+      --text: #eceef1;
+      --text-2: #b4bac2;
+      --text-3: #848b95;
+      --stroke-2: #2e3d52;
+      --stroke-3: #1d2a3d;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; }
+  section { display: flex; flex-direction: column; gap: 8px; background: var(--bg); border-radius: 10px; padding: 20px 24px;
+    box-shadow: 0 1px 2px rgba(15, 45, 87, 0.06), 0 2px 8px rgba(15, 45, 87, 0.05); }
+  /* The header follows the app's navy-to-teal sidebar. */
+  section.hero { background: linear-gradient(120deg, #0f2d57 0%, #0b3a5e 55%, #075062 100%); color: #ffffff; gap: 12px; padding: 28px 24px; }
+  section.hero .eyebrow { color: #62d5de; }
+  section.hero .intro { background: rgba(255, 255, 255, 0.07); border-left-color: #62d5de; color: #dfe8f2; }
+  section.hero .intro strong { color: #62d5de; }
+  h1 { font-size: 24px; margin: 0; line-height: 1.25; }
+  h2 { font-size: 17px; margin: 0; }
+  p { margin: 0; }
+  .eyebrow { color: var(--primary); font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; }
+  .small { font-size: 12px; }
+  .secondary { color: var(--text-2); }
+  .tertiary { color: var(--text-3); }
+  .intro { background: var(--brand-tint); border-left: 3px solid var(--primary); border-radius: 4px; padding: 12px 16px; }
+  .intro strong { color: var(--primary); display: block; margin-bottom: 4px; }
+  .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+  .kpi { border: 1px solid var(--stroke-2); border-radius: 6px; padding: 12px 14px; }
+  .kpi .value { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--navy); }
+  .kpi .value .of { font-size: 14px; font-weight: 600; color: var(--text-3); }
+  .kpi .label { font-size: 12px; color: var(--text-2); }
+  .kpi .detail { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; font-size: 12px; color: var(--text-2); }
+  .legend span { display: inline-flex; gap: 6px; align-items: center; }
+  .chart { position: relative; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart svg text { font-family: inherit; }
+  .dot { cursor: pointer; }
+  .tooltip { position: absolute; pointer-events: none; background: var(--bg); border: 1px solid var(--stroke-2); border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); padding: 8px 12px; min-width: 250px; z-index: 1; font-size: 11px; line-height: 17px; display: none; }
+  .tooltip .name { font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+  .tooltip .sub { color: var(--text-3); margin-bottom: 6px; }
+  .tooltip .row { display: flex; justify-content: space-between; gap: 16px; }
+  .tooltip .row span:first-child { color: var(--text-2); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--stroke-2); border-radius: 6px; overflow: hidden; font-size: 12px; }
+  th { background: var(--brand-tint); color: var(--text-2); font-size: 11px; font-weight: 600; text-align: left; padding: 6px 10px; white-space: nowrap; }
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover { color: var(--primary); }
+  th .arrow { color: var(--primary); }
+  td { padding: 8px 10px; border-top: 1px solid var(--stroke-3); color: var(--text-2); vertical-align: top; }
+  td.name { color: var(--text); font-weight: 600; white-space: nowrap; }
+  td.file { color: var(--text); font-weight: 600; min-width: 160px; overflow-wrap: break-word; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .strong { font-weight: 600; }
+  .flag { color: var(--unhealthy-ink); font-weight: 600; }
+  .empty { text-align: center; padding: 16px; color: var(--healthy-ink); font-weight: 600; }
+  .error { border: 1px solid var(--unhealthy-ink); border-radius: 6px; padding: 12px 16px; color: var(--unhealthy-ink); }
+  @media (max-width: 720px) {
+    .kpis { grid-template-columns: minmax(0, 1fr); }
+    section, section.hero { padding: 16px; }
+  }
+  @media print {
+    main { max-width: none; padding: 0; }
+    section { break-inside: avoid; box-shadow: none; }
+    body { background: #ffffff; }
+  }
+</style>
+<style>
+  .delta { font-size: 11px; font-weight: 600; margin-top: 2px; }
+  .delta.up { color: var(--healthy-ink); }
+  .delta.down { color: var(--unhealthy-ink); }
+  .delta.flat { color: var(--text-3); }
+  .headline { font-size: 15px; line-height: 1.55; }
+  .kpis.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .totals { display: flex; flex-wrap: wrap; gap: 8px 28px; font-size: 13px; color: var(--text-2); }
+  .totals strong { color: var(--text); font-variant-numeric: tabular-nums; }
+  .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .chart svg text { font-size: 11px; fill: var(--text-2); }
+  .chart svg .label { fill: var(--text); font-weight: 600; font-size: 12px; }
+  .chart svg .value { fill: var(--text); font-weight: 700; }
+  h3 { margin: 0; font-size: 14px; color: var(--text); }
+  .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+  .chip { font-size: 11px; border-radius: 4px; padding: 0 6px; white-space: nowrap; background: var(--stroke-3); color: var(--text-2); }
+  .chip.new { background: var(--plan-tint); color: var(--healthy-ink); font-weight: 600; }
+  .chip.gone { background: var(--address-tint); color: var(--unhealthy-ink); font-weight: 600; }
+  @media (max-width: 720px) { .two, .kpis { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<main id="report"></main>
+
+<!-- {{REPORT_DATA}}: replace the placeholder object with ReportData JSON that validates against report-data.schema.json.
+     Keep everything outside this block unchanged. -->
+<script type="application/json" id="report-data">
+{
+  "project": { "name": "{{project-name}}", "source": "{{source}}" },
+  "period": "monthly",
+  "selected": { "from": "", "to": "", "activeUsers": 0, "checks": 0, "uplifts": 0, "degradationsPrevented": 0 }
+}
+</script>
+<!-- {{/REPORT_DATA}} -->
+
+<script>
+// ---------------------------------------------------------------------------
+// Generic layout below: no project-specific values.
+// ---------------------------------------------------------------------------
+(function () {
+  const root = document.getElementById("report");
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+  }
+
+  let report;
+  try {
+    report = JSON.parse(document.getElementById("report-data").textContent);
+  } catch (e) {
+    // All-time figures and check volume: context, kept out of the headline.
+  function totalsSection() {
+    const items = [[`Safeguard checks, last ${unit}`, cur.checks, prev?.checks], ["Safeguard checks, all time", totals.checks],
+      ["Degradations prevented, all time", totals.degradationsPrevented], ["Uplifts, all time", totals.uplifts],
+      ["Users, all time", totals.users], ["Installations, all time", totals.installations]].filter(([, v]) => v != null);
+    return `<div class="totals">${items.map(([l, v, before]) => `<span>${l}: <strong>${int(v)}</strong>${before != null ? ` <span class="tertiary">(${int(before)} the ${unit} before)</span>` : ""}</span>`).join("")}</div>`;
+  }
+
+  root.innerHTML = `<p class="error">The report data is not valid JSON: ${escapeHtml(e.message)}</p>`;
+    return;
+  }
+  const cur = report.selected;
+  if (!cur || !cur.from) {
+    // All-time figures and check volume: context, kept out of the headline.
+  function totalsSection() {
+    const items = [[`Safeguard checks, last ${unit}`, cur.checks, prev?.checks], ["Safeguard checks, all time", totals.checks],
+      ["Degradations prevented, all time", totals.degradationsPrevented], ["Uplifts, all time", totals.uplifts],
+      ["Users, all time", totals.users], ["Installations, all time", totals.installations]].filter(([, v]) => v != null);
+    return `<div class="totals">${items.map(([l, v, before]) => `<span>${l}: <strong>${int(v)}</strong>${before != null ? ` <span class="tertiary">(${int(before)} the ${unit} before)</span>` : ""}</span>`).join("")}</div>`;
+  }
+
+  root.innerHTML = `<p class="error">The report has no data. Fill the {{REPORT_DATA}} block with data from CodeScene.</p>`;
+    return;
+  }
+  const prev = report.previous || null;
+  const unit = report.period === "weekly" ? "week" : "month";
+  const totals = report.totals || {};
+  const int = (v) => (v == null ? "–" : Number(v).toLocaleString("en-US"));
+  const plural = (n, word) => `${int(n)} ${word}${n === 1 ? "" : "s"}`;
+  const shortDate = (d) => new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+  const range = (p) => `${shortDate(p.from)} – ${shortDate(p.to)}`;
+
+  // Change against the previous period, as a multiple when it grew a lot.
+  function delta(now, before) {
+    if (before == null) return "";
+    if (before === 0 && now === 0) return `<div class="delta flat">no change</div>`;
+    if (before === 0) return `<div class="delta up">new this ${unit}</div>`;
+    const ratio = now / before;
+    if (ratio >= 2) return `<div class="delta up">×${ratio.toFixed(1)} on the previous ${unit}</div>`;
+    const pct = Math.round((ratio - 1) * 100);
+    if (pct === 0) return `<div class="delta flat">no change</div>`;
+    return `<div class="delta ${pct > 0 ? "up" : "down"}">${pct > 0 ? "+" : ""}${pct}% on the previous ${unit}</div>`;
+  }
+  function kpis() {
+    const k = (value, label, d, cls = "") => `<div class="kpi ${cls}"><div class="value">${value}</div><div class="label">${label}</div>${d}</div>`;
+    return `<div class="kpis three">
+      ${k(int(cur.activeUsers), "Active users", delta(cur.activeUsers, prev?.activeUsers) + (cur.newUsers ? `<div class="detail">${plural(cur.newUsers, "new user")}</div>` : ""))}
+      ${k(`<span style="color:var(--healthy-ink)">${int(cur.degradationsPrevented)}</span>`, "Degradations prevented", delta(cur.degradationsPrevented, prev?.degradationsPrevented))}
+      ${k(`<span style="color:var(--primary)">${int(cur.uplifts)}</span>`, "Code Health uplifts", delta(cur.uplifts, prev?.uplifts))}
+    </div>`;
+  }
+
+  function headline() {
+    if (!cur.checks) return `<p class="headline">No developer used the local Code Health MCP on this project in this ${unit}.</p>`;
+    const parts = [`In the last ${unit}, the local Code Health MCP stopped <strong>${int(cur.degradationsPrevented)}</strong> Code Health degradations before commit
+      and helped make <strong>${plural(cur.uplifts, "uplift")}</strong>, across <strong>${plural(cur.activeUsers, "active developer")}</strong>.`];
+    if (prev && prev.degradationsPrevented) parts.push(`Degradations prevented went from ${int(prev.degradationsPrevented)} to ${int(cur.degradationsPrevented)} on the previous ${unit}.`);
+    return `<p class="headline">${parts.join(" ")}</p>`;
+  }
+
+  // Bars per period over the year: active users above, impact below.
+  function trendChart() {
+    const t = report.trend || [];
+    if (!t.length) return `<p class="secondary small">No trend data.</p>`;
+    const W = 1000, left = 44, right = 12, n = t.length, slot = (W - left - right) / n;
+    const top1 = 16, h1 = 90, gap = 46, top2 = top1 + h1 + gap, h2 = 130, H = top2 + h2 + 34;
+    const maxU = Math.max(1, ...t.map((p) => p.activeUsers));
+    const maxI = Math.max(1, ...t.map((p) => Math.max(p.uplifts, p.degradationsPrevented)));
+    let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="MCP use over the year">`;
+    svg += `<text class="label" x="0" y="10">Active users</text>`;
+    svg += `<text class="label" x="0" y="${top2 - 10}">Impact</text>`;
+    svg += `<line x1="${left}" x2="${W - right}" y1="${top1 + h1}" y2="${top1 + h1}" stroke="var(--stroke-2)"/>`;
+    svg += `<line x1="${left}" x2="${W - right}" y1="${top2 + h2}" y2="${top2 + h2}" stroke="var(--stroke-2)"/>`;
+    t.forEach((p, i) => {
+      const x = left + i * slot, bw = slot * 0.6, cx = x + slot / 2;
+      const hu = (p.activeUsers / maxU) * h1;
+      svg += `<g><title>${range(p)}: ${plural(p.activeUsers, "active user")}, ${int(p.degradationsPrevented)} prevented, ${int(p.uplifts)} uplifts</title>`;
+      if (p.activeUsers) {
+        svg += `<rect x="${cx - bw / 2}" y="${top1 + h1 - hu}" width="${bw}" height="${hu}" rx="2" fill="var(--navy)"/>`;
+        svg += `<text class="value" x="${cx}" y="${top1 + h1 - hu - 4}" text-anchor="middle">${p.activeUsers}</text>`;
+      }
+      const half = bw / 2 - 1;
+      const hp = (p.degradationsPrevented / maxI) * h2, hu2 = (p.uplifts / maxI) * h2;
+      if (p.degradationsPrevented) {
+        svg += `<rect x="${cx - half - 1}" y="${top2 + h2 - hp}" width="${half}" height="${hp}" rx="2" fill="var(--healthy-ink)"/>`;
+        svg += `<text x="${cx - half / 2 - 1}" y="${top2 + h2 - hp - 4}" text-anchor="middle">${p.degradationsPrevented}</text>`;
+      }
+      if (p.uplifts) {
+        svg += `<rect x="${cx + 1}" y="${top2 + h2 - hu2}" width="${half}" height="${hu2}" rx="2" fill="var(--primary)" opacity="0.55"/>`;
+        svg += `<text x="${cx + half / 2 + 1}" y="${top2 + h2 - hu2 - 4}" text-anchor="middle">${p.uplifts}</text>`;
+      }
+      // Label each period by the month of its midpoint.
+      const mid = new Date((Date.parse(p.from + "T00:00:00Z") + Date.parse(p.to + "T00:00:00Z")) / 2);
+      svg += `<text x="${cx}" y="${top2 + h2 + 16}" text-anchor="middle">${unit === "month" ? mid.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }) : shortDate(p.from)}</text>`;
+      svg += `<rect x="${x}" y="0" width="${slot}" height="${H}" fill="transparent"/></g>`;
+    });
+    return svg + `</svg>`;
+  }
+
+  // Most active users: this period's bar, last period's tick.
+  function developers() {
+    const now = cur.developers || [];
+    const before = new Map((prev?.developers || []).map((d) => [d.name, d.checks]));
+    const gone = [...before.entries()].filter(([name]) => !now.some((d) => d.name === name));
+    const rows = [...now.map((d) => ({ name: d.name, checks: d.checks, prev: before.get(d.name) ?? null })),
+      ...gone.map(([name, checks]) => ({ name, checks: 0, prev: checks, gone: true }))];
+    if (!rows.length) return `<p class="secondary">The tool listed no developers for this ${unit}.</p>`;
+    const max = Math.max(...rows.map((r) => Math.max(r.checks, r.prev || 0)));
+    const W = 1000, left = 220, right = 220, rowH = 28, H = rows.length * rowH + 6;
+    const x = (v) => left + (v / max) * (W - left - right);
+    let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Safeguard checks per developer">`;
+    rows.forEach((r, i) => {
+      const y = i * rowH + 4, mid = y + 11;
+      const name = r.name.length > 28 ? r.name.slice(0, 27) + "…" : r.name;
+      svg += `<g><title>${escapeHtml(r.name)}: ${int(r.checks)} checks${r.prev != null ? `, previous ${unit} ${int(r.prev)}` : ""}</title>`;
+      svg += `<text class="label" x="${left - 12}" y="${mid + 4}" text-anchor="end">${escapeHtml(name)}</text>`;
+      if (r.checks) svg += `<rect x="${left}" y="${y + 2}" width="${Math.max(2, x(r.checks) - left)}" height="18" rx="3" fill="var(--navy)"/>`;
+      if (r.prev != null) svg += `<line x1="${x(r.prev)}" x2="${x(r.prev)}" y1="${y - 1}" y2="${y + 23}" stroke="var(--unhealthy-ink)" stroke-width="2.5"/>`;
+      let note;
+      if (r.gone) note = `<tspan style="fill:var(--unhealthy-ink);font-weight:600">not active this ${unit}</tspan> (${int(r.prev)} before)`;
+      else if (r.prev == null) note = `<tspan class="value">${int(r.checks)}</tspan> <tspan style="fill:var(--healthy-ink);font-weight:600">new</tspan>`;
+      else note = `<tspan class="value">${int(r.checks)}</tspan> (${int(r.prev)} before)`;
+      svg += `<text x="${Math.max(x(r.checks), r.prev != null ? x(r.prev) : 0) + 10}" y="${mid + 4}">${note}</text></g>`;
+    });
+    const listed = now.length;
+    const missing = cur.activeUsers - listed;
+    return `<div class="legend"><span><span class="swatch" style="background:var(--navy)"></span>Checks this ${unit}</span>
+        <span><span class="swatch" style="background:var(--unhealthy-ink);width:3px"></span>Previous ${unit}</span></div>
+      <div class="chart">${svg}</div>
+      ${missing > 0 ? `<p class="small tertiary">The tool lists ${listed} of the ${cur.activeUsers} active users; ${plural(missing, "user")} with fewer checks ${missing === 1 ? "is" : "are"} not named.</p>` : ""}`;
+  }
+
+  // Checks per developer, before and now, as bands.
+  function distribution() {
+    const bands = (cur.checksPerDeveloper?.distribution || []).map((b) => b.label);
+    if (!bands.length) return `<p class="secondary small">No distribution data.</p>`;
+    const get = (p, label) => (p?.checksPerDeveloper?.distribution || []).find((b) => b.label === label)?.developers ?? 0;
+    const series = [prev ? [`Previous ${unit}`, prev, "var(--stroke-2)"] : null, [`This ${unit}`, cur, "var(--navy)"]].filter(Boolean);
+    const max = Math.max(1, ...bands.flatMap((b) => series.map(([, p]) => get(p, b))));
+    const W = 480, left = 30, H = 190, base = 150, slot = (W - left) / bands.length, bw = (slot * 0.7) / series.length;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Checks per developer">`;
+    bands.forEach((b, i) => {
+      const x0 = left + i * slot + slot * 0.15;
+      series.forEach(([, p, fill], j) => {
+        const v = get(p, b), h = (v / max) * (base - 20);
+        svg += `<rect x="${x0 + j * bw}" y="${base - h}" width="${bw - 3}" height="${h}" rx="2" fill="${fill}"><title>${b} checks: ${plural(v, "developer")}</title></rect>`;
+        if (v) svg += `<text x="${x0 + j * bw + (bw - 3) / 2}" y="${base - h - 4}" text-anchor="middle">${v}</text>`;
+      });
+      svg += `<text x="${left + i * slot + slot / 2}" y="${base + 16}" text-anchor="middle">${escapeHtml(b)}</text>`;
+    });
+    svg += `<line x1="${left}" x2="${W}" y1="${base}" y2="${base}" stroke="var(--stroke-2)"/>`;
+    svg += `<text x="${(W + left) / 2}" y="${base + 34}" text-anchor="middle">checks per developer</text></svg>`;
+    const med = (p) => p?.checksPerDeveloper?.median;
+    return `<div class="legend">${series.map(([l, , f]) => `<span><span class="swatch" style="background:${f}"></span>${l}</span>`).join("")}</div>
+      <div class="chart">${svg}</div>
+      <p class="small secondary">Median: <strong>${int(med(cur))}</strong> checks per developer${prev ? `, up from ${int(med(prev))}` : ""}.</p>`;
+  }
+
+  // Horizontal bars, label left, value right.
+  function hbars(items, fill, aria, W = 480, left = 230) {
+    if (!items.length) return `<p class="secondary small">No data.</p>`;
+    const max = Math.max(1, ...items.map((d) => d.value));
+    const right = 50, rowH = 24, H = items.length * rowH + 4;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}">`;
+    items.forEach((d, i) => {
+      const y = i * rowH + 2, w = (d.value / max) * (W - left - right);
+      svg += `<text x="${left - 8}" y="${y + 14}" text-anchor="end" ${d.strong ? 'class="label"' : ""}>${escapeHtml(d.label)}</text>`;
+      if (d.value) svg += `<rect x="${left}" y="${y + 3}" width="${Math.max(2, w)}" height="15" rx="2" fill="${d.fill || fill}"/>`;
+      svg += `<text class="value" x="${left + w + 6}" y="${y + 14}">${int(d.value)}</text>`;
+    });
+    return `<div class="chart">${svg}</div>`;
+  }
+
+  function tools() {
+    const total = (cur.tools || []).reduce((s, t) => s + t.count, 0);
+    return hbars((cur.tools || []).map((t) => ({ label: t.tool, value: t.count })), "var(--primary)", "Calls per MCP tool")
+      + (total ? `<p class="small secondary">The pre-commit safeguard is the automatic check before a commit; the others are run on demand.</p>` : "");
+  }
+
+  function versions() {
+    const cmp = (a, b) => { const pa = a.split(".").map(Number), pb = b.split(".").map(Number);
+      for (let i = 0; i < Math.max(pa.length, pb.length); i++) { const d = (pb[i] || 0) - (pa[i] || 0); if (d) return d; } return 0; };
+    const active = (report.versions || []).filter((v) => v.activeInstalls > 0).sort((a, b) => cmp(a.version, b.version));
+    if (!active.length) return `<p class="secondary small">No active installations.</p>`;
+    const newest = active[0].version;
+    const bars = hbars(active.map((v) => ({ label: v.version === newest ? `${v.version} (newest)` : v.version, value: v.activeInstalls,
+      fill: v.version === newest ? "var(--healthy-ink)" : "var(--problematic)", strong: v.version === newest })), "", "Active installations per version", 1000, 200);
+    const old = active.length - 1;
+    return bars + `<p class="small secondary">${int(totals.activeInstallations)} active installations ran ${plural(active.length, "version")} during the ${unit};
+      ${old ? `${plural(old, "older version")} ${old === 1 ? "is" : "are"} still in use.` : "all on the newest."} One installation that upgraded counts once per version it ran.</p>`;
+  }
+
+  // All-time figures and check volume: context, kept out of the headline.
+  function totalsSection() {
+    const items = [[`Safeguard checks, last ${unit}`, cur.checks, prev?.checks], ["Safeguard checks, all time", totals.checks],
+      ["Degradations prevented, all time", totals.degradationsPrevented], ["Uplifts, all time", totals.uplifts],
+      ["Users, all time", totals.users], ["Installations, all time", totals.installations]].filter(([, v]) => v != null);
+    return `<div class="totals">${items.map(([l, v, before]) => `<span>${l}: <strong>${int(v)}</strong>${before != null ? ` <span class="tertiary">(${int(before)} the ${unit} before)</span>` : ""}</span>`).join("")}</div>`;
+  }
+
+  root.innerHTML = `
+    <section class="hero">
+      <div class="eyebrow">CodeScene · MCP safeguard insights · ${escapeHtml(report.project.name)}</div>
+      <h1>Code Health safeguards in the agentic development loop</h1>
+      <div class="intro"><strong>The idea</strong>In agentic development, an AI agent writes, checks and revises code in a loop. The local Code Health
+        MCP puts Code Health inside that loop, so the agent and the developer see a problem while the code is still being written. Every
+        prevented degradation is unhealthy code that never reached a commit, and every uplift is a change that left the code healthier. This report
+        shows how much that happens, the trend, and who drives it.</div>
+    </section>
+
+    <section>
+      <h2>Summary: ${range(cur)}</h2>
+      ${headline()}
+      ${kpis()}
+    </section>
+
+    <section>
+      <h2>Over the year</h2>
+      <p class="small secondary">Active users per ${unit}, and the impact of their checks. Hover a ${unit} for its numbers.</p>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--navy)"></span>Active users</span>
+        <span><span class="swatch" style="background:var(--healthy-ink)"></span>Degradations prevented</span>
+        <span><span class="swatch" style="background:var(--primary);opacity:0.55"></span>Uplifts</span>
+      </div>
+      <div class="chart">${trendChart()}</div>
+    </section>
+
+    <section>
+      <h2>Most active users</h2>
+      <p class="small secondary">Safeguard checks per developer in ${range(cur)}${prev ? `, against ${range(prev)}` : ""}.</p>
+      ${developers()}
+    </section>
+
+    <section>
+      <div class="two">
+        <div><h3>How much each developer uses it</h3>${distribution()}</div>
+        <div><h3>Which tools</h3>${tools()}</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Installations</h2>
+      ${versions()}
+    </section>
+
+    <section>
+      <h2>Totals</h2>
+      ${totalsSection()}
+    </section>
+
+    <section>
+      <h2>How to read this report</h2>
+      <p class="small secondary"><strong>Safeguard check</strong>: a call to one of the MCP's Code Health tools. <strong>Degradation prevented</strong>: a check
+        found that a change would lower Code Health, and the change was fixed before commit. <strong>Uplift</strong>: a change that raised Code Health.</p>
+      <p class="small secondary">The numbers are live product telemetry, not the latest analysis, so they can change between two runs.
+        Developers are shown by name only.</p>
+      ${(report.notes || []).map((n) => `<p class="small secondary"><strong>Note</strong>: ${escapeHtml(n)}</p>`).join("")}
+      <p class="small tertiary">Source: ${escapeHtml(report.project.source)}${report.generatedAt ? `, ${escapeHtml(report.generatedAt)}` : ""}.</p>
+    </section>`;
+})();
+</script>
+</body>
+</html>

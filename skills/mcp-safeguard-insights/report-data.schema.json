@@ -1,0 +1,271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "codescene://skills/mcp-safeguard-insights/report-data.schema.json",
+  "title": "ReportData",
+  "type": "object",
+  "required": [
+    "project",
+    "period",
+    "selected"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "project": {
+      "type": "object",
+      "required": [
+        "name",
+        "source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "generatedAt": {
+      "type": "string",
+      "description": "YYYY-MM-DD"
+    },
+    "period": {
+      "enum": [
+        "weekly",
+        "monthly"
+      ]
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The summary block: all-time figures.",
+      "properties": {
+        "users": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "activeUsers": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "installations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "activeInstallations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "checks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "uplifts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "degradationsPrevented": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "selected": {
+      "$ref": "#/$defs/Period"
+    },
+    "previous": {
+      "$ref": "#/$defs/Period"
+    },
+    "versions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "version",
+          "activeInstalls"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "activeInstalls": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "trend": {
+      "type": "array",
+      "description": "trends.adoption and trends.impact joined by period.",
+      "items": {
+        "type": "object",
+        "required": [
+          "from",
+          "to",
+          "activeUsers",
+          "uplifts",
+          "degradationsPrevented"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "activeUsers": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "uplifts": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "degradationsPrevented": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "Period": {
+      "type": "object",
+      "required": [
+        "from",
+        "to",
+        "activeUsers",
+        "checks",
+        "uplifts",
+        "degradationsPrevented"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "YYYY-MM-DD"
+        },
+        "to": {
+          "type": "string",
+          "description": "YYYY-MM-DD"
+        },
+        "activeUsers": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "newUsers": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "checks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "uplifts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "degradationsPrevented": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "tool",
+              "count"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "tool": {
+                "type": "string"
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "description": "mostUsedTools, most used first."
+        },
+        "checksPerDeveloper": {
+          "type": "object",
+          "required": [
+            "distribution"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "median": {
+              "type": "number"
+            },
+            "min": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "distribution": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "label",
+                  "developers"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "developers": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "developers": {
+          "type": "array",
+          "description": "topDevelopers as name and check count. Never email addresses or account ids.",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "checks"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "checks": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
