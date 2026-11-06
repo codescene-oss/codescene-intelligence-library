@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Change coupling</title>
+<title>Architecture: Change coupling</title>
 <style>
   /* CodeScene theme colours. The pastel fills match the app's Code Health bubbles; the -ink variants keep
      numbers and labels readable on white, and fall back to the pastels on dark backgrounds. */
@@ -658,7 +658,7 @@
   // Page
   // -------------------------------------------------------------------------
 
-  document.title = `Change coupling · ${project.name}`;
+  document.title = `Architecture: Change coupling · ${project.name}`;
   const problematicCross = cross.filter(isProblematic);
   const expectedCross = cross.filter((e) => !isProblematic(e));
   const topCross = problematicCross.slice(0, maxDependencies);
@@ -681,8 +681,8 @@
 
   root.innerHTML = `
     <section class="hero">
-      <div class="eyebrow">CodeScene · Change coupling · ${escapeHtml(project.name)}</div>
-      <h1>Change coupling: the cost of change in ${escapeHtml(project.name)}</h1>
+      <div class="eyebrow">CodeScene · Architecture · ${escapeHtml(project.name)}</div>
+      <h1>Architecture: Change coupling in ${escapeHtml(project.name)}</h1>
       <div class="intro"><strong>The idea</strong>Complexity comes in two shapes: code that is hard to understand on its own, measured by
         Code Health, and code that looks simple but behaves anything but, because of its dependencies. Static dependency graphs show every
         dependency and miss the logical ones. Change coupling comes from how developers actually work: files that keep co-evolving in the same

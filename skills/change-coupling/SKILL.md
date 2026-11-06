@@ -4,7 +4,7 @@ description: Builds a change coupling report for software architects from a Code
 disable-model-invocation: true
 ---
 
-# Change coupling report
+# Architecture: Change coupling report
 
 Produces a one-page report for software architects on the cost of change. Complexity comes in two shapes: code that is hard to understand on its own, which Code Health measures, and code that looks simple but behaves anything but because of its dependencies. Static dependency graphs list every dependency and miss the logical ones, such as services coupled through a message bus. Change coupling comes from developer behaviour instead: files that keep co-evolving in the same commits. The report lifts CodeScene's file-level change coupling to the architecture, separates the expected dependencies from the expensive ones, and combines both kinds of complexity:
 
