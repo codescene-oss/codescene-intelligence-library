@@ -36,6 +36,15 @@
       "renderers": [
         "html"
       ]
+    },
+    {
+      "id": "portfolio-overview",
+      "version": "1.0.0",
+      "path": "skills/portfolio-overview",
+      "summary": "A one-page summary of every CodeScene project you can access, for technical leaders and managers: what works well, where attention is needed, and how much of the code is AI-optimal, by hotspot Code Health.",
+      "renderers": [
+        "html"
+      ]
     }
   ]
 }

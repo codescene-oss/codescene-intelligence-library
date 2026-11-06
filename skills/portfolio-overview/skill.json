@@ -1,0 +1,51 @@
+{
+  "id": "portfolio-overview",
+  "version": "1.0.0",
+  "min_server_version": "1.0.0",
+  "title": "Portfolio overview report",
+  "summary": "A one-page summary of every CodeScene project you can access, for technical leaders and managers: what works well, where attention is needed, and how much of the code is AI-optimal, by hotspot Code Health.",
+  "audience": [
+    "engineering-manager",
+    "tech-lead"
+  ],
+  "mcp_tools": [
+    "list_projects",
+    "assess_project_code_health",
+    "explore_project_files",
+    "get_commit_activity",
+    "list_code_health_alerts"
+  ],
+  "inputs": [
+    {
+      "name": "max_projects",
+      "description": "The most projects to include, most recently analysed first.",
+      "type": "integer",
+      "minimum": 1,
+      "default": 50
+    },
+    {
+      "name": "name_filter",
+      "description": "Only include projects whose name contains this text. Empty includes all.",
+      "type": "string",
+      "default": ""
+    }
+  ],
+  "skill": "SKILL.md",
+  "data_schema": "report-data.schema.json",
+  "renderers": [
+    {
+      "id": "html",
+      "file": "renderers/report.html",
+      "format": "text/html"
+    }
+  ],
+  "templates": [
+    "templates/portfolio-notes.md"
+  ],
+  "shared": [
+    "../../shared/ground-rules.md"
+  ],
+  "examples": [
+    "examples/sample.report.json"
+  ]
+}

@@ -1,0 +1,248 @@
+{
+  "scope": {
+    "name": "Example organization",
+    "source": "Example data"
+  },
+  "analysisDate": "2026-10-01",
+  "projectCount": 10,
+  "notes": [
+    "Example data: not from a real analysis."
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "name": "payments",
+      "available": true,
+      "hotspotHealth": 3.42,
+      "averageHealth": 5.8,
+      "hotspotHealthYearAgo": 4.1,
+      "averageHealthYearAgo": 6.2,
+      "staleness": "fresh",
+      "codeAgeDays": 1,
+      "linesOfCode": 182000,
+      "languages": [
+        {
+          "name": "Java",
+          "linesOfCode": 182000
+        }
+      ],
+      "files": 1420,
+      "hotspots": 64,
+      "healthyHotspots": 9,
+      "upliftTargets": 12,
+      "offboardingRisks": 4,
+      "commits12m": 2310,
+      "alerts": 3
+    },
+    {
+      "id": 2,
+      "name": "order-service",
+      "available": true,
+      "hotspotHealth": 6.85,
+      "averageHealth": 8.1,
+      "hotspotHealthYearAgo": 7.6,
+      "averageHealthYearAgo": 8.4,
+      "staleness": "fresh",
+      "codeAgeDays": 2,
+      "linesOfCode": 64000,
+      "languages": [
+        {
+          "name": "Kotlin",
+          "linesOfCode": 64000
+        }
+      ],
+      "files": 610,
+      "hotspots": 38,
+      "healthyHotspots": 17,
+      "upliftTargets": 7,
+      "offboardingRisks": 1,
+      "commits12m": 1180,
+      "alerts": 1
+    },
+    {
+      "id": 3,
+      "name": "legacy-reporting",
+      "available": true,
+      "hotspotHealth": 5.2,
+      "averageHealth": 6.4,
+      "hotspotHealthYearAgo": 5.3,
+      "averageHealthYearAgo": 6.4,
+      "staleness": "dormant",
+      "codeAgeDays": 240,
+      "linesOfCode": 48000,
+      "languages": [
+        {
+          "name": "C#",
+          "linesOfCode": 48000
+        }
+      ],
+      "files": 390,
+      "hotspots": 12,
+      "healthyHotspots": 2,
+      "upliftTargets": 0,
+      "offboardingRisks": 3,
+      "commits12m": 14,
+      "alerts": null
+    },
+    {
+      "id": 4,
+      "name": "customer-portal",
+      "available": true,
+      "hotspotHealth": 9.24,
+      "averageHealth": 9.6,
+      "hotspotHealthYearAgo": 9.81,
+      "averageHealthYearAgo": 9.8,
+      "staleness": "fresh",
+      "codeAgeDays": 1,
+      "linesOfCode": 71000,
+      "languages": [
+        {
+          "name": "TypeScript",
+          "linesOfCode": 71000
+        }
+      ],
+      "files": 820,
+      "hotspots": 41,
+      "healthyHotspots": 35,
+      "upliftTargets": 2,
+      "offboardingRisks": 0,
+      "commits12m": 1640,
+      "alerts": 2
+    },
+    {
+      "id": 5,
+      "name": "mobile-app",
+      "available": true,
+      "hotspotHealth": 9.62,
+      "averageHealth": 9.7,
+      "hotspotHealthYearAgo": 9.1,
+      "averageHealthYearAgo": 9.4,
+      "staleness": "fresh",
+      "codeAgeDays": 3,
+      "linesOfCode": 73000,
+      "languages": [
+        {
+          "name": "Swift",
+          "linesOfCode": 38000
+        },
+        {
+          "name": "Kotlin",
+          "linesOfCode": 35000
+        }
+      ],
+      "files": 700,
+      "hotspots": 29,
+      "healthyHotspots": 28,
+      "upliftTargets": 0,
+      "offboardingRisks": 0,
+      "commits12m": 980,
+      "alerts": 0
+    },
+    {
+      "id": 6,
+      "name": "search",
+      "available": true,
+      "hotspotHealth": 9.97,
+      "averageHealth": 9.95,
+      "hotspotHealthYearAgo": 9.95,
+      "averageHealthYearAgo": 9.9,
+      "staleness": "fresh",
+      "codeAgeDays": 1,
+      "linesOfCode": 27000,
+      "languages": [
+        {
+          "name": "Go",
+          "linesOfCode": 27000
+        }
+      ],
+      "files": 260,
+      "hotspots": 18,
+      "healthyHotspots": 18,
+      "upliftTargets": 0,
+      "offboardingRisks": 0,
+      "commits12m": 720,
+      "alerts": 0
+    },
+    {
+      "id": 7,
+      "name": "identity",
+      "available": true,
+      "hotspotHealth": 10.0,
+      "averageHealth": 9.99,
+      "hotspotHealthYearAgo": 10.0,
+      "averageHealthYearAgo": 9.98,
+      "staleness": "fresh",
+      "codeAgeDays": 4,
+      "linesOfCode": 22000,
+      "languages": [
+        {
+          "name": "Rust",
+          "linesOfCode": 22000
+        }
+      ],
+      "files": 190,
+      "hotspots": 11,
+      "healthyHotspots": 11,
+      "upliftTargets": 0,
+      "offboardingRisks": 0,
+      "commits12m": 410,
+      "alerts": 0
+    },
+    {
+      "id": 8,
+      "name": "design-system",
+      "available": true,
+      "hotspotHealth": 9.88,
+      "averageHealth": 9.9,
+      "hotspotHealthYearAgo": 9.4,
+      "averageHealthYearAgo": 9.6,
+      "staleness": "fresh",
+      "codeAgeDays": 2,
+      "linesOfCode": 19000,
+      "languages": [
+        {
+          "name": "TypeScript",
+          "linesOfCode": 19000
+        }
+      ],
+      "files": 330,
+      "hotspots": 15,
+      "healthyHotspots": 15,
+      "upliftTargets": 0,
+      "offboardingRisks": 1,
+      "commits12m": 530,
+      "alerts": 0
+    },
+    {
+      "id": 9,
+      "name": "internal-tools",
+      "available": true,
+      "hotspotHealth": null,
+      "averageHealth": 9.8,
+      "hotspotHealthYearAgo": null,
+      "averageHealthYearAgo": 9.8,
+      "staleness": "dormant",
+      "codeAgeDays": 400,
+      "linesOfCode": 6000,
+      "languages": [
+        {
+          "name": "Python",
+          "linesOfCode": 6000
+        }
+      ],
+      "files": 80,
+      "hotspots": 0,
+      "healthyHotspots": 0,
+      "upliftTargets": 0,
+      "offboardingRisks": 0,
+      "commits12m": 0,
+      "alerts": null
+    },
+    {
+      "id": 10,
+      "name": "data-pipeline",
+      "available": false,
+      "error": "No Code Health data is available for this project yet."
+    }
+  ]
+}
