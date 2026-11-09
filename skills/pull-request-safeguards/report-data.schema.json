@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "codescene://skills/pull-request-safeguards/report-data.schema.json",
+  "title": "ReportData",
+  "type": "object",
+  "required": [
+    "project",
+    "range",
+    "pullRequests"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "project": {
+      "type": "object",
+      "required": [
+        "name",
+        "source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "generatedAt": {
+      "type": "string",
+      "description": "YYYY-MM-DD"
+    },
+    "range": {
+      "$ref": "#/$defs/Range"
+    },
+    "pullRequests": {
+      "type": "array",
+      "description": "Every pull request in the range, one entry each.",
+      "items": {
+        "$ref": "#/$defs/PullRequest"
+      }
+    },
+    "previous": {
+      "type": "object",
+      "description": "The range of the same length just before, for comparison. Leave it out when the data doesn't reach back that far.",
+      "required": [
+        "range",
+        "pullRequests"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "range": {
+          "$ref": "#/$defs/Range"
+        },
+        "pullRequests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PullRequest"
+          }
+        }
+      }
+    },
+    "bots": {
+      "type": "array",
+      "description": "Author names that are automation, not people. Their pull requests count in the totals but not in the developer table.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "Range": {
+      "type": "object",
+      "required": [
+        "from",
+        "to"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "YYYY-MM-DD"
+        },
+        "to": {
+          "type": "string",
+          "description": "YYYY-MM-DD"
+        }
+      }
+    },
+    "PullRequest": {
+      "type": "object",
+      "required": [
+        "id",
+        "repository",
+        "analysedAt",
+        "authors",
+        "detected",
+        "fixed",
+        "ignored",
+        "suppressed",
+        "status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "analysedAt": {
+          "type": "string",
+          "description": "YYYY-MM-DD"
+        },
+        "authors": {
+          "type": "array",
+          "description": "Display names, with aliases of one person merged into one name.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "detected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fixed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ignored": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "suppressed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "status": {
+          "enum": [
+            "no-issues",
+            "resolved",
+            "unresolved"
+          ]
+        }
+      }
+    }
+  }
+}

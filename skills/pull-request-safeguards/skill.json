@@ -1,0 +1,49 @@
+{
+  "id": "pull-request-safeguards",
+  "version": "1.0.0",
+  "min_server_version": "1.0.0",
+  "title": "Pull request safeguards report",
+  "summary": "How Code Health safeguards work on a project's pull requests: how often the review catches an issue, how many findings authors fix rather than ignore or suppress, the trend week by week, and the same per developer and per pull request.",
+  "audience": [
+    "engineering-manager",
+    "tech-lead"
+  ],
+  "mcp_tools": [
+    "list_projects",
+    "get_pull_request_safeguard_outcomes"
+  ],
+  "inputs": [
+    {
+      "name": "project_id",
+      "description": "The CodeScene project to report on. Find it with list_projects.",
+      "type": "integer",
+      "required": true
+    },
+    {
+      "name": "days",
+      "description": "How many days back from today to include.",
+      "type": "integer",
+      "minimum": 7,
+      "maximum": 365,
+      "default": 30
+    }
+  ],
+  "skill": "SKILL.md",
+  "data_schema": "report-data.schema.json",
+  "renderers": [
+    {
+      "id": "html",
+      "file": "renderers/report.html",
+      "format": "text/html"
+    }
+  ],
+  "templates": [
+    "templates/project-notes.md"
+  ],
+  "shared": [
+    "../../shared/ground-rules.md"
+  ],
+  "examples": [
+    "examples/sample.report.json"
+  ]
+}
