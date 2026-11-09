@@ -14,6 +14,7 @@ Everything here is generic: no project names, people or analysis numbers. Projec
 | [change-coupling](skills/change-coupling/SKILL.md) | The cost of change for software architects: logical dependencies between components mined from change coupling, the coordination they force between people, and how hard each is to break given the Code Health of the coupled code. [Details](#architecture-change-coupling) |
 | [portfolio-overview](skills/portfolio-overview/SKILL.md) | A one-page summary of every project you can access, for technical leaders and managers: what works well, where attention is needed, and how much of the code is AI-optimal, by hotspot Code Health. [Details](#portfolio-overview) |
 | [mcp-safeguard-insights](skills/mcp-safeguard-insights/SKILL.md) | How a project's developers use the local Code Health MCP: safeguard checks, degradations prevented before commit, uplifts, the trend over a year, the most active users and out-of-date installations. [Details](#mcp-safeguard-insights) |
+| [pull-request-safeguards](skills/pull-request-safeguards/SKILL.md) | How Code Health safeguards work on pull requests: how often the review catches an issue, how many findings authors fix rather than ignore or suppress, week by week, per developer and per pull request. [Details](#pull-request-safeguards) |
 
 ## Adding a skill
 
@@ -156,6 +157,19 @@ The data is live product telemetry, so it reflects use as of the moment the repo
 - **The most active users**, by safeguard checks, with each person's previous period, who is new and who stopped. Names only: the report never shows email addresses.
 - **How much each developer uses it**, as a distribution, and **which MCP tools** the checks come from.
 - **Installations** per version, so outdated ones stand out, and **totals**: safeguard checks and all-time figures.
+
+### Pull request safeguards
+
+Shows whether CodeScene's Code Health review of pull requests keeps problems out of the main branch.
+
+![Pull request safeguards report](docs/images/pull-request-safeguards.png)
+
+Every pull request gets a Code Health review before it merges. When the review finds a problem, the author can fix it, ignore it and merge anyway, or suppress it as accepted. The report is built from `get_pull_request_safeguard_outcomes`, one row per pull request. It contains:
+
+- **A summary:** pull requests reviewed, how many had findings, the share of findings fixed, and pull requests merged with ignored findings, each compared with the period before.
+- **Week by week:** pull requests by outcome, and what happened to their findings.
+- **Developers:** a sortable table of each person's pull requests and their findings detected, fixed, ignored and suppressed. Aliases of one person are merged, and bots are listed apart.
+- **Pull requests with findings:** unresolved ones first, then by findings detected, plus a table per repository when there are several.
 
 ## License
 

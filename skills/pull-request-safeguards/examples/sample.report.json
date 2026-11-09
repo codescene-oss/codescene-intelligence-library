@@ -1,0 +1,4600 @@
+{
+  "project": {
+    "name": "Example system",
+    "source": "CodeScene",
+    "id": 1
+  },
+  "generatedAt": "2026-03-31",
+  "range": {
+    "from": "2026-03-02",
+    "to": "2026-03-31"
+  },
+  "pullRequests": [
+    {
+      "id": "1415",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-02",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1444",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-02",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1491",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-02",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1474",
+      "repository": "web-app",
+      "analysedAt": "2026-03-03",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1481",
+      "repository": "web-app",
+      "analysedAt": "2026-03-03",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1532",
+      "repository": "web-app",
+      "analysedAt": "2026-03-03",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1543",
+      "repository": "web-app",
+      "analysedAt": "2026-03-03",
+      "authors": [
+        "Developer G"
+      ],
+      "detected": 1,
+      "fixed": 1,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1570",
+      "repository": "web-app",
+      "analysedAt": "2026-03-03",
+      "authors": [
+        "Developer G"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1574",
+      "repository": "web-app",
+      "analysedAt": "2026-03-03",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 3,
+      "fixed": 3,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1586",
+      "repository": "web-app",
+      "analysedAt": "2026-03-03",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1589",
+      "repository": "web-app",
+      "analysedAt": "2026-03-03",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 2,
+      "fixed": 2,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1411",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-04",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1441",
+      "repository": "web-app",
+      "analysedAt": "2026-03-04",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1454",
+      "repository": "web-app",
+      "analysedAt": "2026-03-04",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1464",
+      "repository": "web-app",
+      "analysedAt": "2026-03-04",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1465",
+      "repository": "web-app",
+      "analysedAt": "2026-03-04",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1468",
+      "repository": "web-app",
+      "analysedAt": "2026-03-04",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1504",
+      "repository": "web-app",
+      "analysedAt": "2026-03-04",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1510",
+      "repository": "web-app",
+      "analysedAt": "2026-03-04",
+      "authors": [
+        "Developer H"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1556",
+      "repository": "web-app",
+      "analysedAt": "2026-03-04",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1576",
+      "repository": "web-app",
+      "analysedAt": "2026-03-04",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1401",
+      "repository": "web-app",
+      "analysedAt": "2026-03-05",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 4,
+      "fixed": 4,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1493",
+      "repository": "web-app",
+      "analysedAt": "2026-03-05",
+      "authors": [
+        "Developer C",
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1519",
+      "repository": "web-app",
+      "analysedAt": "2026-03-05",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1541",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-05",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1547",
+      "repository": "web-app",
+      "analysedAt": "2026-03-05",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1561",
+      "repository": "web-app",
+      "analysedAt": "2026-03-05",
+      "authors": [
+        "Developer A",
+        "ci-bot[bot]"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1565",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-05",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1583",
+      "repository": "web-app",
+      "analysedAt": "2026-03-05",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1584",
+      "repository": "web-app",
+      "analysedAt": "2026-03-05",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1416",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1418",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1425",
+      "repository": "web-app",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 1,
+      "fixed": 1,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1435",
+      "repository": "web-app",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer B",
+        "ci-bot[bot]"
+      ],
+      "detected": 2,
+      "fixed": 2,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1445",
+      "repository": "web-app",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1459",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1460",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1466",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1488",
+      "repository": "web-app",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1490",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1505",
+      "repository": "web-app",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 3,
+      "fixed": 2,
+      "ignored": 1,
+      "suppressed": 0,
+      "status": "unresolved"
+    },
+    {
+      "id": "1521",
+      "repository": "web-app",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1539",
+      "repository": "web-app",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 6,
+      "fixed": 6,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1550",
+      "repository": "web-app",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1567",
+      "repository": "web-app",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 2,
+      "fixed": 2,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1573",
+      "repository": "web-app",
+      "analysedAt": "2026-03-06",
+      "authors": [
+        "Developer B",
+        "ci-bot[bot]"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1456",
+      "repository": "web-app",
+      "analysedAt": "2026-03-09",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1518",
+      "repository": "web-app",
+      "analysedAt": "2026-03-09",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1536",
+      "repository": "web-app",
+      "analysedAt": "2026-03-09",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 2,
+      "fixed": 2,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1568",
+      "repository": "web-app",
+      "analysedAt": "2026-03-09",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 1,
+      "fixed": 1,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1427",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-10",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 6,
+      "fixed": 6,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1446",
+      "repository": "web-app",
+      "analysedAt": "2026-03-10",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1469",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-10",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 2,
+      "fixed": 1,
+      "ignored": 1,
+      "suppressed": 0,
+      "status": "unresolved"
+    },
+    {
+      "id": "1498",
+      "repository": "web-app",
+      "analysedAt": "2026-03-10",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1512",
+      "repository": "web-app",
+      "analysedAt": "2026-03-10",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1566",
+      "repository": "web-app",
+      "analysedAt": "2026-03-10",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1404",
+      "repository": "web-app",
+      "analysedAt": "2026-03-11",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1408",
+      "repository": "web-app",
+      "analysedAt": "2026-03-11",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 2,
+      "fixed": 2,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1431",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-11",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1483",
+      "repository": "web-app",
+      "analysedAt": "2026-03-11",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 2,
+      "fixed": 2,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1517",
+      "repository": "web-app",
+      "analysedAt": "2026-03-11",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1546",
+      "repository": "web-app",
+      "analysedAt": "2026-03-11",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1555",
+      "repository": "web-app",
+      "analysedAt": "2026-03-11",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1578",
+      "repository": "web-app",
+      "analysedAt": "2026-03-11",
+      "authors": [
+        "Developer C",
+        "Developer G"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1585",
+      "repository": "web-app",
+      "analysedAt": "2026-03-11",
+      "authors": [
+        "Developer G"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1400",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-12",
+      "authors": [
+        "Developer B",
+        "ci-bot[bot]"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1424",
+      "repository": "web-app",
+      "analysedAt": "2026-03-12",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1458",
+      "repository": "web-app",
+      "analysedAt": "2026-03-12",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 2,
+      "fixed": 2,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1467",
+      "repository": "web-app",
+      "analysedAt": "2026-03-12",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1482",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-12",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1497",
+      "repository": "web-app",
+      "analysedAt": "2026-03-12",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 2,
+      "fixed": 1,
+      "ignored": 1,
+      "suppressed": 0,
+      "status": "unresolved"
+    },
+    {
+      "id": "1507",
+      "repository": "web-app",
+      "analysedAt": "2026-03-12",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1525",
+      "repository": "web-app",
+      "analysedAt": "2026-03-12",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1535",
+      "repository": "web-app",
+      "analysedAt": "2026-03-12",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1545",
+      "repository": "web-app",
+      "analysedAt": "2026-03-12",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1552",
+      "repository": "web-app",
+      "analysedAt": "2026-03-12",
+      "authors": [
+        "Developer A",
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1562",
+      "repository": "web-app",
+      "analysedAt": "2026-03-12",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 1,
+      "fixed": 1,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1581",
+      "repository": "web-app",
+      "analysedAt": "2026-03-12",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 1,
+      "fixed": 1,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1588",
+      "repository": "web-app",
+      "analysedAt": "2026-03-12",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1419",
+      "repository": "web-app",
+      "analysedAt": "2026-03-13",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 1,
+      "fixed": 1,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1432",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-13",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1437",
+      "repository": "web-app",
+      "analysedAt": "2026-03-13",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1511",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-13",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 2,
+      "fixed": 1,
+      "ignored": 0,
+      "suppressed": 1,
+      "status": "resolved"
+    },
+    {
+      "id": "1513",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-13",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1522",
+      "repository": "web-app",
+      "analysedAt": "2026-03-13",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1523",
+      "repository": "web-app",
+      "analysedAt": "2026-03-13",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1537",
+      "repository": "web-app",
+      "analysedAt": "2026-03-13",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1542",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-13",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1560",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-13",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1571",
+      "repository": "web-app",
+      "analysedAt": "2026-03-13",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1579",
+      "repository": "web-app",
+      "analysedAt": "2026-03-13",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1448",
+      "repository": "web-app",
+      "analysedAt": "2026-03-16",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1463",
+      "repository": "web-app",
+      "analysedAt": "2026-03-16",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1470",
+      "repository": "web-app",
+      "analysedAt": "2026-03-16",
+      "authors": [
+        "Developer H"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1503",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-16",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1515",
+      "repository": "web-app",
+      "analysedAt": "2026-03-16",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1520",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-16",
+      "authors": [
+        "Developer H"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1420",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-17",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1428",
+      "repository": "web-app",
+      "analysedAt": "2026-03-17",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1429",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-17",
+      "authors": [
+        "Developer A",
+        "ci-bot[bot]"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1438",
+      "repository": "web-app",
+      "analysedAt": "2026-03-17",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1440",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-17",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 4,
+      "fixed": 4,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1443",
+      "repository": "web-app",
+      "analysedAt": "2026-03-17",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1461",
+      "repository": "web-app",
+      "analysedAt": "2026-03-17",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1475",
+      "repository": "web-app",
+      "analysedAt": "2026-03-17",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1499",
+      "repository": "web-app",
+      "analysedAt": "2026-03-17",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1506",
+      "repository": "web-app",
+      "analysedAt": "2026-03-17",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1538",
+      "repository": "web-app",
+      "analysedAt": "2026-03-17",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1422",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-18",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1430",
+      "repository": "web-app",
+      "analysedAt": "2026-03-18",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1433",
+      "repository": "web-app",
+      "analysedAt": "2026-03-18",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1462",
+      "repository": "web-app",
+      "analysedAt": "2026-03-18",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 3,
+      "fixed": 2,
+      "ignored": 1,
+      "suppressed": 0,
+      "status": "unresolved"
+    },
+    {
+      "id": "1473",
+      "repository": "web-app",
+      "analysedAt": "2026-03-18",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1484",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-18",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1402",
+      "repository": "web-app",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1406",
+      "repository": "web-app",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1407",
+      "repository": "web-app",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1421",
+      "repository": "web-app",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1426",
+      "repository": "web-app",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1436",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1447",
+      "repository": "web-app",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1451",
+      "repository": "web-app",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1457",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1471",
+      "repository": "web-app",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 1,
+      "fixed": 1,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1514",
+      "repository": "web-app",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer D",
+        "ci-bot[bot]"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1531",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1554",
+      "repository": "web-app",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1575",
+      "repository": "web-app",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1577",
+      "repository": "web-app",
+      "analysedAt": "2026-03-19",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1403",
+      "repository": "web-app",
+      "analysedAt": "2026-03-20",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 2,
+      "fixed": 1,
+      "ignored": 1,
+      "suppressed": 0,
+      "status": "unresolved"
+    },
+    {
+      "id": "1439",
+      "repository": "web-app",
+      "analysedAt": "2026-03-20",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 4,
+      "fixed": 4,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1485",
+      "repository": "web-app",
+      "analysedAt": "2026-03-20",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1486",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-20",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1533",
+      "repository": "web-app",
+      "analysedAt": "2026-03-20",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1534",
+      "repository": "web-app",
+      "analysedAt": "2026-03-20",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 2,
+      "fixed": 2,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1580",
+      "repository": "web-app",
+      "analysedAt": "2026-03-20",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 1,
+      "fixed": 1,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1405",
+      "repository": "web-app",
+      "analysedAt": "2026-03-23",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1413",
+      "repository": "web-app",
+      "analysedAt": "2026-03-23",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1414",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-23",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1476",
+      "repository": "web-app",
+      "analysedAt": "2026-03-23",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1494",
+      "repository": "web-app",
+      "analysedAt": "2026-03-23",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 1,
+      "fixed": 1,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1500",
+      "repository": "web-app",
+      "analysedAt": "2026-03-23",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1572",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-23",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1412",
+      "repository": "web-app",
+      "analysedAt": "2026-03-24",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 1,
+      "fixed": 1,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1455",
+      "repository": "web-app",
+      "analysedAt": "2026-03-24",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1477",
+      "repository": "web-app",
+      "analysedAt": "2026-03-24",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1489",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-24",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1492",
+      "repository": "web-app",
+      "analysedAt": "2026-03-24",
+      "authors": [
+        "Developer A",
+        "ci-bot[bot]"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1544",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-24",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1559",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-24",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1563",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-24",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1587",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-24",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1409",
+      "repository": "web-app",
+      "analysedAt": "2026-03-25",
+      "authors": [
+        "Developer D",
+        "Developer F"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1478",
+      "repository": "web-app",
+      "analysedAt": "2026-03-25",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 1,
+      "fixed": 1,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1495",
+      "repository": "web-app",
+      "analysedAt": "2026-03-25",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1553",
+      "repository": "web-app",
+      "analysedAt": "2026-03-25",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1410",
+      "repository": "web-app",
+      "analysedAt": "2026-03-26",
+      "authors": [
+        "Developer G"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1450",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-26",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1452",
+      "repository": "web-app",
+      "analysedAt": "2026-03-26",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1453",
+      "repository": "web-app",
+      "analysedAt": "2026-03-26",
+      "authors": [
+        "Developer C",
+        "ci-bot[bot]"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1496",
+      "repository": "web-app",
+      "analysedAt": "2026-03-26",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1501",
+      "repository": "web-app",
+      "analysedAt": "2026-03-26",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1508",
+      "repository": "web-app",
+      "analysedAt": "2026-03-26",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1524",
+      "repository": "web-app",
+      "analysedAt": "2026-03-26",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 2,
+      "fixed": 1,
+      "ignored": 1,
+      "suppressed": 0,
+      "status": "unresolved"
+    },
+    {
+      "id": "1530",
+      "repository": "web-app",
+      "analysedAt": "2026-03-26",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1540",
+      "repository": "web-app",
+      "analysedAt": "2026-03-26",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1549",
+      "repository": "web-app",
+      "analysedAt": "2026-03-26",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1557",
+      "repository": "web-app",
+      "analysedAt": "2026-03-26",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1569",
+      "repository": "web-app",
+      "analysedAt": "2026-03-26",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1417",
+      "repository": "web-app",
+      "analysedAt": "2026-03-27",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1423",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-27",
+      "authors": [
+        "Developer F"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1434",
+      "repository": "web-app",
+      "analysedAt": "2026-03-27",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1480",
+      "repository": "web-app",
+      "analysedAt": "2026-03-27",
+      "authors": [
+        "Developer G"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1487",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-27",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1526",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-27",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1527",
+      "repository": "web-app",
+      "analysedAt": "2026-03-27",
+      "authors": [
+        "Developer D",
+        "ci-bot[bot]"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1529",
+      "repository": "web-app",
+      "analysedAt": "2026-03-27",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1442",
+      "repository": "web-app",
+      "analysedAt": "2026-03-30",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1449",
+      "repository": "web-app",
+      "analysedAt": "2026-03-30",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 6,
+      "fixed": 6,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "resolved"
+    },
+    {
+      "id": "1479",
+      "repository": "web-app",
+      "analysedAt": "2026-03-30",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1548",
+      "repository": "web-app",
+      "analysedAt": "2026-03-30",
+      "authors": [
+        "Developer G"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1551",
+      "repository": "web-app",
+      "analysedAt": "2026-03-30",
+      "authors": [
+        "Developer D"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1564",
+      "repository": "web-app",
+      "analysedAt": "2026-03-30",
+      "authors": [
+        "Developer E"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1472",
+      "repository": "web-app",
+      "analysedAt": "2026-03-31",
+      "authors": [
+        "Developer B"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1502",
+      "repository": "web-app",
+      "analysedAt": "2026-03-31",
+      "authors": [
+        "Developer B",
+        "Developer F"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1509",
+      "repository": "web-app",
+      "analysedAt": "2026-03-31",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1516",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-31",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1528",
+      "repository": "billing-service",
+      "analysedAt": "2026-03-31",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1558",
+      "repository": "web-app",
+      "analysedAt": "2026-03-31",
+      "authors": [
+        "Developer A"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    },
+    {
+      "id": "1582",
+      "repository": "web-app",
+      "analysedAt": "2026-03-31",
+      "authors": [
+        "Developer C"
+      ],
+      "detected": 0,
+      "fixed": 0,
+      "ignored": 0,
+      "suppressed": 0,
+      "status": "no-issues"
+    }
+  ],
+  "previous": {
+    "range": {
+      "from": "2026-01-31",
+      "to": "2026-03-01"
+    },
+    "pullRequests": [
+      {
+        "id": "1243",
+        "repository": "web-app",
+        "analysedAt": "2026-01-29",
+        "authors": [
+          "Developer H"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1248",
+        "repository": "billing-service",
+        "analysedAt": "2026-01-29",
+        "authors": [
+          "Developer H"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1278",
+        "repository": "web-app",
+        "analysedAt": "2026-01-29",
+        "authors": [
+          "Developer F"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1284",
+        "repository": "web-app",
+        "analysedAt": "2026-01-29",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1345",
+        "repository": "web-app",
+        "analysedAt": "2026-01-29",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1366",
+        "repository": "web-app",
+        "analysedAt": "2026-01-29",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1371",
+        "repository": "web-app",
+        "analysedAt": "2026-01-29",
+        "authors": [
+          "Developer F"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1381",
+        "repository": "web-app",
+        "analysedAt": "2026-01-29",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1396",
+        "repository": "web-app",
+        "analysedAt": "2026-01-29",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1247",
+        "repository": "billing-service",
+        "analysedAt": "2026-01-30",
+        "authors": [
+          "Developer F"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1362",
+        "repository": "web-app",
+        "analysedAt": "2026-01-30",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1363",
+        "repository": "web-app",
+        "analysedAt": "2026-01-30",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1377",
+        "repository": "web-app",
+        "analysedAt": "2026-01-30",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1259",
+        "repository": "web-app",
+        "analysedAt": "2026-02-02",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 2,
+        "fixed": 1,
+        "ignored": 1,
+        "suppressed": 0,
+        "status": "unresolved"
+      },
+      {
+        "id": "1289",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-02",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 1,
+        "fixed": 1,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1347",
+        "repository": "web-app",
+        "analysedAt": "2026-02-02",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 1,
+        "fixed": 1,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1359",
+        "repository": "web-app",
+        "analysedAt": "2026-02-02",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1399",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-02",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1245",
+        "repository": "web-app",
+        "analysedAt": "2026-02-03",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1263",
+        "repository": "web-app",
+        "analysedAt": "2026-02-03",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1274",
+        "repository": "web-app",
+        "analysedAt": "2026-02-03",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1288",
+        "repository": "web-app",
+        "analysedAt": "2026-02-03",
+        "authors": [
+          "Developer G"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1293",
+        "repository": "web-app",
+        "analysedAt": "2026-02-03",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1354",
+        "repository": "web-app",
+        "analysedAt": "2026-02-03",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1360",
+        "repository": "web-app",
+        "analysedAt": "2026-02-03",
+        "authors": [
+          "Developer F"
+        ],
+        "detected": 1,
+        "fixed": 1,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1394",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-03",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1398",
+        "repository": "web-app",
+        "analysedAt": "2026-02-03",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1264",
+        "repository": "web-app",
+        "analysedAt": "2026-02-04",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1302",
+        "repository": "web-app",
+        "analysedAt": "2026-02-04",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1307",
+        "repository": "web-app",
+        "analysedAt": "2026-02-04",
+        "authors": [
+          "Developer G"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1310",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-04",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1338",
+        "repository": "web-app",
+        "analysedAt": "2026-02-04",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1343",
+        "repository": "web-app",
+        "analysedAt": "2026-02-04",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1349",
+        "repository": "web-app",
+        "analysedAt": "2026-02-04",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1242",
+        "repository": "web-app",
+        "analysedAt": "2026-02-05",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1253",
+        "repository": "web-app",
+        "analysedAt": "2026-02-05",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1262",
+        "repository": "web-app",
+        "analysedAt": "2026-02-05",
+        "authors": [
+          "Developer A",
+          "Developer F"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1279",
+        "repository": "web-app",
+        "analysedAt": "2026-02-05",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1280",
+        "repository": "web-app",
+        "analysedAt": "2026-02-05",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1298",
+        "repository": "web-app",
+        "analysedAt": "2026-02-05",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 1,
+        "fixed": 1,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1329",
+        "repository": "web-app",
+        "analysedAt": "2026-02-05",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1341",
+        "repository": "web-app",
+        "analysedAt": "2026-02-05",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 2,
+        "fixed": 1,
+        "ignored": 1,
+        "suppressed": 0,
+        "status": "unresolved"
+      },
+      {
+        "id": "1391",
+        "repository": "web-app",
+        "analysedAt": "2026-02-05",
+        "authors": [
+          "Developer H"
+        ],
+        "detected": 6,
+        "fixed": 6,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1240",
+        "repository": "web-app",
+        "analysedAt": "2026-02-06",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 3,
+        "fixed": 2,
+        "ignored": 1,
+        "suppressed": 0,
+        "status": "unresolved"
+      },
+      {
+        "id": "1249",
+        "repository": "web-app",
+        "analysedAt": "2026-02-06",
+        "authors": [
+          "Developer F"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1255",
+        "repository": "web-app",
+        "analysedAt": "2026-02-06",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1257",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-06",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1258",
+        "repository": "web-app",
+        "analysedAt": "2026-02-06",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1287",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-06",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 4,
+        "fixed": 3,
+        "ignored": 1,
+        "suppressed": 0,
+        "status": "unresolved"
+      },
+      {
+        "id": "1297",
+        "repository": "web-app",
+        "analysedAt": "2026-02-06",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1311",
+        "repository": "web-app",
+        "analysedAt": "2026-02-06",
+        "authors": [
+          "Developer F"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1326",
+        "repository": "web-app",
+        "analysedAt": "2026-02-06",
+        "authors": [
+          "Developer B",
+          "ci-bot[bot]"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1339",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-06",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 1,
+        "fixed": 1,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1353",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-06",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1386",
+        "repository": "web-app",
+        "analysedAt": "2026-02-06",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1389",
+        "repository": "web-app",
+        "analysedAt": "2026-02-06",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1395",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-06",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1277",
+        "repository": "web-app",
+        "analysedAt": "2026-02-09",
+        "authors": [
+          "Developer G"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1290",
+        "repository": "web-app",
+        "analysedAt": "2026-02-09",
+        "authors": [
+          "Developer C",
+          "ci-bot[bot]"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1291",
+        "repository": "web-app",
+        "analysedAt": "2026-02-09",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1332",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-09",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1346",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-09",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1379",
+        "repository": "web-app",
+        "analysedAt": "2026-02-09",
+        "authors": [
+          "Developer H"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1251",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-10",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1348",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-10",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1267",
+        "repository": "web-app",
+        "analysedAt": "2026-02-11",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1303",
+        "repository": "web-app",
+        "analysedAt": "2026-02-11",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1308",
+        "repository": "web-app",
+        "analysedAt": "2026-02-11",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1335",
+        "repository": "web-app",
+        "analysedAt": "2026-02-11",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1390",
+        "repository": "web-app",
+        "analysedAt": "2026-02-11",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1266",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-12",
+        "authors": [
+          "Developer G",
+          "Developer H"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1269",
+        "repository": "web-app",
+        "analysedAt": "2026-02-12",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 2,
+        "fixed": 1,
+        "ignored": 1,
+        "suppressed": 0,
+        "status": "unresolved"
+      },
+      {
+        "id": "1299",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-12",
+        "authors": [
+          "Developer F"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1312",
+        "repository": "web-app",
+        "analysedAt": "2026-02-12",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1337",
+        "repository": "web-app",
+        "analysedAt": "2026-02-12",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1340",
+        "repository": "web-app",
+        "analysedAt": "2026-02-12",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1356",
+        "repository": "web-app",
+        "analysedAt": "2026-02-12",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 2,
+        "fixed": 2,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1372",
+        "repository": "web-app",
+        "analysedAt": "2026-02-12",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1376",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-12",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1380",
+        "repository": "web-app",
+        "analysedAt": "2026-02-12",
+        "authors": [
+          "Developer F"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1268",
+        "repository": "web-app",
+        "analysedAt": "2026-02-13",
+        "authors": [
+          "Developer F",
+          "ci-bot[bot]"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1321",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-13",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1327",
+        "repository": "web-app",
+        "analysedAt": "2026-02-13",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 2,
+        "fixed": 2,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1330",
+        "repository": "web-app",
+        "analysedAt": "2026-02-13",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1334",
+        "repository": "web-app",
+        "analysedAt": "2026-02-13",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1364",
+        "repository": "web-app",
+        "analysedAt": "2026-02-13",
+        "authors": [
+          "Developer F"
+        ],
+        "detected": 4,
+        "fixed": 4,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1373",
+        "repository": "web-app",
+        "analysedAt": "2026-02-13",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1374",
+        "repository": "web-app",
+        "analysedAt": "2026-02-13",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1393",
+        "repository": "web-app",
+        "analysedAt": "2026-02-13",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1246",
+        "repository": "web-app",
+        "analysedAt": "2026-02-16",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 3,
+        "fixed": 3,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1252",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-16",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1271",
+        "repository": "web-app",
+        "analysedAt": "2026-02-16",
+        "authors": [
+          "Developer B",
+          "ci-bot[bot]"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1295",
+        "repository": "web-app",
+        "analysedAt": "2026-02-16",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 6,
+        "fixed": 5,
+        "ignored": 1,
+        "suppressed": 0,
+        "status": "unresolved"
+      },
+      {
+        "id": "1301",
+        "repository": "web-app",
+        "analysedAt": "2026-02-16",
+        "authors": [
+          "Developer H"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1306",
+        "repository": "web-app",
+        "analysedAt": "2026-02-16",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1313",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-16",
+        "authors": [
+          "Developer B",
+          "ci-bot[bot]"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1323",
+        "repository": "web-app",
+        "analysedAt": "2026-02-16",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1328",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-16",
+        "authors": [
+          "Developer H"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1342",
+        "repository": "web-app",
+        "analysedAt": "2026-02-16",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 1,
+        "fixed": 1,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1241",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-17",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1276",
+        "repository": "web-app",
+        "analysedAt": "2026-02-17",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1304",
+        "repository": "web-app",
+        "analysedAt": "2026-02-17",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1384",
+        "repository": "web-app",
+        "analysedAt": "2026-02-17",
+        "authors": [
+          "Developer F"
+        ],
+        "detected": 6,
+        "fixed": 6,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1387",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-17",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1305",
+        "repository": "web-app",
+        "analysedAt": "2026-02-18",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1315",
+        "repository": "web-app",
+        "analysedAt": "2026-02-18",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1244",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-19",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1270",
+        "repository": "web-app",
+        "analysedAt": "2026-02-19",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1292",
+        "repository": "web-app",
+        "analysedAt": "2026-02-19",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 4,
+        "fixed": 3,
+        "ignored": 1,
+        "suppressed": 0,
+        "status": "unresolved"
+      },
+      {
+        "id": "1317",
+        "repository": "web-app",
+        "analysedAt": "2026-02-19",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1331",
+        "repository": "web-app",
+        "analysedAt": "2026-02-19",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1358",
+        "repository": "web-app",
+        "analysedAt": "2026-02-19",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1365",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-19",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 6,
+        "fixed": 5,
+        "ignored": 1,
+        "suppressed": 0,
+        "status": "unresolved"
+      },
+      {
+        "id": "1370",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-19",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1392",
+        "repository": "web-app",
+        "analysedAt": "2026-02-19",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 2,
+        "fixed": 2,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1261",
+        "repository": "web-app",
+        "analysedAt": "2026-02-20",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1285",
+        "repository": "web-app",
+        "analysedAt": "2026-02-20",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1286",
+        "repository": "web-app",
+        "analysedAt": "2026-02-20",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1300",
+        "repository": "web-app",
+        "analysedAt": "2026-02-20",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1316",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-20",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1318",
+        "repository": "web-app",
+        "analysedAt": "2026-02-20",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1319",
+        "repository": "web-app",
+        "analysedAt": "2026-02-20",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 4,
+        "fixed": 4,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1322",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-20",
+        "authors": [
+          "Developer G"
+        ],
+        "detected": 6,
+        "fixed": 6,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1336",
+        "repository": "web-app",
+        "analysedAt": "2026-02-20",
+        "authors": [
+          "Developer F"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1344",
+        "repository": "web-app",
+        "analysedAt": "2026-02-20",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1355",
+        "repository": "web-app",
+        "analysedAt": "2026-02-20",
+        "authors": [
+          "Developer H"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1375",
+        "repository": "web-app",
+        "analysedAt": "2026-02-20",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1309",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-23",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1314",
+        "repository": "web-app",
+        "analysedAt": "2026-02-23",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1324",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-23",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1369",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-23",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1325",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-24",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1357",
+        "repository": "web-app",
+        "analysedAt": "2026-02-24",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1382",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-24",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1385",
+        "repository": "web-app",
+        "analysedAt": "2026-02-24",
+        "authors": [
+          "Developer H"
+        ],
+        "detected": 4,
+        "fixed": 4,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1250",
+        "repository": "web-app",
+        "analysedAt": "2026-02-25",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 3,
+        "fixed": 3,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1272",
+        "repository": "web-app",
+        "analysedAt": "2026-02-25",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1283",
+        "repository": "web-app",
+        "analysedAt": "2026-02-25",
+        "authors": [
+          "Developer D",
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1333",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-25",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1361",
+        "repository": "web-app",
+        "analysedAt": "2026-02-25",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1281",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-26",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1296",
+        "repository": "web-app",
+        "analysedAt": "2026-02-26",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1352",
+        "repository": "web-app",
+        "analysedAt": "2026-02-26",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1388",
+        "repository": "web-app",
+        "analysedAt": "2026-02-26",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1254",
+        "repository": "web-app",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1256",
+        "repository": "web-app",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1260",
+        "repository": "web-app",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 1,
+        "fixed": 1,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1265",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 1,
+        "fixed": 1,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1273",
+        "repository": "web-app",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1275",
+        "repository": "web-app",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1282",
+        "repository": "web-app",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer G"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1294",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1320",
+        "repository": "web-app",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer D"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1350",
+        "repository": "web-app",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer B"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1351",
+        "repository": "web-app",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer C"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1367",
+        "repository": "web-app",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer F"
+        ],
+        "detected": 2,
+        "fixed": 2,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "resolved"
+      },
+      {
+        "id": "1368",
+        "repository": "web-app",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer E"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1378",
+        "repository": "web-app",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer H"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1383",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      },
+      {
+        "id": "1397",
+        "repository": "billing-service",
+        "analysedAt": "2026-02-27",
+        "authors": [
+          "Developer A"
+        ],
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "status": "no-issues"
+      }
+    ]
+  },
+  "bots": [
+    "ci-bot[bot]"
+  ],
+  "notes": [
+    "Developer B appears under two author names, a display name and a login; they are merged here."
+  ]
+}

@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pull request safeguards</title>
+<style>
+  /* CodeScene theme colours. The pastel fills match the app's Code Health bubbles; the -ink variants keep
+     numbers and labels readable on white, and fall back to the pastels on dark backgrounds. */
+  :root {
+    --unhealthy: #ef8290;
+    --problematic: #f6d991;
+    --healthy: #8ddec8;
+    --unhealthy-ink: #c8475a;
+    --problematic-ink: #9a7213;
+    --healthy-ink: #1f8569;
+    --primary: #2f7b7a;
+    --navy: #0f2d57;
+    --address-tint: #ef829026;
+    --plan-tint: #8ddec826;
+    --brand-tint: #2f7b7a14;
+    --page: #eef2f8;
+    --bg: #ffffff;
+    --text: #323a4e;
+    --text-2: #4f5866;
+    --text-3: #7d8694;
+    --stroke-2: #d5dbe3;
+    --stroke-3: #eceff4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --unhealthy-ink: #ef8290;
+      --problematic-ink: #f6d991;
+      --healthy-ink: #8ddec8;
+      --primary: #62d5de;
+      --page: #0a1424;
+      --bg: #12223a;
+      --text: #eceef1;
+      --text-2: #b4bac2;
+      --text-3: #848b95;
+      --stroke-2: #2e3d52;
+      --stroke-3: #1d2a3d;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; }
+  section { display: flex; flex-direction: column; gap: 8px; background: var(--bg); border-radius: 10px; padding: 20px 24px;
+    box-shadow: 0 1px 2px rgba(15, 45, 87, 0.06), 0 2px 8px rgba(15, 45, 87, 0.05); }
+  /* The header follows the app's navy-to-teal sidebar. */
+  section.hero { background: linear-gradient(120deg, #0f2d57 0%, #0b3a5e 55%, #075062 100%); color: #ffffff; gap: 12px; padding: 28px 24px; }
+  section.hero .eyebrow { color: #62d5de; }
+  section.hero .intro { background: rgba(255, 255, 255, 0.07); border-left-color: #62d5de; color: #dfe8f2; }
+  section.hero .intro strong { color: #62d5de; }
+  h1 { font-size: 24px; margin: 0; line-height: 1.25; }
+  h2 { font-size: 17px; margin: 0; }
+  p { margin: 0; }
+  .eyebrow { color: var(--primary); font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; }
+  .small { font-size: 12px; }
+  .secondary { color: var(--text-2); }
+  .tertiary { color: var(--text-3); }
+  .intro { background: var(--brand-tint); border-left: 3px solid var(--primary); border-radius: 4px; padding: 12px 16px; }
+  .intro strong { color: var(--primary); display: block; margin-bottom: 4px; }
+  .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+  .kpi { border: 1px solid var(--stroke-2); border-radius: 6px; padding: 12px 14px; }
+  .kpi .value { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--navy); }
+  .kpi .value .of { font-size: 14px; font-weight: 600; color: var(--text-3); }
+  .kpi .label { font-size: 12px; color: var(--text-2); }
+  .kpi .detail { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; font-size: 12px; color: var(--text-2); }
+  .legend span { display: inline-flex; gap: 6px; align-items: center; }
+  .chart { position: relative; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart svg text { font-family: inherit; }
+  .tooltip { position: absolute; pointer-events: none; background: var(--bg); border: 1px solid var(--stroke-2); border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); padding: 8px 12px; min-width: 250px; z-index: 1; font-size: 11px; line-height: 17px; display: none; }
+  .tooltip .name { font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+  .tooltip .sub { color: var(--text-3); margin-bottom: 6px; }
+  .tooltip .row { display: flex; justify-content: space-between; gap: 16px; }
+  .tooltip .row span:first-child { color: var(--text-2); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--stroke-2); border-radius: 6px; overflow: hidden; font-size: 12px; }
+  th { background: var(--brand-tint); color: var(--text-2); font-size: 11px; font-weight: 600; text-align: left; padding: 6px 10px; white-space: nowrap; }
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover { color: var(--primary); }
+  th .arrow { color: var(--primary); }
+  td { padding: 8px 10px; border-top: 1px solid var(--stroke-3); color: var(--text-2); vertical-align: top; }
+  td.name { color: var(--text); font-weight: 600; white-space: nowrap; }
+  td.file { color: var(--text); font-weight: 600; min-width: 160px; overflow-wrap: break-word; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .strong { font-weight: 600; }
+  .flag { color: var(--unhealthy-ink); font-weight: 600; }
+  .empty { text-align: center; padding: 16px; color: var(--healthy-ink); font-weight: 600; }
+  .error { border: 1px solid var(--unhealthy-ink); border-radius: 6px; padding: 12px 16px; color: var(--unhealthy-ink); }
+  @media (max-width: 720px) {
+    .kpis { grid-template-columns: minmax(0, 1fr); }
+    section, section.hero { padding: 16px; }
+  }
+  @media print {
+    main { max-width: none; padding: 0; }
+    section { break-inside: avoid; box-shadow: none; }
+    body { background: #ffffff; }
+  }
+</style>
+<style>
+  .delta { font-size: 11px; font-weight: 600; margin-top: 2px; }
+  .delta.good { color: var(--healthy-ink); }
+  .delta.bad { color: var(--unhealthy-ink); }
+  .delta.flat { color: var(--text-3); }
+  .headline { font-size: 15px; line-height: 1.55; }
+  .kpis.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .chart svg text { font-size: 11px; fill: var(--text-2); }
+  .chart svg .label { fill: var(--text); font-weight: 600; font-size: 12px; }
+  .chart svg .value { fill: var(--text); font-weight: 700; }
+  .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+  .status { font-size: 11px; font-weight: 600; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+  .status.resolved { background: var(--plan-tint); color: var(--healthy-ink); }
+  .status.unresolved { background: var(--address-tint); color: var(--unhealthy-ink); }
+  .status.no-issues { background: var(--stroke-3); color: var(--text-2); }
+  td.zero { color: var(--text-3); }
+  td.bad { color: var(--unhealthy-ink); font-weight: 600; }
+  td.good { color: var(--healthy-ink); font-weight: 600; }
+  .chart g.week { cursor: default; }
+  .chart g.week .hit { fill: transparent; }
+  .chart g.week.hover .hit { fill: var(--brand-tint); }
+  @media (max-width: 720px) { .kpis.four { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<main id="report"></main>
+
+<!-- {{REPORT_DATA}}: replace the placeholder object with ReportData JSON that validates against report-data.schema.json.
+     Keep everything outside this block unchanged. -->
+<script type="application/json" id="report-data">
+{
+  "project": { "name": "{{project-name}}", "source": "{{source}}" },
+  "range": { "from": "", "to": "" },
+  "pullRequests": []
+}
+</script>
+<!-- {{/REPORT_DATA}} -->
+
+<script>
+// ---------------------------------------------------------------------------
+// Generic layout below: no project-specific values.
+// ---------------------------------------------------------------------------
+(function () {
+  const root = document.getElementById("report");
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+  }
+
+  let report;
+  try {
+    report = JSON.parse(document.getElementById("report-data").textContent);
+  } catch (e) {
+    root.innerHTML = `<p class="error">The report data is not valid JSON: ${escapeHtml(e.message)}</p>`;
+    return;
+  }
+  if (!report.range || !report.range.from) {
+    root.innerHTML = `<p class="error">The report has no data. Fill the {{REPORT_DATA}} block with data from CodeScene.</p>`;
+    return;
+  }
+
+  const prs = report.pullRequests || [];
+  const prev = report.previous || null;
+  const bots = new Set(report.bots || []);
+  const int = (v) => (v == null ? "–" : Number(v).toLocaleString("en-US"));
+  const plural = (n, word, many = word + "s") => `${int(n)} ${n === 1 ? word : many}`;
+  const pct = (part, whole) => (whole ? Math.round((part / whole) * 100) : null);
+  const day = (d) => Date.parse(d + "T00:00:00Z");
+  const shortDate = (d) => new Date(typeof d === "number" ? d : day(d)).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+  const span = (r) => `${shortDate(r.from)} – ${shortDate(r.to)}`;
+
+  function summarise(list) {
+    const s = { prs: list.length, withFindings: 0, unresolved: 0, detected: 0, fixed: 0, ignored: 0, suppressed: 0, people: new Set() };
+    list.forEach((p) => {
+      if (p.detected > 0) s.withFindings++;
+      if (p.status === "unresolved") s.unresolved++;
+      s.detected += p.detected; s.fixed += p.fixed; s.ignored += p.ignored; s.suppressed += p.suppressed;
+      p.authors.forEach((a) => { if (!bots.has(a)) s.people.add(a); });
+    });
+    return s;
+  }
+  const cur = summarise(prs);
+  const before = prev ? summarise(prev.pullRequests || []) : null;
+
+  // Change against the previous range. `higherIsBetter` picks the colour; null keeps it neutral.
+  function delta(now, then, higherIsBetter, points = false) {
+    if (!before || now == null || then == null) return "";
+    const tone = (up) => (higherIsBetter == null ? "flat" : up === higherIsBetter ? "good" : "bad");
+    if (points) {
+      const d = now - then;
+      if (d === 0) return `<div class="delta flat">no change</div>`;
+      return `<div class="delta ${tone(d > 0)}">${d > 0 ? "+" : ""}${d} point${Math.abs(d) === 1 ? "" : "s"} on the previous period</div>`;
+    }
+    if (then === 0 && now === 0) return `<div class="delta flat">no change</div>`;
+    if (then === 0) return `<div class="delta ${tone(true)}">up from 0</div>`;
+    const p = Math.round((now / then - 1) * 100);
+    if (p === 0) return `<div class="delta flat">no change</div>`;
+    return `<div class="delta ${tone(p > 0)}">${p > 0 ? "+" : ""}${p}% on the previous period</div>`;
+  }
+
+  function kpis() {
+    const k = (value, label, detail, d) => `<div class="kpi"><div class="value">${value}</div><div class="label">${label}</div>${detail ? `<div class="detail">${detail}</div>` : ""}${d}</div>`;
+    const fixShare = pct(cur.fixed, cur.detected), fixShareBefore = before ? pct(before.fixed, before.detected) : null;
+    return `<div class="kpis four">
+      ${k(int(cur.prs), "Pull requests reviewed", `by ${plural(cur.people.size, "developer")}`, delta(cur.prs, before?.prs, true))}
+      ${k(`${int(cur.withFindings)}${cur.prs ? ` <span class="of">${pct(cur.withFindings, cur.prs)}%</span>` : ""}`, "Caught a Code Health issue",
+        "pull requests with findings", delta(cur.withFindings, before?.withFindings, null))}
+      ${k(`<span style="color:var(--healthy-ink)">${fixShare == null ? "–" : fixShare + "%"}</span>`, "Findings fixed",
+        cur.detected ? `${int(cur.fixed)} of ${plural(cur.detected, "finding")}` : "no findings", delta(fixShare, fixShareBefore, true, true))}
+      ${k(`<span style="color:${cur.unresolved ? "var(--unhealthy-ink)" : "var(--healthy-ink)"}">${int(cur.unresolved)}</span>`, "Merged with ignored findings",
+        cur.ignored ? plural(cur.ignored, "finding") + " ignored" : "nothing ignored", delta(cur.unresolved, before?.unresolved, false))}
+    </div>`;
+  }
+
+  function headline() {
+    if (!cur.prs) return `<p class="headline">No pull requests were reviewed in ${span(report.range)}. The pull request integration may not be set up for this project.</p>`;
+    const parts = [`Between ${shortDate(report.range.from)} and ${shortDate(report.range.to)}, CodeScene reviewed <strong>${plural(cur.prs, "pull request")}</strong>.`];
+    if (!cur.withFindings) parts.push(`None of them introduced a Code Health issue.`);
+    else {
+      parts.push(`The review caught Code Health issues in <strong>${int(cur.withFindings)}</strong> of them (${pct(cur.withFindings, cur.prs)}%),`);
+      parts.push(cur.fixed === cur.detected
+        ? `and their authors fixed all <strong>${plural(cur.detected, "finding")}</strong> before merging.`
+        : `and their authors fixed <strong>${int(cur.fixed)}</strong> of ${plural(cur.detected, "finding")} before merging.`);
+      parts.push(cur.unresolved
+        ? `<strong style="color:var(--unhealthy-ink)">${plural(cur.unresolved, "pull request was", "pull requests were")} merged with ignored findings.</strong>`
+        : `No pull request was merged with an ignored finding.`);
+      if (cur.suppressed) parts.push(`${plural(cur.suppressed, "finding was", "findings were")} suppressed as accepted.`);
+    }
+    return `<p class="headline">${parts.join(" ")}</p>`;
+  }
+
+  // Pull requests per week by status, and findings per week by what happened to them.
+  function weeklyChart() {
+    const start = day(report.range.from), end = day(report.range.to);
+    const monday = (t) => t - ((new Date(t).getUTCDay() + 6) % 7) * 86400000;
+    const weeks = [];
+    for (let t = monday(start); t <= end; t += 7 * 86400000) weeks.push({ t, none: 0, resolved: 0, unresolved: 0, fixed: 0, ignored: 0, suppressed: 0, detected: 0, people: new Set(), repos: new Set(), bots: 0 });
+    prs.forEach((p) => {
+      const w = weeks.find((x) => day(p.analysedAt) >= x.t && day(p.analysedAt) < x.t + 7 * 86400000);
+      if (!w) return;
+      w[p.status === "no-issues" ? "none" : p.status]++;
+      w.fixed += p.fixed; w.ignored += p.ignored; w.suppressed += p.suppressed; w.detected += p.detected;
+      w.repos.add(p.repository);
+      p.authors.forEach((a) => (bots.has(a) ? w.bots++ : w.people.add(a)));
+    });
+    if (!weeks.length) return `<p class="secondary small">No weeks in the range.</p>`;
+    const W = 1000, left = 44, right = 12, slot = (W - left - right) / weeks.length, bw = Math.min(56, slot * 0.6);
+    const top1 = 22, h1 = 130, gap = 50, top2 = top1 + h1 + gap, h2 = 80, H = top2 + h2 + 34;
+    const maxP = Math.max(1, ...weeks.map((w) => w.none + w.resolved + w.unresolved));
+    const maxF = Math.max(1, ...weeks.map((w) => w.fixed + w.ignored + w.suppressed));
+    let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Pull requests and findings per week">`;
+    svg += `<text class="label" x="0" y="12">Pull requests</text><text class="label" x="0" y="${top2 - 12}">Findings</text>`;
+    svg += `<line x1="${left}" x2="${W - right}" y1="${top1 + h1}" y2="${top1 + h1}" stroke="var(--stroke-2)"/>`;
+    svg += `<line x1="${left}" x2="${W - right}" y1="${top2 + h2}" y2="${top2 + h2}" stroke="var(--stroke-2)"/>`;
+    weeks.forEach((w, i) => {
+      const cx = left + i * slot + slot / 2, x = cx - bw / 2;
+      const total = w.none + w.resolved + w.unresolved, findings = w.fixed + w.ignored + w.suppressed;
+      svg += `<g class="week" data-week="${i}"><rect class="hit" x="${left + i * slot}" y="0" width="${slot}" height="${H}" rx="4"/>`;
+      let y = top1 + h1;
+      [["none", "var(--stroke-2)"], ["resolved", "var(--healthy-ink)"], ["unresolved", "var(--unhealthy-ink)"]].forEach(([key, fill]) => {
+        const h = (w[key] / maxP) * h1;
+        if (h > 0) { y -= h; svg += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${fill}"/>`; }
+      });
+      if (total) svg += `<text class="value" x="${cx}" y="${y - 5}" text-anchor="middle">${total}</text>`;
+      y = top2 + h2;
+      [["fixed", "var(--healthy-ink)"], ["suppressed", "var(--problematic)"], ["ignored", "var(--unhealthy-ink)"]].forEach(([key, fill]) => {
+        const h = (w[key] / maxF) * h2;
+        if (h > 0) { y -= h; svg += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${fill}"/>`; }
+      });
+      if (findings) svg += `<text class="value" x="${cx}" y="${y - 5}" text-anchor="middle">${findings}</text>`;
+      svg += `<text x="${cx}" y="${top2 + h2 + 16}" text-anchor="middle">${shortDate(Math.max(w.t, start))}</text>`;
+      svg += `</g>`;
+    });
+    weeklyData = weeks.map((w) => ({ ...w, from: Math.max(w.t, start), to: Math.min(w.t + 6 * 86400000, end) }));
+    return svg + `</svg>`;
+  }
+  let weeklyData = [];
+
+  // Popup with a week's numbers, shown while hovering its column.
+  function weekTooltip(w) {
+    const total = w.none + w.resolved + w.unresolved;
+    const row = (label, value, colour) => `<div class="row"><span>${label}</span><strong${colour ? ` style="color:${colour}"` : ""}>${value}</strong></div>`;
+    if (!total) return `<div class="name">${shortDate(w.from)} – ${shortDate(w.to)}</div><div class="sub">No pull requests reviewed</div>`;
+    return `<div class="name">${shortDate(w.from)} – ${shortDate(w.to)}</div>
+      <div class="sub">${plural(w.people.size, "developer")}${w.repos.size > 1 ? ` in ${plural(w.repos.size, "repository", "repositories")}` : ""}${w.bots ? `, plus ${plural(w.bots, "bot pull request")}` : ""}</div>
+      ${row("Pull requests", int(total))}
+      ${row("No issues", int(w.none))}
+      ${row("Resolved", int(w.resolved), w.resolved ? "var(--healthy-ink)" : "")}
+      ${row("Unresolved", int(w.unresolved), w.unresolved ? "var(--unhealthy-ink)" : "")}
+      ${row("Caught an issue", `${pct(w.resolved + w.unresolved, total)}%`)}
+      <div class="sub" style="margin:6px 0 2px">Findings</div>
+      ${row("Detected", int(w.detected))}
+      ${row("Fixed", int(w.fixed), w.fixed ? "var(--healthy-ink)" : "")}
+      ${row("Ignored", int(w.ignored), w.ignored ? "var(--unhealthy-ink)" : "")}
+      ${row("Suppressed", int(w.suppressed))}`;
+  }
+  function wireWeeklyTooltip() {
+    const chart = document.getElementById("weekly"), tip = chart?.querySelector(".tooltip");
+    if (!chart || !tip) return;
+    chart.querySelectorAll("g.week").forEach((g) => {
+      const w = weeklyData[Number(g.dataset.week)];
+      g.addEventListener("mouseenter", () => { tip.innerHTML = weekTooltip(w); tip.style.display = "block"; g.classList.add("hover"); });
+      g.addEventListener("mouseleave", () => { tip.style.display = "none"; g.classList.remove("hover"); });
+      g.addEventListener("mousemove", (e) => {
+        const box = chart.getBoundingClientRect();
+        let x = e.clientX - box.left + 16;
+        if (x + tip.offsetWidth > box.width) x = e.clientX - box.left - tip.offsetWidth - 16;
+        tip.style.left = `${Math.max(0, x)}px`;
+        tip.style.top = `${Math.max(0, e.clientY - box.top - tip.offsetHeight / 2)}px`;
+      });
+    });
+  }
+
+  // Sortable tables: click a header to sort by it.
+  function sortableTable(id, columns, rows, sortKey) {
+    const head = columns.map((c) => `<th class="sortable${c.num ? " num" : ""}" data-key="${c.key}">${c.label}</th>`).join("");
+    return `<div class="table-wrap"><table class="data" id="${id}" data-sort="${sortKey}"><thead><tr>${head}</tr></thead><tbody></tbody></table></div>`;
+  }
+  function fillTable(id, columns, rows, sortKey, desc = true) {
+    const table = document.getElementById(id);
+    if (!table) return;
+    const col = columns.find((c) => c.key === sortKey);
+    const sorted = [...rows].sort((a, b) => {
+      const va = col.sort ? col.sort(a) : a[sortKey], vb = col.sort ? col.sort(b) : b[sortKey];
+      const d = typeof va === "string" ? va.localeCompare(vb) : va - vb;
+      return desc ? -d : d;
+    });
+    table.querySelector("tbody").innerHTML = sorted.map((r) => `<tr>${columns.map((c) => c.cell(r)).join("")}</tr>`).join("");
+    table.querySelectorAll("th").forEach((th) => {
+      const key = th.dataset.key, c = columns.find((x) => x.key === key);
+      th.innerHTML = c.label + (key === sortKey ? ` <span class="arrow">${desc ? "▼" : "▲"}</span>` : "");
+      th.onclick = () => fillTable(id, columns, rows, key, key === sortKey ? !desc : typeof rows[0]?.[key] !== "string");
+    });
+  }
+  const numCell = (v, cls = "") => `<td class="num ${v ? cls : "zero"}">${int(v)}</td>`;
+
+  const people = new Map();
+  const botPrs = new Map();
+  prs.forEach((p) => p.authors.forEach((a) => {
+    const target = bots.has(a) ? botPrs : people;
+    const r = target.get(a) || { name: a, prs: 0, withFindings: 0, detected: 0, fixed: 0, ignored: 0, suppressed: 0, unresolved: 0 };
+    r.prs++; if (p.detected > 0) r.withFindings++; if (p.status === "unresolved") r.unresolved++;
+    r.detected += p.detected; r.fixed += p.fixed; r.ignored += p.ignored; r.suppressed += p.suppressed;
+    target.set(a, r);
+  }));
+  const devColumns = [
+    { key: "name", label: "Developer", cell: (r) => `<td class="name">${escapeHtml(r.name)}</td>` },
+    { key: "prs", label: "Pull requests", num: true, cell: (r) => numCell(r.prs, "strong") },
+    { key: "withFindings", label: "With findings", num: true, cell: (r) => numCell(r.withFindings) },
+    { key: "detected", label: "Detected", num: true, cell: (r) => numCell(r.detected) },
+    { key: "fixed", label: "Fixed", num: true, cell: (r) => numCell(r.fixed, "good") },
+    { key: "ignored", label: "Ignored", num: true, cell: (r) => numCell(r.ignored, "bad") },
+    { key: "suppressed", label: "Suppressed", num: true, cell: (r) => numCell(r.suppressed) },
+    { key: "unresolved", label: "Unresolved PRs", num: true, cell: (r) => numCell(r.unresolved, "bad") },
+  ];
+  function developersSection() {
+    if (!people.size) return `<p class="secondary">No pull requests by developers in this range.</p>`;
+    const botNote = botPrs.size ? `<p class="small tertiary">Automation, not in the table: ${[...botPrs.values()].map((b) =>
+      `${escapeHtml(b.name)} (${plural(b.prs, "pull request")}${b.withFindings ? `, ${b.withFindings} with findings` : ""})`).join(", ")}.</p>` : "";
+    const shared = prs.filter((p) => p.authors.filter((a) => !bots.has(a)).length > 1).length;
+    return sortableTable("developers", devColumns, [...people.values()], "prs")
+      + (shared ? `<p class="small tertiary">${plural(shared, "pull request has", "pull requests have")} more than one author and ${shared === 1 ? "counts" : "count"} for each.</p>` : "")
+      + botNote;
+  }
+
+  const multiRepo = new Set(prs.map((p) => p.repository)).size > 1;
+  const statusLabel = { "no-issues": "No issues", resolved: "Resolved", unresolved: "Unresolved" };
+  const prColumns = [
+    { key: "id", label: "Pull request", sort: (r) => Number(r.id) || 0, cell: (r) => `<td class="name">#${escapeHtml(r.id)}</td>` },
+    ...(multiRepo ? [{ key: "repository", label: "Repository", cell: (r) => `<td>${escapeHtml(r.repository)}</td>` }] : []),
+    { key: "analysedAt", label: "Reviewed", cell: (r) => `<td>${shortDate(r.analysedAt)}</td>` },
+    { key: "authors", label: "Authors", sort: (r) => r.authors.join(", "), cell: (r) => `<td>${r.authors.map(escapeHtml).join(", ")}</td>` },
+    { key: "detected", label: "Detected", num: true, cell: (r) => numCell(r.detected, "strong") },
+    { key: "fixed", label: "Fixed", num: true, cell: (r) => numCell(r.fixed, "good") },
+    { key: "ignored", label: "Ignored", num: true, cell: (r) => numCell(r.ignored, "bad") },
+    { key: "suppressed", label: "Suppressed", num: true, cell: (r) => numCell(r.suppressed) },
+    { key: "status", label: "Status", sort: (r) => (r.status === "unresolved" ? 1000 : 0) + r.detected, cell: (r) => `<td><span class="status ${r.status}">${statusLabel[r.status]}</span></td>` },
+  ];
+  const flagged = prs.filter((p) => p.detected > 0 || p.status !== "no-issues");
+  function pullRequestsSection() {
+    if (!flagged.length) return `<p class="empty">No pull request had a Code Health finding in this range.</p>`;
+    return sortableTable("pull-requests", prColumns, flagged, "status");
+  }
+
+  function repositoriesSection() {
+    if (!multiRepo) return "";
+    const repos = new Map();
+    prs.forEach((p) => {
+      const r = repos.get(p.repository) || { name: p.repository, prs: 0, withFindings: 0, fixed: 0, ignored: 0, unresolved: 0 };
+      r.prs++; if (p.detected > 0) r.withFindings++; if (p.status === "unresolved") r.unresolved++;
+      r.fixed += p.fixed; r.ignored += p.ignored;
+      repos.set(p.repository, r);
+    });
+    const rows = [...repos.values()].sort((a, b) => b.prs - a.prs).map((r) => `<tr><td class="name">${escapeHtml(r.name)}</td>
+      ${numCell(r.prs, "strong")}${numCell(r.withFindings)}${numCell(r.fixed, "good")}${numCell(r.ignored, "bad")}${numCell(r.unresolved, "bad")}</tr>`).join("");
+    return `<section><h2>Repositories</h2><div class="table-wrap"><table class="data"><thead><tr><th>Repository</th><th class="num">Pull requests</th>
+      <th class="num">With findings</th><th class="num">Fixed</th><th class="num">Ignored</th><th class="num">Unresolved PRs</th></tr></thead>
+      <tbody>${rows}</tbody></table></div></section>`;
+  }
+
+  document.title = `Pull request safeguards · ${report.project.name}`;
+  root.innerHTML = `
+    <section class="hero">
+      <div class="eyebrow">CodeScene · Pull request safeguards · ${escapeHtml(report.project.name)}</div>
+      <h1>Code Health safeguards on pull requests in ${escapeHtml(report.project.name)}</h1>
+      <div class="intro"><strong>The idea</strong>CodeScene reviews the Code Health of every pull request before it merges. When the review finds
+        a problem, the author can fix it, ignore it and merge anyway, or suppress it as accepted. Each fixed finding is a Code Health problem that
+        never reached the main branch. This report shows how often the review catches something, what authors do about it, and where findings
+        are left unresolved.</div>
+    </section>
+
+    <section>
+      <h2>Summary: ${span(report.range)}</h2>
+      ${headline()}
+      ${kpis()}
+    </section>
+
+    <section>
+      <h2>Week by week</h2>
+      <p class="small secondary">Pull requests reviewed each week by outcome, and what happened to their findings. Hover a week for its numbers.</p>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--stroke-2)"></span>No issues</span>
+        <span><span class="swatch" style="background:var(--healthy-ink)"></span>Resolved pull request, fixed finding</span>
+        <span><span class="swatch" style="background:var(--unhealthy-ink)"></span>Unresolved pull request, ignored finding</span>
+        <span><span class="swatch" style="background:var(--problematic)"></span>Suppressed finding</span>
+      </div>
+      <div class="chart" id="weekly">${weeklyChart()}<div class="tooltip"></div></div>
+    </section>
+
+    <section>
+      <h2>Developers</h2>
+      <p class="small secondary">Each developer's pull requests in ${span(report.range)} and what the review found. Click a column to sort.</p>
+      ${developersSection()}
+    </section>
+
+    <section>
+      <h2>Pull requests with findings</h2>
+      <p class="small secondary">Unresolved ones first, then the most findings. Click a column to sort.</p>
+      ${pullRequestsSection()}
+    </section>
+
+    ${repositoriesSection()}
+
+    <section>
+      <h2>How to read this report</h2>
+      <p class="small secondary"><strong>Detected</strong>: findings that would lower Code Health. <strong>Fixed</strong>: resolved in the pull request
+        before it merged. <strong>Ignored</strong>: left in the code when it merged. <strong>Suppressed</strong>: marked as accepted.
+        A pull request is <strong>resolved</strong> when it had findings and none were ignored, and <strong>unresolved</strong> when any were.</p>
+      <p class="small secondary">The figures come from the latest analysis, so pull requests after it are missing. Developers are shown by name only.</p>
+      ${(report.notes || []).map((n) => `<p class="small secondary"><strong>Note</strong>: ${escapeHtml(n)}</p>`).join("")}
+      <p class="small tertiary">Source: ${escapeHtml(report.project.source)}${report.generatedAt ? `, ${escapeHtml(report.generatedAt)}` : ""}.</p>
+    </section>`;
+
+  fillTable("developers", devColumns, [...people.values()], "prs");
+  fillTable("pull-requests", prColumns, flagged, "status");
+  wireWeeklyTooltip();
+})();
+</script>
+</body>
+</html>
