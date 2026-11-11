@@ -62,6 +62,12 @@
       "maximum": 10,
       "description": "New files below this Code Health raise an alert. Defaults to 9.0."
     },
+    "aiOptimal": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "Code Health from which code counts as AI-optimal. Defaults to 9.5."
+    },
     "maxPackages": {
       "type": "integer",
       "minimum": 0,

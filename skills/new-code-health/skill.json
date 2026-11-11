@@ -2,8 +2,8 @@
   "id": "new-code-health",
   "version": "1.0.0",
   "min_server_version": "1.0.0",
-  "title": "New code health report",
-  "summary": "The Code Health of the code added to a project over the last month: how much new code there is, its median and lowest Code Health per module and package, an alert for new files below the healthy threshold, and who wrote it.",
+  "title": "New code insights report",
+  "summary": "Whether the code added to a project over the last month is healthy and AI-ready: new code per module and package with its median and lowest Code Health, an alert for new technical debt, the share that is AI-optimal, and who to involve.",
   "audience": [
     "engineering-manager",
     "tech-lead"
@@ -21,11 +21,19 @@
     },
     {
       "name": "threshold",
-      "description": "New files below this Code Health raise an alert.",
+      "description": "New files below this Code Health are flagged as new technical debt.",
       "type": "number",
       "minimum": 1,
       "maximum": 10,
       "default": 9.0
+    },
+    {
+      "name": "ai_optimal",
+      "description": "Code Health from which code counts as AI-optimal.",
+      "type": "number",
+      "minimum": 1,
+      "maximum": 10,
+      "default": 9.5
     },
     {
       "name": "max_packages",

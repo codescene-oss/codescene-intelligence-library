@@ -15,7 +15,7 @@ Everything here is generic: no project names, people or analysis numbers. Projec
 | [portfolio-overview](skills/portfolio-overview/SKILL.md) | A one-page summary of every project you can access, for technical leaders and managers: what works well, where attention is needed, and how much of the code is AI-optimal, by hotspot Code Health. [Details](#portfolio-overview) |
 | [mcp-safeguard-insights](skills/mcp-safeguard-insights/SKILL.md) | How a project's developers use the local Code Health MCP: safeguard checks, degradations prevented before commit, uplifts, the trend over a year, the most active users and out-of-date installations. [Details](#mcp-safeguard-insights) |
 | [pull-request-safeguards](skills/pull-request-safeguards/SKILL.md) | How Code Health safeguards work on pull requests: how often the review catches an issue, how many findings authors fix rather than ignore or suppress, week by week, per developer and per pull request. [Details](#pull-request-safeguards) |
-| [new-code-health](skills/new-code-health/SKILL.md) | The Code Health of the code added over the last month: new files and lines per module and package, their median and lowest Code Health, an alert for new files below 9.0, and who wrote them. [Details](#new-code-health) |
+| [new-code-health](skills/new-code-health/SKILL.md) | Whether the code added over the last month is healthy and AI-ready: new code per module and package, its median and lowest Code Health, an alert for new technical debt, the share that is AI-optimal, and who to involve. [Details](#new-code-insights) |
 
 ## Adding a skill
 
@@ -172,20 +172,20 @@ Every pull request gets a Code Health review before it merges. When the review f
 - **Developers:** a sortable table of each person's pull requests and their findings detected, fixed, ignored and suppressed. Aliases of one person are merged, and bots are listed apart.
 - **Pull requests with findings:** unresolved ones first, then by findings detected, plus a table per repository when there are several.
 
-### New code health
+### New code insights
 
-Shows whether the code added to a project over the last month starts out healthy.
+Answers "is new code healthy and AI-ready?" for the code added to a project over the last month: whether it adds technical debt, which is cheapest to prevent while the code is new, and whether it is AI-optimal, the Code Health where AI assistants and people both work at their best.
 
-![New code health report](docs/images/new-code-health.png)
+![New code insights report](docs/images/new-code-health.png)
 
 A file counts as new when it has a Code Health score in the latest analysis but none in CodeScene's snapshot a month earlier. The report is built from `explore_project_files`. It contains:
 
-- **A summary:** new files and lines of code, the share that is test code, the median and lowest Code Health of the new files, and an alert when any new file is below 9.0.
-- **By module and by package:** files, lines, the Code Health range with its median and lowest value, and the main authors with their share of the lines. The package table shows the top 20 by default and has a filter.
-- **Developer contributions:** each developer's new files and lines, their share of the new code and its Code Health. Also capped at 20 by default, with a filter.
+- **A summary:** new files and lines of code, the share that is test code, the median and lowest Code Health of the new files, the share of new lines that is AI-optimal (9.5 or more), and an alert when any new file is below 9.0.
+- **By module and by package:** files, lines, the Code Health range with its median and lowest value, the AI-optimal share, and the main authors with their share of the lines. The package table shows the top 20 by default and has a filter.
+- **Developer contributions:** each developer's new files and lines, their share of the new code, its Code Health and AI-optimal share: where new knowledge sits and who to involve. Also capped at 20 by default, with a filter.
 - **Lowest Code Health:** the new files below 10, lowest first.
 
-The row limits and the alert threshold are inputs of the skill.
+The row limits, the alert threshold and the AI-optimal level are inputs of the skill.
 
 ## License
 

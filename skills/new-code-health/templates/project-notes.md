@@ -1,4 +1,4 @@
-# {{project-name}} new code health (project {{project-id}})
+# {{project-name}} new code insights (project {{project-id}})
 
 Keep this file in your own workspace (for example `codescene/projects/{{project-slug}}-new-code-health.md`), not in the shared library.
 
@@ -9,6 +9,7 @@ Keep this file in your own workspace (for example `codescene/projects/{{project-
 | Project id | {{project-id}} |
 | Display name | {{display-name}} |
 | Alert threshold | {{threshold}} |
+| AI-optimal from | {{ai-optimal}} |
 | Rows: packages, developers, lowest files | {{max-packages}}, {{max-developers}}, {{max-lowest-files}} |
 
 ## Packages

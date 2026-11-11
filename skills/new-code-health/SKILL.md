@@ -1,12 +1,17 @@
 ---
 name: codescene-new-code-health
-description: Builds a report on the Code Health of the code added to a CodeScene project over the last month. It shows how much new code there is, its median and lowest Code Health per module and package, an alert for new files below the healthy threshold, and which developers wrote it. Uses the CodeScene MCP server. Use when the user asks about new code, code added recently, whether new code is healthy, or who is writing the new code.
+description: Builds a report on whether the code added to a CodeScene project over the last month is healthy and AI-ready. It shows how much new code there is, its median and lowest Code Health per module and package, an alert for new technical debt, the share that is AI-optimal, and which developers to involve. Uses the CodeScene MCP server. Use when the user asks about new code, code added recently, whether new code is healthy or AI-ready, whether new technical debt is being added, or who is writing the new code.
 disable-model-invocation: true
 ---
 
-# New code health report
+# New code insights report
 
-Produces a one-page report on the files added to one project since CodeScene's Code Health snapshot a month before the latest analysis. For each module and package it shows the files and lines added, the share that is test code, and the **median** and **lowest** Code Health of the new files. A new file below the alert threshold, 9.0 by default, is an **alert**: new code should start out healthy.
+Produces a one-page report on the files added to one project since CodeScene's Code Health snapshot a month before the latest analysis. For each module and package it shows the files and lines added, the share that is test code, and the **median** and **lowest** Code Health of the new files. It answers two questions a leader has about the code being added now:
+
+- **Is it adding technical debt?** New code is where debt is cheapest to prevent. A new file below the alert threshold, 9.0 by default, is an **alert**.
+- **Is it AI-ready?** Code at 9.5 or more by default is **AI-optimal**: where AI assistants and people both work at their best. The report shows the share of new lines that is.
+
+The developer columns show where new knowledge sits and who to involve. They are not a productivity measure; say so if the user reads them that way.
 
 The data comes from `explore_project_files`: the latest analysis, not live data.
 
@@ -25,6 +30,7 @@ Collect these before starting. Use the project notes if they exist; otherwise as
 | Project | required: its name or its id. Resolve a name to the id with `list_projects`; if several projects match, ask the user which one |
 | Display name for the title | the project name from `list_projects` |
 | Alert threshold | `9.0` |
+| AI-optimal from | `9.5` |
 | Rows in the package, developer and lowest-file tables | `20` each; `0` shows all |
 | Packages | from the project notes: how modules and packages are read from the paths |
 | Author names | from the project notes: aliases to merge |
@@ -62,7 +68,7 @@ Map each new file to a `File`:
 
 **5. Merge author aliases.** The same person can appear under several names, such as a display name and a login. Use the aliases in the project notes. Otherwise, list names that look like the same person and ask the user which to merge; don't guess.
 
-**6. Render.** Build a `ReportData` object that validates against the schema, with `project` (`name`, `source`, `id`), `generatedAt`, `threshold`, `maxPackages`, `maxDevelopers`, `maxLowestFiles` and `notes`. Copy the renderer to the user's output location as `{{project-slug}}-new-code-health.html`, and replace the stub inside its `{{REPORT_DATA}}` block. Leave the rest unchanged. Put only JSON there. Open the file in a browser and check that the tables appear instead of an error box.
+**6. Render.** Build a `ReportData` object that validates against the schema, with `project` (`name`, `source`, `id`), `generatedAt`, `threshold`, `aiOptimal`, `maxPackages`, `maxDevelopers`, `maxLowestFiles` and `notes`. Copy the renderer to the user's output location as `{{project-slug}}-new-code-insights.html`, and replace the stub inside its `{{REPORT_DATA}}` block. Leave the rest unchanged. Put only JSON there. Open the file in a browser and check that the tables appear instead of an error box.
 
 Use `notes` for facts the reader needs, for example which author names were merged, or a main author known only by a login.
 
@@ -70,9 +76,10 @@ Use `notes` for facts the reader needs, for example which author names were merg
 
 ## How the renderer reads the data
 
-- **Summary:** new files, lines of new code and the share that is test code, the median and lowest Code Health, and the number of files below the threshold. A banner turns into an alert when any new file is below the threshold.
-- **By module and by package:** sortable tables with files, lines, test share, the Code Health range on the 1–10 scale, the median, the lowest, and the main authors with their share of the lines. Rows with a file below the threshold are highlighted. The package table shows at most `maxPackages` rows, by the sorted column, and has a filter that searches every package and author.
-- **Developer contributions:** each developer's files and lines as main author, their share of the new code, its median and lowest Code Health, and their main packages. At most `maxDevelopers` rows, with a filter.
+- **Header:** "Is new code healthy and AI-ready?", with the number of new files and the date range.
+- **Summary:** new files, lines of new code and the share that is test code, the median and lowest Code Health, and the share of new lines that is AI-optimal. A banner turns into an alert when any new file is below the threshold.
+- **By module and by package:** sortable tables with files, lines, test share, the Code Health range on the 1–10 scale with the AI-optimal line marked, the median, the lowest, the share of lines that is AI-optimal, and the main authors with their share of the lines. Rows with a file below the threshold are highlighted. The package table shows at most `maxPackages` rows, by the sorted column, and has a filter that searches every package and author.
+- **Developer contributions:** each developer's files and lines as main author, their share of the new code, its median and lowest Code Health, the share that is AI-optimal, and their main packages. At most `maxDevelopers` rows, with a filter.
 - **Lowest Code Health:** only new files below 10, lowest first, at most `maxLowestFiles` of them.
 
 ## Rules learned the hard way

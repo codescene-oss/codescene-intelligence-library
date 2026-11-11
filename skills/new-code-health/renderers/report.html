@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>New code health</title>
+<title>New code insights</title>
 <style>
   /* CodeScene theme colours. The pastel fills match the app's Code Health bubbles; the -ink variants keep
      numbers and labels readable on white, and fall back to the pastels on dark backgrounds. */
@@ -104,6 +104,8 @@
 </style>
 <style>
   .headline { font-size: 15px; line-height: 1.55; }
+  section.hero .subtitle { font-size: 15px; line-height: 1.5; color: #dfe8f2; max-width: 820px; }
+  section.hero .meta { font-size: 12px; color: #b9c6d6; }
   .kpi.alert { border-color: var(--unhealthy-ink); background: var(--address-tint); }
   .kpi.alert .value { color: var(--unhealthy-ink); }
   .kpi.ok .value { color: var(--healthy-ink); }
@@ -150,10 +152,12 @@
 
   const files = report.files || [];
   if (!files.length) {
-    root.innerHTML = `<section><h1>New code in ${esc(report.project?.name || "")}</h1><p class="secondary">No new files in this range.</p></section>`;
+    root.innerHTML = `<section><div class="eyebrow">CodeScene · New code insights · ${esc(report.project?.name || "")}</div><h1>Is new code healthy and AI-ready?</h1><p class="secondary">No new files in this range.</p></section>`;
     return;
   }
   const T = report.threshold ?? 9.0;
+  // Code Health from which code is AI-optimal: where AI assistants and people both work at their best.
+  const AI = report.aiOptimal ?? 9.5;
   // How many rows the "By package", "Developer contributions" and "Lowest Code Health" tables show. Set maxPackages,
   // maxDevelopers and maxLowestFiles in the report data to change them; 0 shows all.
   const limit = (v) => (Number.isInteger(v) && v >= 0 ? v : 20);
@@ -181,6 +185,7 @@
     const hs = fs.map((f) => f.codeHealth);
     const lines = fs.reduce((a, f) => a + f.lines, 0);
     const testLines = fs.filter((f) => f.test).reduce((a, f) => a + f.lines, 0);
+    const aiLines = fs.filter((f) => f.codeHealth >= AI).reduce((a, f) => a + f.lines, 0);
     const byAuthor = new Map();
     fs.forEach((f) => byAuthor.set(f.mainAuthor, (byAuthor.get(f.mainAuthor) || 0) + f.lines));
     const authors = [...byAuthor.entries()].sort((a, b) => b[1] - a[1]).map(([n, l]) => ({ name: n, share: lines ? l / lines : 0 }));
@@ -188,7 +193,7 @@
     const byPkg = new Map();
     fs.forEach((f) => byPkg.set(f.package, (byPkg.get(f.package) || 0) + f.lines));
     const packages = [...byPkg.entries()].sort((a, b) => b[1] - a[1]).map(([n]) => n);
-    return { name, files: fs.length, lines, testShare: lines ? testLines / lines : 0, median: median(hs), min: Math.min(...hs), max: Math.max(...hs),
+    return { name, files: fs.length, lines, testShare: lines ? testLines / lines : 0, aiShare: lines ? aiLines / lines : 0, median: median(hs), min: Math.min(...hs), max: Math.max(...hs),
       below: fs.filter((f) => f.codeHealth < T).length, authors, lowest, packages, mainAuthor: authors[0]?.name || "" };
   }
 
@@ -209,6 +214,7 @@
       <rect x="0" y="5" width="${x(4)}" height="4" fill="var(--unhealthy)" opacity=".35"/>
       <rect x="${x(4)}" y="5" width="${x(9) - x(4)}" height="4" fill="var(--problematic)" opacity=".35"/>
       <rect x="${x(9)}" y="5" width="${W - x(9)}" height="4" fill="var(--healthy)" opacity=".6"/>
+      <rect x="${x(AI) - 0.5}" y="2" width="1" height="${H - 4}" fill="var(--healthy-ink)" opacity=".7"/>
       <rect x="${Math.min(x(p.min), W - 3)}" y="3" width="${Math.max(3, x(p.max) - x(p.min))}" height="8" rx="2" fill="var(--${cls(p.min)}-ink)"/>
       <rect x="${Math.min(x(p.median), W - 2) - 1}" y="0" width="2" height="${H}" fill="var(--navy)"/></svg>`;
   }
@@ -239,6 +245,7 @@
     { key: "range", label: "Code Health range", sort: (r) => r.min, asc: true, cell: (r) => `<td class="range">${rangeSvg(r)}</td>` },
     { key: "median", label: "Median", num: true, cell: (r) => chCell(r.median) },
     { key: "min", label: "Lowest", num: true, asc: true, cell: (r) => `<td class="num"><span class="ch ${cls(r.min)}">${ch1(r.min)}</span>${r.min < T ? ' <span class="flag">▲</span>' : ""}</td>` },
+    { key: "aiShare", label: "AI-optimal", num: true, cell: (r) => `<td class="num ${r.aiShare === 1 ? "good" : r.aiShare < 0.5 ? "bad" : ""}">${pct(r.aiShare)}</td>` },
     { key: "mainAuthor", label: "Main authors (share of lines)", asc: true, cell: (r) => `<td class="authors">${authorList(r.authors)}</td>` },
   ]; };
   const moduleColumns = groupColumns("Module", modules);
@@ -251,6 +258,7 @@
     { key: "testShare", label: "Test code", num: true, cell: (r) => `<td class="num">${pct(r.testShare)}</td>` },
     { key: "median", label: "Median", num: true, cell: (r) => chCell(r.median) },
     { key: "min", label: "Lowest", num: true, asc: true, cell: (r) => `<td class="num"><span class="ch ${cls(r.min)}">${ch1(r.min)}</span>${r.min < T ? ' <span class="flag">▲</span>' : ""}</td>` },
+    { key: "aiShare", label: "AI-optimal", num: true, cell: (r) => `<td class="num ${r.aiShare === 1 ? "good" : r.aiShare < 0.5 ? "bad" : ""}">${pct(r.aiShare)}</td>` },
     { key: "pk", label: "Main packages", sort: (r) => r.packages[0], asc: true, cell: (r) => `<td class="authors">${r.packages.slice(0, 3).map(esc).join(", ")}${r.packages.length > 3 ? ` <span class="share">+${r.packages.length - 3}</span>` : ""}</td>` },
   ];
 
@@ -266,6 +274,7 @@
   const lowestTxt = `${ch1(all.min)} in ${esc(all.lowest.path.split("/").pop())} (${esc(all.lowest.package)})`;
   const headline = `Between ${range}, ${esc(report.project.name)} gained <strong>${int(all.files)} new files</strong> with <strong>${int(all.lines)} lines of code</strong> across ${packages.length} packages.
     Median Code Health of the new code is <strong>${ch1(all.median)}</strong>, and the lowest is <strong>${lowestTxt}</strong>.
+    <strong>${pct(all.aiShare)} of the new lines are AI-optimal</strong>, at ${AI.toFixed(1)} or more.
     ${alertFiles.length ? `<strong>${alertFiles.length} new ${alertFiles.length === 1 ? "file is" : "files are"} below ${T.toFixed(1)}</strong>, in ${alertPkgs.length} ${alertPkgs.length === 1 ? "package" : "packages"}.` : `No new file is below the ${T.toFixed(1)} threshold for healthy code.`}
     ${top ? `${esc(top.name)} leads the most new code, ${pct(top.lines / all.lines)} of the lines.` : ""}`;
 
@@ -273,10 +282,11 @@
 
   root.innerHTML = `
   <section class="hero">
-    <div class="eyebrow">Code Health of new code</div>
-    <h1>New code in ${esc(report.project.name)}</h1>
-    <p class="small" style="color:#b9c6d6">${esc(report.project.source)} · ${fmtDate(report.range.from)} – ${fmtDate(report.range.to)} · analysis of ${fmtDate(report.analysisDate || report.generatedAt)}</p>
-    <div class="intro"><strong>What counts as new</strong>Files that have a Code Health score in the latest analysis but had none a month earlier. Healthy code scores ${T.toFixed(1)} or more; anything below is flagged.</div>
+    <div class="eyebrow">CodeScene · New code insights · ${esc(report.project.name)}</div>
+    <h1>Is new code healthy and AI-ready?</h1>
+    <p class="subtitle">Code Health of the ${int(all.files)} files added between ${range}: where technical debt is creeping in, how much is AI-optimal, and who to involve.</p>
+    <p class="meta">${esc(report.project.source)} · analysis of ${fmtDate(report.analysisDate || report.generatedAt)}</p>
+    <div class="intro"><strong>How to read it</strong>New files are those with a Code Health score in the latest analysis but none a month earlier. New code below ${T.toFixed(1)} is flagged as new technical debt. Code at ${AI.toFixed(1)} or more is AI-optimal: where AI assistants and people both work at their best. Each file counts for its main author, the developer who wrote most of it.</div>
   </section>
   <section>
     <p class="headline">${headline}</p>
@@ -285,7 +295,7 @@
       ${kpi(int(all.lines), "Lines of new code", `${pct(all.testShare)} of it test code`)}
       ${kpi(ch1(all.median), "Median Code Health", "of the new files", "ok")}
       ${kpi(ch1(all.min), "Lowest Code Health", esc(all.lowest.path.split("/").pop()), all.min < T ? "alert" : "ok")}
-      ${kpi(alertFiles.length, `Files below ${T.toFixed(1)}`, alertFiles.length ? `in ${alertPkgs.length} ${alertPkgs.length === 1 ? "package" : "packages"}` : "no alert", alertFiles.length ? "alert" : "ok")}
+      ${kpi(pct(all.aiShare), "AI-optimal", `of new lines at ${AI.toFixed(1)} or more`, all.aiShare === 1 ? "ok" : "")}
     </div>
     ${alertFiles.length
       ? `<div class="banner alert">Alert: ${alertFiles.length} new ${alertFiles.length === 1 ? "file is" : "files are"} below ${T.toFixed(1)} Code Health.<div class="sub">${alertFiles.length === 1 ? "It is" : "They are"} listed under Lowest Code Health below and marked ▲ in the tables.</div></div>`
@@ -293,7 +303,7 @@
   </section>
   <section>
     <h2>By module</h2>
-    <p class="small secondary">The bar shows each module's Code Health range on the 1–10 scale, from its lowest to its highest new file; the dark tick is the median.</p>
+    <p class="small secondary">The bar shows each module's Code Health range on the 1–10 scale, from its lowest to its highest new file; the dark tick is the median and the thin green line marks AI-optimal (${AI.toFixed(1)}). AI-optimal is the share of new lines at ${AI.toFixed(1)} or more.</p>
     ${sortableTable("modules", moduleColumns)}
   </section>
   <section>

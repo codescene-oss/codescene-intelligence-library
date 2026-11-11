@@ -11,6 +11,7 @@
     "to": "2026-03-31"
   },
   "threshold": 9.0,
+  "aiOptimal": 9.5,
   "maxPackages": 20,
   "maxDevelopers": 20,
   "maxLowestFiles": 20,
