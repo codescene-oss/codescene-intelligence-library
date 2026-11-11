@@ -1,5 +1,5 @@
 ---
-name: codescene-new-code-health
+name: codescene-new-code-insights
 description: Builds a report on whether the code added to a CodeScene project over the last month is healthy and AI-ready. It shows how much new code there is, its median and lowest Code Health per module and package, an alert for new technical debt, the share that is AI-optimal, and which developers to involve. Uses the CodeScene MCP server. Use when the user asks about new code, code added recently, whether new code is healthy or AI-ready, whether new technical debt is being added, or who is writing the new code.
 disable-model-invocation: true
 ---
@@ -17,7 +17,7 @@ The data comes from `explore_project_files`: the latest analysis, not live data.
 
 The report lists developers by name. Never show email addresses or account ids.
 
-The report data has one shape, defined in [report-data.schema.json](report-data.schema.json). [renderers/report.html](renderers/report.html) has a `{{REPORT_DATA}}` block that is the only part you fill in. Per-project inputs and decisions go in the user's workspace, not in this library, as `codescene/projects/{{project-slug}}-new-code-health.md`, created from [templates/project-notes.md](templates/project-notes.md).
+The report data has one shape, defined in [report-data.schema.json](report-data.schema.json). [renderers/report.html](renderers/report.html) has a `{{REPORT_DATA}}` block that is the only part you fill in. Per-project inputs and decisions go in the user's workspace, not in this library, as `codescene/projects/{{project-slug}}-new-code-insights.md`, created from [templates/project-notes.md](templates/project-notes.md).
 
 Follow [../../shared/ground-rules.md](../../shared/ground-rules.md) throughout.
 

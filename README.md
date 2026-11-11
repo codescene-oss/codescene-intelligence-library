@@ -15,7 +15,7 @@ Everything here is generic: no project names, people or analysis numbers. Projec
 | [portfolio-overview](skills/portfolio-overview/SKILL.md) | A one-page summary of every project you can access, for technical leaders and managers: what works well, where attention is needed, and how much of the code is AI-optimal, by hotspot Code Health. [Details](#portfolio-overview) |
 | [mcp-safeguard-insights](skills/mcp-safeguard-insights/SKILL.md) | How a project's developers use the local Code Health MCP: safeguard checks, degradations prevented before commit, uplifts, the trend over a year, the most active users and out-of-date installations. [Details](#mcp-safeguard-insights) |
 | [pull-request-safeguards](skills/pull-request-safeguards/SKILL.md) | How Code Health safeguards work on pull requests: how often the review catches an issue, how many findings authors fix rather than ignore or suppress, week by week, per developer and per pull request. [Details](#pull-request-safeguards) |
-| [new-code-health](skills/new-code-health/SKILL.md) | Whether the code added over the last month is healthy and AI-ready: new code per module and package, its median and lowest Code Health, an alert for new technical debt, the share that is AI-optimal, and who to involve. [Details](#new-code-insights) |
+| [new-code-insights](skills/new-code-insights/SKILL.md) | Whether the code added over the last month is healthy and AI-ready: new code per module and package, its median and lowest Code Health, an alert for new technical debt, the share that is AI-optimal, and who to involve. [Details](#new-code-insights) |
 
 ## Adding a skill
 
@@ -176,7 +176,7 @@ Every pull request gets a Code Health review before it merges. When the review f
 
 Answers "is new code healthy and AI-ready?" for the code added to a project over the last month: whether it adds technical debt, which is cheapest to prevent while the code is new, and whether it is AI-optimal, the Code Health where AI assistants and people both work at their best.
 
-![New code insights report](docs/images/new-code-health.png)
+![New code insights report](docs/images/new-code-insights.png)
 
 A file counts as new when it has a Code Health score in the latest analysis but none in CodeScene's snapshot a month earlier. The report is built from `explore_project_files`. It contains:
 

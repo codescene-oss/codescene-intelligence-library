@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "codescene://skills/new-code-health/report-data.schema.json",
+  "$id": "codescene://skills/new-code-insights/report-data.schema.json",
   "title": "ReportData",
   "type": "object",
   "required": [

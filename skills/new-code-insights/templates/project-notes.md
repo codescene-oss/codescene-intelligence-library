@@ -1,6 +1,6 @@
 # {{project-name}} new code insights (project {{project-id}})
 
-Keep this file in your own workspace (for example `codescene/projects/{{project-slug}}-new-code-health.md`), not in the shared library.
+Keep this file in your own workspace (for example `codescene/projects/{{project-slug}}-new-code-insights.md`), not in the shared library.
 
 ## Inputs
 
