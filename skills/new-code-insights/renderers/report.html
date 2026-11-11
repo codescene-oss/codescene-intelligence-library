@@ -334,7 +334,6 @@
       ${kpi(ch1(all.median), "Median Code Health", "of the new files", "ok")}
       ${kpi(ch1(all.min), "Lowest Code Health", esc(all.lowest.path.split("/").pop()), all.min < T ? "alert" : "ok")}
       ${kpi(pct(all.aiShare), "AI-optimal", `of new lines at ${AI.toFixed(1)} or more`, all.aiShare === 1 ? "ok" : "")}
-      ${hasCoverage ? kpi(pct(all.coverage), "Line coverage", `of new production code, ${pct(all.measuredShare)} measured`, all.coverage >= COV ? "ok" : "alert") : ""}
     </div>
     ${alertFiles.length
       ? `<div class="banner alert">Alert: ${alertFiles.length} new ${alertFiles.length === 1 ? "file is" : "files are"} below ${T.toFixed(1)} Code Health.<div class="sub">${alertFiles.length === 1 ? "It is" : "They are"} listed under Lowest Code Health below and marked ▲ in the tables.</div></div>`

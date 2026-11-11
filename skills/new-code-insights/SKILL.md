@@ -79,17 +79,17 @@ Use `notes` for facts the reader needs, for example which author names were merg
 ## How the renderer reads the data
 
 - **Header:** "Is new code healthy and AI-ready?", with the number of new files and the date range.
-- **Summary:** new files, lines of new code and the share that is test code, the median and lowest Code Health, the share of new lines that is AI-optimal, and line coverage when there is any. A banner turns into an alert when any new file is below the threshold.
+- **Summary:** new files, lines of new code and the share that is test code, the median and lowest Code Health, and the share of new lines that is AI-optimal. A banner turns into an alert when any new file is below the threshold.
 - **By module and by package:** sortable tables with files, lines, test share, the Code Health range on the 1–10 scale with the AI-optimal line marked, the median, the lowest, the share of lines that is AI-optimal, and the main authors with their share of the lines. Rows with a file below the threshold are highlighted. The package table shows at most `maxPackages` rows, by the sorted column, and has a filter that searches every package and author.
 - **Developer contributions:** each developer's files and lines as main author, the median and lowest Code Health, the share that is AI-optimal, their coverage, and their main packages. Rows with code below AI-optimal are highlighted in amber, and rows with code below the threshold in red. At most `maxDevelopers` rows, with a filter.
 - **Lowest Code Health:** only new files below 10, lowest first, at most `maxLowestFiles` of them.
-- **Coverage, when present:** a line coverage tile, a Coverage column, with "–" where there is no coverage data, and the least covered new production files below the target. Coverage is weighted by lines and covers production code only. Without any coverage data, these are left out and the notes say coverage is not integrated.
+- **Coverage, when present:** a sentence in the headline, a Coverage column, with "–" where there is no coverage data, and the least covered new production files below the target. Coverage is weighted by lines and covers production code only. Without any coverage data, these are left out and the notes say coverage is not integrated.
 
 ## Rules learned the hard way
 
 - **Read every page.** A report built from the first page of files undercounts.
 - **New means new to the analysis.** A file renamed or moved during the month also counts as new, and deleted files are not visible. Say so in `notes` when a large share of the new files may be moves.
-- **Coverage is optional.** It comes from CodeScene's coverage integration, which many projects don't have, and some languages are never measured. Keep a missing value null, never 0. The summary tile says how much of the new code has coverage data; the table cells leave it out to stay readable.
+- **Coverage is optional.** It comes from CodeScene's coverage integration, which many projects don't have, and some languages are never measured. Keep a missing value null, never 0. The headline says how much of the new code has coverage data; the table cells leave it out to stay readable.
 - **One main author per file.** A file counts for the developer who wrote most of it; a package's main authors are weighted by the lines of the files they lead.
 - **Never show email addresses.** Map author names only, and merge aliases into a display name.
 - Use CodeScene's theme colours, as in the other reports.
