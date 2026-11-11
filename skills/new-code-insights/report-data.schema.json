@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "codescene://skills/new-code-insights/report-data.schema.json",
+  "title": "ReportData",
+  "type": "object",
+  "required": [
+    "project",
+    "range",
+    "files"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "project": {
+      "type": "object",
+      "required": [
+        "name",
+        "source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "generatedAt": {
+      "type": "string",
+      "description": "YYYY-MM-DD"
+    },
+    "analysisDate": {
+      "type": "string",
+      "description": "YYYY-MM-DD: the date of the analysis the files come from."
+    },
+    "range": {
+      "type": "object",
+      "description": "From the earlier Code Health snapshot to the latest analysis.",
+      "required": [
+        "from",
+        "to"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "YYYY-MM-DD"
+        },
+        "to": {
+          "type": "string",
+          "description": "YYYY-MM-DD"
+        }
+      }
+    },
+    "threshold": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "New files below this Code Health raise an alert. Defaults to 9.0."
+    },
+    "aiOptimal": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "Code Health from which code counts as AI-optimal. Defaults to 9.5."
+    },
+    "coverageTarget": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Line coverage target for new production code, as a share. Defaults to 0.8."
+    },
+    "maxPackages": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Rows in the package table; 0 shows all. Defaults to 20."
+    },
+    "maxDevelopers": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Rows in the developer contributions table; 0 shows all. Defaults to 20."
+    },
+    "maxLowestFiles": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Rows in the lowest Code Health table; 0 shows all. Defaults to 20."
+    },
+    "files": {
+      "type": "array",
+      "description": "Every new file, one entry each.",
+      "items": {
+        "$ref": "#/$defs/File"
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "File": {
+      "type": "object",
+      "required": [
+        "path",
+        "module",
+        "package",
+        "lines",
+        "codeHealth",
+        "mainAuthor",
+        "test",
+        "lastModified"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "module": {
+          "type": "string",
+          "description": "The top-level part of the system the file belongs to."
+        },
+        "package": {
+          "type": "string",
+          "description": "The package the file belongs to, with source and test files of one package grouped together."
+        },
+        "language": {
+          "type": "string"
+        },
+        "lines": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "codeHealth": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "coverage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Line coverage as a share, or null when the file has no measurement. Coverage is an optional integration: leave it null rather than guessing."
+        },
+        "mainAuthor": {
+          "type": "string",
+          "description": "Display name of the developer who wrote most of the file, with aliases merged."
+        },
+        "mainAuthorShare": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "authorCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "test": {
+          "type": "boolean",
+          "description": "True for test code."
+        },
+        "lastModified": {
+          "type": "string",
+          "description": "YYYY-MM-DD"
+        }
+      }
+    }
+  }
+}
