@@ -182,8 +182,8 @@ A file counts as new when it has a Code Health score in the latest analysis but 
 
 - **A summary:** new files and lines of code, the share that is test code, the median and lowest Code Health of the new files, the share of new lines that is AI-optimal (9.5 or more), and an alert when any new file is below 9.0.
 - **By module and by package:** files, lines, the Code Health range with its median and lowest value, the AI-optimal share, and the main authors with their share of the lines. The package table shows the top 20 by default and has a filter.
-- **Developer contributions:** each developer's new files and lines, their Code Health and AI-optimal share: where new knowledge sits and who to involve. Developers with new code below AI-optimal stand out.
-- **Line coverage, when the project has it:** per module, package and developer, with how much of the code is measured, and the least covered new files. Coverage is an optional integration, so the report leaves it out when there is none. Also capped at 20 by default, with a filter.
+- **Developer contributions:** each developer's new files and lines, their Code Health and AI-optimal share: where new knowledge sits and who to involve. Developers with new code below AI-optimal stand out. Also capped at 20 by default, with a filter.
+- **Line coverage, when the project has it:** per module, package and developer, and the least covered new files. Coverage is an optional integration, so the report leaves it out when there is none.
 - **Lowest Code Health:** the new files below 10, lowest first.
 
 The row limits, the alert threshold, the AI-optimal level and the coverage target are inputs of the skill.

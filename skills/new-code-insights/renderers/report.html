@@ -126,7 +126,6 @@
   tr.not-optimal td { background: #f6d9911f; }
   #people tr.not-optimal td.name { box-shadow: inset 3px 0 0 var(--problematic); }
   #people tr.alert td.name { box-shadow: inset 3px 0 0 var(--unhealthy-ink); }
-  td.cov .measured { display: block; font-size: 10px; font-weight: 400; color: var(--text-3); }
   td.cov.bad { color: var(--unhealthy-ink); font-weight: 600; }
   .kpis { grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); }
   .range svg { display: block; }
@@ -257,8 +256,8 @@
   const aiCell = (r) => `<td class="num ai ${r.aiShare === 1 ? "full" : r.aiShare < 0.5 ? "low" : "part"}">${pct(r.aiShare)}</td>`;
   const aiColumn = { key: "aiShare", label: "AI-optimal", num: true, cell: aiCell };
   const covCell = (r) => r.coverage == null
-    ? `<td class="num cov tertiary">–<span class="measured">not measured</span></td>`
-    : `<td class="num cov ${r.coverage < COV ? "bad" : ""}">${pct(r.coverage)}<span class="measured">${pct(r.measuredShare)} measured</span></td>`;
+    ? `<td class="num cov tertiary" title="No coverage data">–</td>`
+    : `<td class="num cov ${r.coverage < COV ? "bad" : ""}" title="Coverage data for ${pct(r.measuredShare)} of the production lines">${pct(r.coverage)}</td>`;
   const coverageColumns = hasCoverage ? [{ key: "coverage", label: "Coverage", num: true, sort: (r) => r.coverage ?? -1, asc: true, cell: covCell }] : [];
   const groupColumns = (label, rows) => { const maxLines = Math.max(...rows.map((p) => p.lines), 1); return [
     { key: "name", label, asc: true, cell: (r) => `<td class="pkg">${esc(r.name).replace(/\//g, "/<wbr>")}</td>` },
