@@ -209,7 +209,7 @@
     const byPkg = new Map();
     fs.forEach((f) => byPkg.set(f.package, (byPkg.get(f.package) || 0) + f.lines));
     const packages = [...byPkg.entries()].sort((a, b) => b[1] - a[1]).map(([n]) => n);
-    return { name, files: fs.length, lines, testShare: lines ? testLines / lines : 0, aiShare: lines ? aiLines / lines : 0, notOptimal: lines - aiLines, coverage, measuredShare: prodLines ? measuredLines / prodLines : 0, median: median(hs), min: Math.min(...hs), max: Math.max(...hs),
+    return { name, files: fs.length, lines, testShare: lines ? testLines / lines : 0, aiShare: lines ? aiLines / lines : 0, coverage, measuredShare: prodLines ? measuredLines / prodLines : 0, median: median(hs), min: Math.min(...hs), max: Math.max(...hs),
       below: fs.filter((f) => f.codeHealth < T).length, authors, lowest, packages, mainAuthor: authors[0]?.name || "" };
   }
 
@@ -280,7 +280,6 @@
     { key: "testShare", label: "Test code", num: true, cell: (r) => `<td class="num">${pct(r.testShare)}</td>` },
     { key: "median", label: "Median", num: true, cell: (r) => chCell(r.median) },
     { key: "min", label: "Lowest", num: true, asc: true, cell: (r) => `<td class="num"><span class="ch ${cls(r.min)}">${ch1(r.min)}</span>${r.min < T ? ' <span class="flag">▲</span>' : ""}</td>` },
-    { key: "notOptimal", label: `Lines below ${AI.toFixed(1)}`, num: true, cell: (r) => `<td class="num ${r.notOptimal ? "strong" : "zero"}">${int(r.notOptimal)}</td>` },
     aiColumn,
     ...coverageColumns,
     { key: "pk", label: "Main packages", sort: (r) => r.packages[0], asc: true, cell: (r) => `<td class="authors">${r.packages.slice(0, 3).map(esc).join(", ")}${r.packages.length > 3 ? ` <span class="share">+${r.packages.length - 3}</span>` : ""}</td>` },
