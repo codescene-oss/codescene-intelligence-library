@@ -278,7 +278,6 @@
     { key: "name", label: "Developer", asc: true, cell: (r) => `<td class="name">${esc(r.name)}</td>` },
     { key: "files", label: "Files led", num: true, cell: (r) => `<td class="num strong">${int(r.files)}</td>` },
     { key: "lines", label: "Lines", num: true, cell: (r) => `<td class="num">${int(r.lines)}</td>` },
-    { key: "share", label: "Share of new code", num: true, sort: (r) => r.lines, cell: (r) => `<td class="num">${pct(r.lines / all.lines)}</td>` },
     { key: "testShare", label: "Test code", num: true, cell: (r) => `<td class="num">${pct(r.testShare)}</td>` },
     { key: "median", label: "Median", num: true, cell: (r) => chCell(r.median) },
     { key: "min", label: "Lowest", num: true, asc: true, cell: (r) => `<td class="num"><span class="ch ${cls(r.min)}">${ch1(r.min)}</span>${r.min < T ? ' <span class="flag">▲</span>' : ""}</td>` },
