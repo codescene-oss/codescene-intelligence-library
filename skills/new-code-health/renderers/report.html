@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New code health</title>
+<style>
+  /* CodeScene theme colours. The pastel fills match the app's Code Health bubbles; the -ink variants keep
+     numbers and labels readable on white, and fall back to the pastels on dark backgrounds. */
+  :root {
+    --unhealthy: #ef8290;
+    --problematic: #f6d991;
+    --healthy: #8ddec8;
+    --unhealthy-ink: #c8475a;
+    --problematic-ink: #9a7213;
+    --healthy-ink: #1f8569;
+    --primary: #2f7b7a;
+    --navy: #0f2d57;
+    --address-tint: #ef829026;
+    --plan-tint: #8ddec826;
+    --brand-tint: #2f7b7a14;
+    --page: #eef2f8;
+    --bg: #ffffff;
+    --text: #323a4e;
+    --text-2: #4f5866;
+    --text-3: #7d8694;
+    --stroke-2: #d5dbe3;
+    --stroke-3: #eceff4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --unhealthy-ink: #ef8290;
+      --problematic-ink: #f6d991;
+      --healthy-ink: #8ddec8;
+      --primary: #62d5de;
+      --page: #0a1424;
+      --bg: #12223a;
+      --text: #eceef1;
+      --text-2: #b4bac2;
+      --text-3: #848b95;
+      --stroke-2: #2e3d52;
+      --stroke-3: #1d2a3d;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; }
+  section { display: flex; flex-direction: column; gap: 8px; background: var(--bg); border-radius: 10px; padding: 20px 24px;
+    box-shadow: 0 1px 2px rgba(15, 45, 87, 0.06), 0 2px 8px rgba(15, 45, 87, 0.05); }
+  /* The header follows the app's navy-to-teal sidebar. */
+  section.hero { background: linear-gradient(120deg, #0f2d57 0%, #0b3a5e 55%, #075062 100%); color: #ffffff; gap: 12px; padding: 28px 24px; }
+  section.hero .eyebrow { color: #62d5de; }
+  section.hero .intro { background: rgba(255, 255, 255, 0.07); border-left-color: #62d5de; color: #dfe8f2; }
+  section.hero .intro strong { color: #62d5de; }
+  h1 { font-size: 24px; margin: 0; line-height: 1.25; }
+  h2 { font-size: 17px; margin: 0; }
+  p { margin: 0; }
+  .eyebrow { color: var(--primary); font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; }
+  .small { font-size: 12px; }
+  .secondary { color: var(--text-2); }
+  .tertiary { color: var(--text-3); }
+  .intro { background: var(--brand-tint); border-left: 3px solid var(--primary); border-radius: 4px; padding: 12px 16px; }
+  .intro strong { color: var(--primary); display: block; margin-bottom: 4px; }
+  .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+  .kpi { border: 1px solid var(--stroke-2); border-radius: 6px; padding: 12px 14px; }
+  .kpi .value { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--navy); }
+  .kpi .value .of { font-size: 14px; font-weight: 600; color: var(--text-3); }
+  .kpi .label { font-size: 12px; color: var(--text-2); }
+  .kpi .detail { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; font-size: 12px; color: var(--text-2); }
+  .legend span { display: inline-flex; gap: 6px; align-items: center; }
+  .chart { position: relative; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart svg text { font-family: inherit; }
+  .tooltip { position: absolute; pointer-events: none; background: var(--bg); border: 1px solid var(--stroke-2); border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); padding: 8px 12px; min-width: 250px; z-index: 1; font-size: 11px; line-height: 17px; display: none; }
+  .tooltip .name { font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+  .tooltip .sub { color: var(--text-3); margin-bottom: 6px; }
+  .tooltip .row { display: flex; justify-content: space-between; gap: 16px; }
+  .tooltip .row span:first-child { color: var(--text-2); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--stroke-2); border-radius: 6px; overflow: hidden; font-size: 12px; }
+  th { background: var(--brand-tint); color: var(--text-2); font-size: 11px; font-weight: 600; text-align: left; padding: 6px 10px; white-space: nowrap; }
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover { color: var(--primary); }
+  th .arrow { color: var(--primary); }
+  td { padding: 8px 10px; border-top: 1px solid var(--stroke-3); color: var(--text-2); vertical-align: top; }
+  td.name { color: var(--text); font-weight: 600; white-space: nowrap; }
+  td.file { color: var(--text); font-weight: 600; min-width: 160px; overflow-wrap: break-word; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .strong { font-weight: 600; }
+  .flag { color: var(--unhealthy-ink); font-weight: 600; }
+  .empty { text-align: center; padding: 16px; color: var(--healthy-ink); font-weight: 600; }
+  .error { border: 1px solid var(--unhealthy-ink); border-radius: 6px; padding: 12px 16px; color: var(--unhealthy-ink); }
+  @media (max-width: 720px) {
+    .kpis { grid-template-columns: minmax(0, 1fr); }
+    section, section.hero { padding: 16px; }
+  }
+  @media print {
+    main { max-width: none; padding: 0; }
+    section { break-inside: avoid; box-shadow: none; }
+    body { background: #ffffff; }
+  }
+</style>
+<style>
+  .headline { font-size: 15px; line-height: 1.55; }
+  .kpi.alert { border-color: var(--unhealthy-ink); background: var(--address-tint); }
+  .kpi.alert .value { color: var(--unhealthy-ink); }
+  .kpi.ok .value { color: var(--healthy-ink); }
+  .ch { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .ch.healthy { color: var(--healthy-ink); }
+  .ch.problematic { color: var(--problematic-ink); }
+  .ch.unhealthy { color: var(--unhealthy-ink); }
+  .banner { border-radius: 6px; padding: 12px 16px; font-weight: 600; }
+  .banner.ok { background: var(--plan-tint); color: var(--healthy-ink); }
+  .banner.alert { background: var(--address-tint); color: var(--unhealthy-ink); }
+  .banner .sub { font-weight: 400; color: var(--text-2); margin-top: 2px; }
+  tr.alert td { background: var(--address-tint); }
+  .range svg { display: block; }
+  .authors { white-space: normal; min-width: 200px; }
+  td.pkg { color: var(--text); font-weight: 600; overflow-wrap: anywhere; min-width: 150px; }
+  .authors .share { color: var(--text-3); }
+  .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: 12px; color: var(--text-2); }
+  .controls input[type=search] { font: inherit; padding: 4px 8px; border: 1px solid var(--stroke-2); border-radius: 4px; background: var(--bg); color: var(--text); min-width: 220px; }
+  .bar { display: inline-block; height: 8px; border-radius: 2px; background: var(--primary); vertical-align: middle; opacity: .75; }
+  ul.notes { margin: 0; padding-left: 18px; color: var(--text-2); font-size: 12px; }
+</style>
+</head>
+<body>
+<main id="report"></main>
+
+<!-- {{REPORT_DATA}}: replace the placeholder object with ReportData JSON that validates against report-data.schema.json.
+     Keep everything outside this block unchanged. -->
+<script type="application/json" id="report-data">
+{
+  "project": { "name": "{{project-name}}", "source": "{{source}}" },
+  "range": { "from": "", "to": "" },
+  "files": []
+}
+</script>
+<!-- {{/REPORT_DATA}} -->
+
+<script>
+(function () {
+  const root = document.getElementById("report");
+  const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  let report;
+  try { report = JSON.parse(document.getElementById("report-data").textContent); }
+  catch (e) { root.innerHTML = `<p class="error">The report data is not valid JSON: ${esc(e.message)}</p>`; return; }
+
+  const files = report.files || [];
+  if (!files.length) {
+    root.innerHTML = `<section><h1>New code in ${esc(report.project?.name || "")}</h1><p class="secondary">No new files in this range.</p></section>`;
+    return;
+  }
+  const T = report.threshold ?? 9.0;
+  // How many rows the "By package", "Developer contributions" and "Lowest Code Health" tables show. Set maxPackages,
+  // maxDevelopers and maxLowestFiles in the report data to change them; 0 shows all.
+  const limit = (v) => (Number.isInteger(v) && v >= 0 ? v : 20);
+  const MAX_PACKAGES = limit(report.maxPackages);
+  const MAX_DEVELOPERS = limit(report.maxDevelopers);
+  const MAX_LOWEST_FILES = limit(report.maxLowestFiles);
+  const int = (n) => Math.round(n).toLocaleString("en-GB");
+  const ch1 = (v) => (v == null ? "–" : (Math.floor(v * 100) / 100).toFixed(2).replace(/\.?0+$/, "") || "0");
+  const fmtDate = (s) => new Date(s + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+  const cls = (v) => (v >= 9 ? "healthy" : v >= 4 ? "problematic" : "unhealthy");
+  const chCell = (v) => `<td class="num"><span class="ch ${cls(v)}">${ch1(v)}</span></td>`;
+  const pct = (n) => (n > 0 && n < 0.005 ? "<1%" : `${Math.round(n * 100)}%`);
+  function median(xs) {
+    const s = [...xs].sort((a, b) => a - b), n = s.length;
+    if (!n) return null;
+    return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2;
+  }
+
+  function group(keyFn) {
+    const m = new Map();
+    files.forEach((f) => { const k = keyFn(f); if (!m.has(k)) m.set(k, []); m.get(k).push(f); });
+    return [...m.entries()].map(([name, fs]) => summarise(name, fs));
+  }
+  function summarise(name, fs) {
+    const hs = fs.map((f) => f.codeHealth);
+    const lines = fs.reduce((a, f) => a + f.lines, 0);
+    const testLines = fs.filter((f) => f.test).reduce((a, f) => a + f.lines, 0);
+    const byAuthor = new Map();
+    fs.forEach((f) => byAuthor.set(f.mainAuthor, (byAuthor.get(f.mainAuthor) || 0) + f.lines));
+    const authors = [...byAuthor.entries()].sort((a, b) => b[1] - a[1]).map(([n, l]) => ({ name: n, share: lines ? l / lines : 0 }));
+    const lowest = fs.reduce((a, f) => (f.codeHealth < a.codeHealth ? f : a), fs[0]);
+    const byPkg = new Map();
+    fs.forEach((f) => byPkg.set(f.package, (byPkg.get(f.package) || 0) + f.lines));
+    const packages = [...byPkg.entries()].sort((a, b) => b[1] - a[1]).map(([n]) => n);
+    return { name, files: fs.length, lines, testShare: lines ? testLines / lines : 0, median: median(hs), min: Math.min(...hs), max: Math.max(...hs),
+      below: fs.filter((f) => f.codeHealth < T).length, authors, lowest, packages, mainAuthor: authors[0]?.name || "" };
+  }
+
+  const all = summarise("all", files);
+  const modules = group((f) => f.module);
+  const packages = group((f) => f.package);
+  const people = group((f) => f.mainAuthor);
+  const alertFiles = files.filter((f) => f.codeHealth < T).sort((a, b) => a.codeHealth - b.codeHealth);
+  const alertPkgs = packages.filter((p) => p.min < T);
+
+  const authorList = (as, n = 3) => as.slice(0, n).map((a) => `${esc(a.name)} <span class="share">${pct(a.share)}</span>`).join(", ") +
+    (as.length > n ? ` <span class="share">+${as.length - n}</span>` : "");
+
+  // Code Health range on a 1–10 scale: zones, a min–max bar and a median tick.
+  function rangeSvg(p) {
+    const W = 90, H = 14, x = (v) => ((v - 1) / 9) * W;
+    return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-label="Code Health ${ch1(p.min)} to ${ch1(p.max)}, median ${ch1(p.median)}">
+      <rect x="0" y="5" width="${x(4)}" height="4" fill="var(--unhealthy)" opacity=".35"/>
+      <rect x="${x(4)}" y="5" width="${x(9) - x(4)}" height="4" fill="var(--problematic)" opacity=".35"/>
+      <rect x="${x(9)}" y="5" width="${W - x(9)}" height="4" fill="var(--healthy)" opacity=".6"/>
+      <rect x="${Math.min(x(p.min), W - 3)}" y="3" width="${Math.max(3, x(p.max) - x(p.min))}" height="8" rx="2" fill="var(--${cls(p.min)}-ink)"/>
+      <rect x="${Math.min(x(p.median), W - 2) - 1}" y="0" width="2" height="${H}" fill="var(--navy)"/></svg>`;
+  }
+
+  function sortableTable(id, columns) {
+    const head = columns.map((c) => `<th class="sortable${c.num ? " num" : ""}" data-key="${c.key}">${c.label}</th>`).join("");
+    return `<div class="table-wrap"><table id="${id}"><thead><tr>${head}</tr></thead><tbody></tbody></table></div>`;
+  }
+  function fillTable(id, columns, rows, sortKey, desc = true, rowCls = () => "", limit = 0) {
+    const table = document.getElementById(id); if (!table) return;
+    const col = columns.find((c) => c.key === sortKey);
+    const val = (r) => (col.sort ? col.sort(r) : r[sortKey]);
+    const sorted = [...rows].sort((a, b) => { const va = val(a), vb = val(b); const d = typeof va === "string" ? va.localeCompare(vb) : va - vb; return desc ? -d : d; });
+    const shown = limit > 0 ? sorted.slice(0, limit) : sorted;
+    table.querySelector("tbody").innerHTML = shown.map((r) => `<tr class="${rowCls(r)}">${columns.map((c) => c.cell(r)).join("")}</tr>`).join("");
+    table.querySelectorAll("th").forEach((th) => {
+      const key = th.dataset.key, c = columns.find((x) => x.key === key);
+      th.innerHTML = c.label + (key === sortKey ? ` <span class="arrow">${desc ? "▼" : "▲"}</span>` : "");
+      th.onclick = () => fillTable(id, columns, rows, key, key === sortKey ? !desc : !(c.asc), rowCls, limit);
+    });
+  }
+
+  const groupColumns = (label, rows) => { const maxLines = Math.max(...rows.map((p) => p.lines), 1); return [
+    { key: "name", label, asc: true, cell: (r) => `<td class="pkg">${esc(r.name).replace(/\//g, "/<wbr>")}</td>` },
+    { key: "files", label: "Files", num: true, cell: (r) => `<td class="num strong">${int(r.files)}</td>` },
+    { key: "lines", label: "Lines", num: true, cell: (r) => `<td class="num">${int(r.lines)} <span class="bar" style="width:${Math.max(2, (r.lines / maxLines) * 40)}px"></span></td>` },
+    { key: "testShare", label: "Test code", num: true, cell: (r) => `<td class="num">${pct(r.testShare)}</td>` },
+    { key: "range", label: "Code Health range", sort: (r) => r.min, asc: true, cell: (r) => `<td class="range">${rangeSvg(r)}</td>` },
+    { key: "median", label: "Median", num: true, cell: (r) => chCell(r.median) },
+    { key: "min", label: "Lowest", num: true, asc: true, cell: (r) => `<td class="num"><span class="ch ${cls(r.min)}">${ch1(r.min)}</span>${r.min < T ? ' <span class="flag">▲</span>' : ""}</td>` },
+    { key: "mainAuthor", label: "Main authors (share of lines)", asc: true, cell: (r) => `<td class="authors">${authorList(r.authors)}</td>` },
+  ]; };
+  const moduleColumns = groupColumns("Module", modules);
+  const packageColumns = groupColumns("Package", packages);
+  const peopleColumns = [
+    { key: "name", label: "Developer", asc: true, cell: (r) => `<td class="name">${esc(r.name)}</td>` },
+    { key: "files", label: "Files led", num: true, cell: (r) => `<td class="num strong">${int(r.files)}</td>` },
+    { key: "lines", label: "Lines", num: true, cell: (r) => `<td class="num">${int(r.lines)}</td>` },
+    { key: "share", label: "Share of new code", num: true, sort: (r) => r.lines, cell: (r) => `<td class="num">${pct(r.lines / all.lines)}</td>` },
+    { key: "testShare", label: "Test code", num: true, cell: (r) => `<td class="num">${pct(r.testShare)}</td>` },
+    { key: "median", label: "Median", num: true, cell: (r) => chCell(r.median) },
+    { key: "min", label: "Lowest", num: true, asc: true, cell: (r) => `<td class="num"><span class="ch ${cls(r.min)}">${ch1(r.min)}</span>${r.min < T ? ' <span class="flag">▲</span>' : ""}</td>` },
+    { key: "pk", label: "Main packages", sort: (r) => r.packages[0], asc: true, cell: (r) => `<td class="authors">${r.packages.slice(0, 3).map(esc).join(", ")}${r.packages.length > 3 ? ` <span class="share">+${r.packages.length - 3}</span>` : ""}</td>` },
+  ];
+
+  // Only files below a perfect 10 have Code Health issues to show.
+  const imperfect = files.filter((f) => f.codeHealth < 10).sort((a, b) => a.codeHealth - b.codeHealth || b.lines - a.lines);
+  const lowestFiles = MAX_LOWEST_FILES > 0 ? imperfect.slice(0, MAX_LOWEST_FILES) : imperfect;
+  const fileRow = (f) => `<tr class="${f.codeHealth < T ? "alert" : ""}"><td class="file">${esc(f.path)}</td><td>${esc(f.package)}</td>
+    <td class="num">${int(f.lines)}</td>${chCell(f.codeHealth)}<td class="name">${esc(f.mainAuthor)} <span class="tertiary">${pct(f.mainAuthorShare)}</span></td><td class="num">${fmtDate(f.lastModified)}</td></tr>`;
+  const fileHead = `<thead><tr><th>File</th><th>Package</th><th class="num">Lines</th><th class="num">Code Health</th><th>Main author</th><th class="num">Last modified</th></tr></thead>`;
+
+  const range = `${fmtDate(report.range.from)} and ${fmtDate(report.range.to)}`;
+  const top = people.sort((a, b) => b.lines - a.lines)[0];
+  const lowestTxt = `${ch1(all.min)} in ${esc(all.lowest.path.split("/").pop())} (${esc(all.lowest.package)})`;
+  const headline = `Between ${range}, ${esc(report.project.name)} gained <strong>${int(all.files)} new files</strong> with <strong>${int(all.lines)} lines of code</strong> across ${packages.length} packages.
+    Median Code Health of the new code is <strong>${ch1(all.median)}</strong>, and the lowest is <strong>${lowestTxt}</strong>.
+    ${alertFiles.length ? `<strong>${alertFiles.length} new ${alertFiles.length === 1 ? "file is" : "files are"} below ${T.toFixed(1)}</strong>, in ${alertPkgs.length} ${alertPkgs.length === 1 ? "package" : "packages"}.` : `No new file is below the ${T.toFixed(1)} threshold for healthy code.`}
+    ${top ? `${esc(top.name)} leads the most new code, ${pct(top.lines / all.lines)} of the lines.` : ""}`;
+
+  const kpi = (value, label, detail, extra = "") => `<div class="kpi ${extra}"><div class="value">${value}</div><div class="label">${label}</div><div class="detail">${detail}</div></div>`;
+
+  root.innerHTML = `
+  <section class="hero">
+    <div class="eyebrow">Code Health of new code</div>
+    <h1>New code in ${esc(report.project.name)}</h1>
+    <p class="small" style="color:#b9c6d6">${esc(report.project.source)} · ${fmtDate(report.range.from)} – ${fmtDate(report.range.to)} · analysis of ${fmtDate(report.analysisDate || report.generatedAt)}</p>
+    <div class="intro"><strong>What counts as new</strong>Files that have a Code Health score in the latest analysis but had none a month earlier. Healthy code scores ${T.toFixed(1)} or more; anything below is flagged.</div>
+  </section>
+  <section>
+    <p class="headline">${headline}</p>
+    <div class="kpis">
+      ${kpi(int(all.files), "New files", `in ${packages.length} packages, ${modules.length} modules`)}
+      ${kpi(int(all.lines), "Lines of new code", `${pct(all.testShare)} of it test code`)}
+      ${kpi(ch1(all.median), "Median Code Health", "of the new files", "ok")}
+      ${kpi(ch1(all.min), "Lowest Code Health", esc(all.lowest.path.split("/").pop()), all.min < T ? "alert" : "ok")}
+      ${kpi(alertFiles.length, `Files below ${T.toFixed(1)}`, alertFiles.length ? `in ${alertPkgs.length} ${alertPkgs.length === 1 ? "package" : "packages"}` : "no alert", alertFiles.length ? "alert" : "ok")}
+    </div>
+    ${alertFiles.length
+      ? `<div class="banner alert">Alert: ${alertFiles.length} new ${alertFiles.length === 1 ? "file is" : "files are"} below ${T.toFixed(1)} Code Health.<div class="sub">${alertFiles.length === 1 ? "It is" : "They are"} listed under Lowest Code Health below and marked ▲ in the tables.</div></div>`
+      : `<div class="banner ok">No alert: every new file is healthy (${T.toFixed(1)} or more).<div class="sub">The lowest is ${lowestTxt}.</div></div>`}
+  </section>
+  <section>
+    <h2>By module</h2>
+    <p class="small secondary">The bar shows each module's Code Health range on the 1–10 scale, from its lowest to its highest new file; the dark tick is the median.</p>
+    ${sortableTable("modules", moduleColumns)}
+  </section>
+  <section>
+    <h2>By package</h2>
+    <div class="controls"><input type="search" id="packages-filter" placeholder="Filter packages or authors"><span id="packages-count"></span></div>
+    ${sortableTable("packages", packageColumns)}
+  </section>
+  <section>
+    <h2>Developer contributions</h2>
+    <p class="small secondary">Each new file is counted for its main author, the developer who wrote most of its lines.</p>
+    <div class="controls"><input type="search" id="people-filter" placeholder="Filter developers or packages"><span id="people-count"></span></div>
+    ${sortableTable("people", peopleColumns)}
+  </section>
+  <section>
+    <h2>Lowest Code Health</h2>
+    ${imperfect.length
+      ? `<p class="small secondary">${lowestFiles.length < imperfect.length
+          ? `The ${lowestFiles.length} lowest of the ${int(imperfect.length)} new files below 10`
+          : `The ${imperfect.length === 1 ? "only new file" : `${int(imperfect.length)} new files`} below 10`}${alertFiles.length ? `; files below ${T.toFixed(1)} are highlighted` : ""}.</p>
+    <div class="table-wrap"><table>${fileHead}<tbody>${lowestFiles.map(fileRow).join("")}</tbody></table></div>`
+      : `<p class="empty">Every new file has a perfect Code Health of 10.</p>`}
+  </section>
+  ${(report.notes || []).length ? `<section><h2>Notes</h2><ul class="notes">${report.notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></section>` : ""}
+  `;
+
+  const alertRow = (r) => (r.min < T ? "alert" : "");
+  fillTable("modules", moduleColumns, modules, "lines", true, alertRow);
+  // A sortable table with a filter box that shows at most `max` rows (0 shows all).
+  function limitedTable(id, columns, rows, max, matches, noun) {
+    const filter = document.getElementById(`${id}-filter`);
+    const show = () => {
+      const q = filter.value.trim().toLowerCase();
+      const shown = q ? rows.filter((r) => matches(r, q)) : rows;
+      const cut = max > 0 && shown.length > max;
+      document.getElementById(`${id}-count`).textContent = cut
+        ? `Showing the top ${max} of ${shown.length}${q ? " matching" : ""} ${noun} by the sorted column. Sort by another column, or filter, to see the rest.`
+        : `${shown.length} of ${rows.length} ${noun}`;
+      fillTable(id, columns, shown, "lines", true, alertRow, max);
+    };
+    filter.addEventListener("input", show);
+    show();
+  }
+  const has = (s, q) => s.toLowerCase().includes(q);
+  limitedTable("packages", packageColumns, packages, MAX_PACKAGES,
+    (p, q) => has(p.name, q) || p.authors.some((a) => has(a.name, q)), "packages");
+  limitedTable("people", peopleColumns, people, MAX_DEVELOPERS,
+    (d, q) => has(d.name, q) || d.packages.some((p) => has(p, q)), "developers");
+})();
+</script>
+</body>
+</html>

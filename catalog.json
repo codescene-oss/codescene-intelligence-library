@@ -63,6 +63,15 @@
       "renderers": [
         "html"
       ]
+    },
+    {
+      "id": "new-code-health",
+      "version": "1.0.0",
+      "path": "skills/new-code-health",
+      "summary": "The Code Health of the code added to a project over the last month: how much new code there is, its median and lowest Code Health per module and package, an alert for new files below the healthy threshold, and who wrote it.",
+      "renderers": [
+        "html"
+      ]
     }
   ]
 }
