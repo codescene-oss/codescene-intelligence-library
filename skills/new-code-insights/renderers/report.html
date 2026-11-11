@@ -118,6 +118,17 @@
   .banner.alert { background: var(--address-tint); color: var(--unhealthy-ink); }
   .banner .sub { font-weight: 400; color: var(--text-2); margin-top: 2px; }
   tr.alert td { background: var(--address-tint); }
+  /* AI-optimal cells: green when all of the new code is AI-optimal, amber when part of it is not. */
+  td.ai { font-weight: 600; }
+  td.ai.full { background: var(--plan-tint); color: var(--healthy-ink); }
+  td.ai.part { background: #f6d99140; color: var(--problematic-ink); }
+  td.ai.low { background: var(--address-tint); color: var(--unhealthy-ink); }
+  tr.not-optimal td { background: #f6d9911f; }
+  #people tr.not-optimal td.name { box-shadow: inset 3px 0 0 var(--problematic); }
+  #people tr.alert td.name { box-shadow: inset 3px 0 0 var(--unhealthy-ink); }
+  td.cov .measured { display: block; font-size: 10px; font-weight: 400; color: var(--text-3); }
+  td.cov.bad { color: var(--unhealthy-ink); font-weight: 600; }
+  .kpis { grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); }
   .range svg { display: block; }
   .authors { white-space: normal; min-width: 200px; }
   td.pkg { color: var(--text); font-weight: 600; overflow-wrap: anywhere; min-width: 150px; }
@@ -158,6 +169,9 @@
   const T = report.threshold ?? 9.0;
   // Code Health from which code is AI-optimal: where AI assistants and people both work at their best.
   const AI = report.aiOptimal ?? 9.5;
+  // Line coverage target for new production code. Coverage is optional: it is shown only when some new production file has it.
+  const COV = report.coverageTarget ?? 0.8;
+  const hasCoverage = files.some((f) => !f.test && f.coverage != null);
   // How many rows the "By package", "Developer contributions" and "Lowest Code Health" tables show. Set maxPackages,
   // maxDevelopers and maxLowestFiles in the report data to change them; 0 shows all.
   const limit = (v) => (Number.isInteger(v) && v >= 0 ? v : 20);
@@ -186,6 +200,9 @@
     const lines = fs.reduce((a, f) => a + f.lines, 0);
     const testLines = fs.filter((f) => f.test).reduce((a, f) => a + f.lines, 0);
     const aiLines = fs.filter((f) => f.codeHealth >= AI).reduce((a, f) => a + f.lines, 0);
+    const prod = fs.filter((f) => !f.test), measured = prod.filter((f) => f.coverage != null);
+    const prodLines = prod.reduce((a, f) => a + f.lines, 0), measuredLines = measured.reduce((a, f) => a + f.lines, 0);
+    const coverage = measuredLines ? measured.reduce((a, f) => a + f.coverage * f.lines, 0) / measuredLines : null;
     const byAuthor = new Map();
     fs.forEach((f) => byAuthor.set(f.mainAuthor, (byAuthor.get(f.mainAuthor) || 0) + f.lines));
     const authors = [...byAuthor.entries()].sort((a, b) => b[1] - a[1]).map(([n, l]) => ({ name: n, share: lines ? l / lines : 0 }));
@@ -193,7 +210,7 @@
     const byPkg = new Map();
     fs.forEach((f) => byPkg.set(f.package, (byPkg.get(f.package) || 0) + f.lines));
     const packages = [...byPkg.entries()].sort((a, b) => b[1] - a[1]).map(([n]) => n);
-    return { name, files: fs.length, lines, testShare: lines ? testLines / lines : 0, aiShare: lines ? aiLines / lines : 0, median: median(hs), min: Math.min(...hs), max: Math.max(...hs),
+    return { name, files: fs.length, lines, testShare: lines ? testLines / lines : 0, aiShare: lines ? aiLines / lines : 0, notOptimal: lines - aiLines, coverage, measuredShare: prodLines ? measuredLines / prodLines : 0, median: median(hs), min: Math.min(...hs), max: Math.max(...hs),
       below: fs.filter((f) => f.codeHealth < T).length, authors, lowest, packages, mainAuthor: authors[0]?.name || "" };
   }
 
@@ -237,6 +254,12 @@
     });
   }
 
+  const aiCell = (r) => `<td class="num ai ${r.aiShare === 1 ? "full" : r.aiShare < 0.5 ? "low" : "part"}">${pct(r.aiShare)}</td>`;
+  const aiColumn = { key: "aiShare", label: "AI-optimal", num: true, cell: aiCell };
+  const covCell = (r) => r.coverage == null
+    ? `<td class="num cov tertiary">–<span class="measured">not measured</span></td>`
+    : `<td class="num cov ${r.coverage < COV ? "bad" : ""}">${pct(r.coverage)}<span class="measured">${pct(r.measuredShare)} measured</span></td>`;
+  const coverageColumns = hasCoverage ? [{ key: "coverage", label: "Coverage", num: true, sort: (r) => r.coverage ?? -1, asc: true, cell: covCell }] : [];
   const groupColumns = (label, rows) => { const maxLines = Math.max(...rows.map((p) => p.lines), 1); return [
     { key: "name", label, asc: true, cell: (r) => `<td class="pkg">${esc(r.name).replace(/\//g, "/<wbr>")}</td>` },
     { key: "files", label: "Files", num: true, cell: (r) => `<td class="num strong">${int(r.files)}</td>` },
@@ -245,7 +268,8 @@
     { key: "range", label: "Code Health range", sort: (r) => r.min, asc: true, cell: (r) => `<td class="range">${rangeSvg(r)}</td>` },
     { key: "median", label: "Median", num: true, cell: (r) => chCell(r.median) },
     { key: "min", label: "Lowest", num: true, asc: true, cell: (r) => `<td class="num"><span class="ch ${cls(r.min)}">${ch1(r.min)}</span>${r.min < T ? ' <span class="flag">▲</span>' : ""}</td>` },
-    { key: "aiShare", label: "AI-optimal", num: true, cell: (r) => `<td class="num ${r.aiShare === 1 ? "good" : r.aiShare < 0.5 ? "bad" : ""}">${pct(r.aiShare)}</td>` },
+    aiColumn,
+    ...coverageColumns,
     { key: "mainAuthor", label: "Main authors (share of lines)", asc: true, cell: (r) => `<td class="authors">${authorList(r.authors)}</td>` },
   ]; };
   const moduleColumns = groupColumns("Module", modules);
@@ -258,7 +282,9 @@
     { key: "testShare", label: "Test code", num: true, cell: (r) => `<td class="num">${pct(r.testShare)}</td>` },
     { key: "median", label: "Median", num: true, cell: (r) => chCell(r.median) },
     { key: "min", label: "Lowest", num: true, asc: true, cell: (r) => `<td class="num"><span class="ch ${cls(r.min)}">${ch1(r.min)}</span>${r.min < T ? ' <span class="flag">▲</span>' : ""}</td>` },
-    { key: "aiShare", label: "AI-optimal", num: true, cell: (r) => `<td class="num ${r.aiShare === 1 ? "good" : r.aiShare < 0.5 ? "bad" : ""}">${pct(r.aiShare)}</td>` },
+    { key: "notOptimal", label: `Lines below ${AI.toFixed(1)}`, num: true, cell: (r) => `<td class="num ${r.notOptimal ? "strong" : "zero"}">${int(r.notOptimal)}</td>` },
+    aiColumn,
+    ...coverageColumns,
     { key: "pk", label: "Main packages", sort: (r) => r.packages[0], asc: true, cell: (r) => `<td class="authors">${r.packages.slice(0, 3).map(esc).join(", ")}${r.packages.length > 3 ? ` <span class="share">+${r.packages.length - 3}</span>` : ""}</td>` },
   ];
 
@@ -269,12 +295,27 @@
     <td class="num">${int(f.lines)}</td>${chCell(f.codeHealth)}<td class="name">${esc(f.mainAuthor)} <span class="tertiary">${pct(f.mainAuthorShare)}</span></td><td class="num">${fmtDate(f.lastModified)}</td></tr>`;
   const fileHead = `<thead><tr><th>File</th><th>Package</th><th class="num">Lines</th><th class="num">Code Health</th><th>Main author</th><th class="num">Last modified</th></tr></thead>`;
 
+  const underCovered = files.filter((f) => !f.test && f.coverage != null && f.coverage < COV).sort((a, b) => a.coverage - b.coverage || b.lines - a.lines);
+  const leastCovered = MAX_LOWEST_FILES > 0 ? underCovered.slice(0, MAX_LOWEST_FILES) : underCovered;
+  const covRow = (f) => `<tr><td class="file">${esc(f.path)}</td><td>${esc(f.package)}</td><td class="num">${int(f.lines)}</td>
+    <td class="num cov bad">${pct(f.coverage)}</td>${chCell(f.codeHealth)}<td class="name">${esc(f.mainAuthor)}</td></tr>`;
+  const covHead = `<thead><tr><th>File</th><th>Package</th><th class="num">Lines</th><th class="num">Coverage</th><th class="num">Code Health</th><th>Main author</th></tr></thead>`;
+  const coverageSection = hasCoverage
+    ? `<section><h2>Least covered</h2>
+      <p class="small secondary">New production files with line coverage below ${pct(COV)}. Coverage is measured for ${pct(all.measuredShare)} of the new production lines; files without a measurement are not listed.</p>
+      ${underCovered.length
+        ? `${leastCovered.length < underCovered.length ? `<p class="small tertiary">The ${leastCovered.length} least covered of ${int(underCovered.length)} files.</p>` : ""}
+          <div class="table-wrap"><table>${covHead}<tbody>${leastCovered.map(covRow).join("")}</tbody></table></div>`
+        : `<p class="empty">Every measured new production file meets the ${pct(COV)} target.</p>`}</section>`
+    : "";
+
   const range = `${fmtDate(report.range.from)} and ${fmtDate(report.range.to)}`;
   const top = people.sort((a, b) => b.lines - a.lines)[0];
   const lowestTxt = `${ch1(all.min)} in ${esc(all.lowest.path.split("/").pop())} (${esc(all.lowest.package)})`;
   const headline = `Between ${range}, ${esc(report.project.name)} gained <strong>${int(all.files)} new files</strong> with <strong>${int(all.lines)} lines of code</strong> across ${packages.length} packages.
     Median Code Health of the new code is <strong>${ch1(all.median)}</strong>, and the lowest is <strong>${lowestTxt}</strong>.
     <strong>${pct(all.aiShare)} of the new lines are AI-optimal</strong>, at ${AI.toFixed(1)} or more.
+    ${hasCoverage ? `Line coverage of the new production code is <strong>${pct(all.coverage)}</strong>, measured for ${pct(all.measuredShare)} of it.` : ""}
     ${alertFiles.length ? `<strong>${alertFiles.length} new ${alertFiles.length === 1 ? "file is" : "files are"} below ${T.toFixed(1)}</strong>, in ${alertPkgs.length} ${alertPkgs.length === 1 ? "package" : "packages"}.` : `No new file is below the ${T.toFixed(1)} threshold for healthy code.`}
     ${top ? `${esc(top.name)} leads the most new code, ${pct(top.lines / all.lines)} of the lines.` : ""}`;
 
@@ -296,6 +337,7 @@
       ${kpi(ch1(all.median), "Median Code Health", "of the new files", "ok")}
       ${kpi(ch1(all.min), "Lowest Code Health", esc(all.lowest.path.split("/").pop()), all.min < T ? "alert" : "ok")}
       ${kpi(pct(all.aiShare), "AI-optimal", `of new lines at ${AI.toFixed(1)} or more`, all.aiShare === 1 ? "ok" : "")}
+      ${hasCoverage ? kpi(pct(all.coverage), "Line coverage", `of new production code, ${pct(all.measuredShare)} measured`, all.coverage >= COV ? "ok" : "alert") : ""}
     </div>
     ${alertFiles.length
       ? `<div class="banner alert">Alert: ${alertFiles.length} new ${alertFiles.length === 1 ? "file is" : "files are"} below ${T.toFixed(1)} Code Health.<div class="sub">${alertFiles.length === 1 ? "It is" : "They are"} listed under Lowest Code Health below and marked ▲ in the tables.</div></div>`
@@ -313,7 +355,7 @@
   </section>
   <section>
     <h2>Developer contributions</h2>
-    <p class="small secondary">Each new file is counted for its main author, the developer who wrote most of its lines.</p>
+    <p class="small secondary">Each new file is counted for its main author, the developer who wrote most of its lines. This shows where new knowledge sits and who to involve, not productivity. Rows are highlighted when part of a developer's new code is below AI-optimal (${AI.toFixed(1)}), and in red when it is below ${T.toFixed(1)}.${hasCoverage ? " Coverage covers their new production files only." : ""}</p>
     <div class="controls"><input type="search" id="people-filter" placeholder="Filter developers or packages"><span id="people-count"></span></div>
     ${sortableTable("people", peopleColumns)}
   </section>
@@ -326,13 +368,14 @@
     <div class="table-wrap"><table>${fileHead}<tbody>${lowestFiles.map(fileRow).join("")}</tbody></table></div>`
       : `<p class="empty">Every new file has a perfect Code Health of 10.</p>`}
   </section>
-  ${(report.notes || []).length ? `<section><h2>Notes</h2><ul class="notes">${report.notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></section>` : ""}
+  ${coverageSection}
+  ${(report.notes || []).length || !hasCoverage ? `<section><h2>Notes</h2><ul class="notes">${(report.notes || []).map((n) => `<li>${esc(n)}</li>`).join("")}${hasCoverage ? "" : "<li>Coverage is not shown: no new production file has line coverage. CodeScene's coverage integration may not be set up for this project, so this says nothing about how well the code is tested.</li>"}</ul></section>` : ""}
   `;
 
   const alertRow = (r) => (r.min < T ? "alert" : "");
   fillTable("modules", moduleColumns, modules, "lines", true, alertRow);
   // A sortable table with a filter box that shows at most `max` rows (0 shows all).
-  function limitedTable(id, columns, rows, max, matches, noun) {
+  function limitedTable(id, columns, rows, max, matches, noun, rowCls = alertRow) {
     const filter = document.getElementById(`${id}-filter`);
     const show = () => {
       const q = filter.value.trim().toLowerCase();
@@ -341,7 +384,7 @@
       document.getElementById(`${id}-count`).textContent = cut
         ? `Showing the top ${max} of ${shown.length}${q ? " matching" : ""} ${noun} by the sorted column. Sort by another column, or filter, to see the rest.`
         : `${shown.length} of ${rows.length} ${noun}`;
-      fillTable(id, columns, shown, "lines", true, alertRow, max);
+      fillTable(id, columns, shown, "lines", true, rowCls, max);
     };
     filter.addEventListener("input", show);
     show();
@@ -350,7 +393,8 @@
   limitedTable("packages", packageColumns, packages, MAX_PACKAGES,
     (p, q) => has(p.name, q) || p.authors.some((a) => has(a.name, q)), "packages");
   limitedTable("people", peopleColumns, people, MAX_DEVELOPERS,
-    (d, q) => has(d.name, q) || d.packages.some((p) => has(p, q)), "developers");
+    (d, q) => has(d.name, q) || d.packages.some((p) => has(p, q)), "developers",
+    (r) => (r.min < T ? "alert" : r.aiShare < 1 ? "not-optimal" : ""));
 })();
 </script>
 </body>

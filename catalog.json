@@ -68,7 +68,7 @@
       "id": "new-code-insights",
       "version": "1.0.0",
       "path": "skills/new-code-insights",
-      "summary": "Whether the code added to a project over the last month is healthy and AI-ready: new code per module and package with its median and lowest Code Health, an alert for new technical debt, the share that is AI-optimal, and who to involve.",
+      "summary": "Whether the code added to a project over the last month is healthy and AI-ready: new code per module and package with its median and lowest Code Health, an alert for new technical debt, the share that is AI-optimal, line coverage when the project has it, and who to involve.",
       "renderers": [
         "html"
       ]

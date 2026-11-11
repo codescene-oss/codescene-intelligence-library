@@ -31,6 +31,7 @@ Collect these before starting. Use the project notes if they exist; otherwise as
 | Display name for the title | the project name from `list_projects` |
 | Alert threshold | `9.0` |
 | AI-optimal from | `9.5` |
+| Line coverage target | `0.8`, used only when the project has coverage data |
 | Rows in the package, developer and lowest-file tables | `20` each; `0` shows all |
 | Packages | from the project notes: how modules and packages are read from the paths |
 | Author names | from the project notes: aliases to merge |
@@ -59,6 +60,7 @@ Map each new file to a `File`:
 |---|---|
 | `path`, `language`, `lines` | `path`, `language`, `linesOfCode` |
 | `codeHealth` | `codeHealth.value` |
+| `coverage` | `coverage.lineCoverage`, or null when it is missing or null |
 | `mainAuthor`, `mainAuthorShare`, `authorCount` | `knowledge.mainAuthor.name`, `knowledge.mainAuthor.ownership`, `knowledge.authorCount`; the name after step 5 |
 | `lastModified` | `lastModified.date` |
 | `test` | true when the path is test code: a `test`, `tests`, `__test__` or `__tests__` folder, or a name such as `*.test.*`, `*.spec.*` or `*_test.*`. Use the patterns in the project notes when they differ |
@@ -68,7 +70,7 @@ Map each new file to a `File`:
 
 **5. Merge author aliases.** The same person can appear under several names, such as a display name and a login. Use the aliases in the project notes. Otherwise, list names that look like the same person and ask the user which to merge; don't guess.
 
-**6. Render.** Build a `ReportData` object that validates against the schema, with `project` (`name`, `source`, `id`), `generatedAt`, `threshold`, `aiOptimal`, `maxPackages`, `maxDevelopers`, `maxLowestFiles` and `notes`. Copy the renderer to the user's output location as `{{project-slug}}-new-code-insights.html`, and replace the stub inside its `{{REPORT_DATA}}` block. Leave the rest unchanged. Put only JSON there. Open the file in a browser and check that the tables appear instead of an error box.
+**6. Render.** Build a `ReportData` object that validates against the schema, with `project` (`name`, `source`, `id`), `generatedAt`, `threshold`, `aiOptimal`, `coverageTarget`, `maxPackages`, `maxDevelopers`, `maxLowestFiles` and `notes`. Copy the renderer to the user's output location as `{{project-slug}}-new-code-insights.html`, and replace the stub inside its `{{REPORT_DATA}}` block. Leave the rest unchanged. Put only JSON there. Open the file in a browser and check that the tables appear instead of an error box.
 
 Use `notes` for facts the reader needs, for example which author names were merged, or a main author known only by a login.
 
@@ -77,15 +79,17 @@ Use `notes` for facts the reader needs, for example which author names were merg
 ## How the renderer reads the data
 
 - **Header:** "Is new code healthy and AI-ready?", with the number of new files and the date range.
-- **Summary:** new files, lines of new code and the share that is test code, the median and lowest Code Health, and the share of new lines that is AI-optimal. A banner turns into an alert when any new file is below the threshold.
+- **Summary:** new files, lines of new code and the share that is test code, the median and lowest Code Health, the share of new lines that is AI-optimal, and line coverage when there is any. A banner turns into an alert when any new file is below the threshold.
 - **By module and by package:** sortable tables with files, lines, test share, the Code Health range on the 1–10 scale with the AI-optimal line marked, the median, the lowest, the share of lines that is AI-optimal, and the main authors with their share of the lines. Rows with a file below the threshold are highlighted. The package table shows at most `maxPackages` rows, by the sorted column, and has a filter that searches every package and author.
-- **Developer contributions:** each developer's files and lines as main author, their share of the new code, its median and lowest Code Health, the share that is AI-optimal, and their main packages. At most `maxDevelopers` rows, with a filter.
+- **Developer contributions:** each developer's files and lines as main author, their share of the new code, its median and lowest Code Health, their lines below AI-optimal, the share that is AI-optimal, their coverage, and their main packages. Rows with code below AI-optimal are highlighted in amber, and rows with code below the threshold in red. At most `maxDevelopers` rows, with a filter.
 - **Lowest Code Health:** only new files below 10, lowest first, at most `maxLowestFiles` of them.
+- **Coverage, when present:** a line coverage tile, a Coverage column with the share of production lines measured, and the least covered new production files below the target. Coverage is weighted by lines and covers production code only. Without any coverage data, these are left out and the notes say coverage is not integrated.
 
 ## Rules learned the hard way
 
 - **Read every page.** A report built from the first page of files undercounts.
 - **New means new to the analysis.** A file renamed or moved during the month also counts as new, and deleted files are not visible. Say so in `notes` when a large share of the new files may be moves.
+- **Coverage is optional.** It comes from CodeScene's coverage integration, which many projects don't have, and some languages are never measured. Keep a missing value null, never 0, and always show how much of the code is measured next to a coverage figure.
 - **One main author per file.** A file counts for the developer who wrote most of it; a package's main authors are weighted by the lines of the files they lead.
 - **Never show email addresses.** Map author names only, and merge aliases into a display name.
 - Use CodeScene's theme colours, as in the other reports.

@@ -68,6 +68,12 @@
       "maximum": 10,
       "description": "Code Health from which code counts as AI-optimal. Defaults to 9.5."
     },
+    "coverageTarget": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Line coverage target for new production code, as a share. Defaults to 0.8."
+    },
     "maxPackages": {
       "type": "integer",
       "minimum": 0,
@@ -134,6 +140,15 @@
           "type": "number",
           "minimum": 1,
           "maximum": 10
+        },
+        "coverage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Line coverage as a share, or null when the file has no measurement. Coverage is an optional integration: leave it null rather than guessing."
         },
         "mainAuthor": {
           "type": "string",
