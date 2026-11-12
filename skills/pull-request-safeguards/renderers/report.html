@@ -108,7 +108,6 @@
   .delta.bad { color: var(--unhealthy-ink); }
   .delta.flat { color: var(--text-3); }
   .headline { font-size: 15px; line-height: 1.55; }
-  .kpis.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .chart svg text { font-size: 11px; fill: var(--text-2); }
   .chart svg .label { fill: var(--text); font-weight: 600; font-size: 12px; }
   .chart svg .value { fill: var(--text); font-weight: 700; }
@@ -117,13 +116,16 @@
   .status.resolved { background: var(--plan-tint); color: var(--healthy-ink); }
   .status.unresolved { background: var(--address-tint); color: var(--unhealthy-ink); }
   .status.no-issues { background: var(--stroke-3); color: var(--text-2); }
+  .status.suppressed { background: color-mix(in srgb, var(--problematic) 35%, transparent); color: var(--problematic-ink); }
+  .status.maintained { background: var(--plan-tint); color: var(--healthy-ink); }
+  .status.improved { background: var(--healthy-ink); color: var(--bg); }
+  .status.declined { background: var(--address-tint); color: var(--unhealthy-ink); }
   td.zero { color: var(--text-3); }
   td.bad { color: var(--unhealthy-ink); font-weight: 600; }
   td.good { color: var(--healthy-ink); font-weight: 600; }
   .chart g.week { cursor: default; }
   .chart g.week .hit { fill: transparent; }
   .chart g.week.hover .hit { fill: var(--brand-tint); }
-  @media (max-width: 720px) { .kpis.four { grid-template-columns: minmax(0, 1fr); } }
 </style>
 </head>
 <body>
@@ -170,12 +172,21 @@
   const plural = (n, word, many = word + "s") => `${int(n)} ${n === 1 ? word : many}`;
   const pct = (part, whole) => (whole ? Math.round((part / whole) * 100) : null);
   const day = (d) => Date.parse(d + "T00:00:00Z");
+  const band = report.stableBand ?? 0.05;
+  // Maintained, improved or declined: a change inside the stable band is good news, not a trend.
+  const impact = (p) => (!p.codeHealth || p.codeHealth.change == null ? null
+    : p.codeHealth.change <= -band ? "declined" : p.codeHealth.change >= band ? "improved" : "maintained");
+  const impactLabel = { maintained: "Maintained", improved: "Improved", declined: "Declined" };
+  const score = (v) => (v >= 10 ? "10" : Number(v).toFixed(2));
   const shortDate = (d) => new Date(typeof d === "number" ? d : day(d)).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
   const span = (r) => `${shortDate(r.from)} – ${shortDate(r.to)}`;
 
   function summarise(list) {
-    const s = { prs: list.length, withFindings: 0, unresolved: 0, detected: 0, fixed: 0, ignored: 0, suppressed: 0, people: new Set() };
+    const s = { prs: list.length, withFindings: 0, unresolved: 0, detected: 0, fixed: 0, ignored: 0, suppressed: 0, people: new Set(),
+      measured: 0, maintained: 0, improved: 0, declined: 0 };
     list.forEach((p) => {
+      const i = impact(p);
+      if (i) { s.measured++; s[i]++; }
       if (p.detected > 0) s.withFindings++;
       if (p.status === "unresolved") s.unresolved++;
       s.detected += p.detected; s.fixed += p.fixed; s.ignored += p.ignored; s.suppressed += p.suppressed;
@@ -205,7 +216,9 @@
   function kpis() {
     const k = (value, label, detail, d) => `<div class="kpi"><div class="value">${value}</div><div class="label">${label}</div>${detail ? `<div class="detail">${detail}</div>` : ""}${d}</div>`;
     const fixShare = pct(cur.fixed, cur.detected), fixShareBefore = before ? pct(before.fixed, before.detected) : null;
-    return `<div class="kpis four">
+    const kept = cur.measured ? pct(cur.maintained + cur.improved, cur.measured) : null;
+    const keptBefore = before?.measured ? pct(before.maintained + before.improved, before.measured) : null;
+    return `<div class="kpis">
       ${k(int(cur.prs), "Pull requests reviewed", `by ${plural(cur.people.size, "developer")}`, delta(cur.prs, before?.prs, true))}
       ${k(`${int(cur.withFindings)}${cur.prs ? ` <span class="of">${pct(cur.withFindings, cur.prs)}%</span>` : ""}`, "Caught a Code Health issue",
         "pull requests with findings", delta(cur.withFindings, before?.withFindings, null))}
@@ -213,6 +226,9 @@
         cur.detected ? `${int(cur.fixed)} of ${plural(cur.detected, "finding")}` : "no findings", delta(fixShare, fixShareBefore, true, true))}
       ${k(`<span style="color:${cur.unresolved ? "var(--unhealthy-ink)" : "var(--healthy-ink)"}">${int(cur.unresolved)}</span>`, "Merged with ignored findings",
         cur.ignored ? plural(cur.ignored, "finding") + " ignored" : "nothing ignored", delta(cur.unresolved, before?.unresolved, false))}
+      ${k(`<span style="color:var(--healthy-ink)">${kept == null ? "–" : kept + "%"}</span>`, "Maintained Code Health",
+        !cur.measured ? "no impact data" : cur.declined ? `${plural(cur.declined, "pull request")} declined` : "none declined",
+        delta(kept, keptBefore, true, true))}
     </div>`;
   }
 
@@ -230,6 +246,13 @@
         : `No pull request was merged with an ignored finding.`);
       if (cur.suppressed) parts.push(`${plural(cur.suppressed, "finding was", "findings were")} suppressed as accepted.`);
     }
+    if (cur.measured) {
+      const kept = cur.maintained + cur.improved;
+      parts.push(kept === cur.measured
+        ? `${cur.measured === cur.prs ? "Every one" : `Every one of the ${int(cur.measured)} measured pull requests`} kept Code Health stable or better${cur.improved ? `, and ${int(cur.improved)} improved it` : ""}.`
+        : `${int(kept)} of ${plural(cur.measured, "measured pull request")} kept Code Health stable or better${cur.improved ? `, ${int(cur.improved)} of them improving it` : ""};
+          <strong style="color:var(--unhealthy-ink)">${int(cur.declined)} lowered it.</strong>`);
+    }
     return `<p class="headline">${parts.join(" ")}</p>`;
   }
 
@@ -238,24 +261,35 @@
     const start = day(report.range.from), end = day(report.range.to);
     const monday = (t) => t - ((new Date(t).getUTCDay() + 6) % 7) * 86400000;
     const weeks = [];
-    for (let t = monday(start); t <= end; t += 7 * 86400000) weeks.push({ t, none: 0, resolved: 0, unresolved: 0, fixed: 0, ignored: 0, suppressed: 0, detected: 0, people: new Set(), repos: new Set(), bots: 0 });
+    for (let t = monday(start); t <= end; t += 7 * 86400000) weeks.push({ t, none: 0, resolved: 0, unresolved: 0, fixed: 0, ignored: 0, suppressed: 0, detected: 0, people: new Set(), repos: new Set(), bots: 0, measured: 0, maintained: 0, improved: 0, declined: 0 });
     prs.forEach((p) => {
       const w = weeks.find((x) => day(p.analysedAt) >= x.t && day(p.analysedAt) < x.t + 7 * 86400000);
       if (!w) return;
       w[p.status === "no-issues" ? "none" : p.status]++;
       w.fixed += p.fixed; w.ignored += p.ignored; w.suppressed += p.suppressed; w.detected += p.detected;
       w.repos.add(p.repository);
+      const i = impact(p);
+      if (i) { w.measured++; w[i]++; }
       p.authors.forEach((a) => (bots.has(a) ? w.bots++ : w.people.add(a)));
     });
     if (!weeks.length) return `<p class="secondary small">No weeks in the range.</p>`;
     const W = 1000, left = 44, right = 12, slot = (W - left - right) / weeks.length, bw = Math.min(56, slot * 0.6);
-    const top1 = 22, h1 = 130, gap = 50, top2 = top1 + h1 + gap, h2 = 80, H = top2 + h2 + 34;
+    const showImpact = cur.measured > 0;
+    const top1 = 22, h1 = 130, gap = 50, top2 = top1 + h1 + gap, h2 = 80;
+    // Code Health panel: improved pull requests above the line, declined below. Maintained ones sit on the line.
+    const top3 = top2 + h2 + gap, h3 = 36, mid3 = top3 + h3, axis = showImpact ? mid3 + h3 : top2 + h2, H = axis + 34;
+    const maxI = Math.max(1, ...weeks.map((w) => Math.max(w.improved, w.declined)));
     const maxP = Math.max(1, ...weeks.map((w) => w.none + w.resolved + w.unresolved));
     const maxF = Math.max(1, ...weeks.map((w) => w.fixed + w.ignored + w.suppressed));
     let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Pull requests and findings per week">`;
     svg += `<text class="label" x="0" y="12">Pull requests</text><text class="label" x="0" y="${top2 - 12}">Findings</text>`;
     svg += `<line x1="${left}" x2="${W - right}" y1="${top1 + h1}" y2="${top1 + h1}" stroke="var(--stroke-2)"/>`;
     svg += `<line x1="${left}" x2="${W - right}" y1="${top2 + h2}" y2="${top2 + h2}" stroke="var(--stroke-2)"/>`;
+    if (showImpact) {
+      svg += `<text class="label" x="0" y="${top3 - 12}">Code Health</text>`;
+      svg += `<text x="0" y="${mid3 - h3 / 2 + 4}">improved</text><text x="0" y="${mid3 + h3 / 2 + 4}">declined</text>`;
+      svg += `<line x1="${left + 30}" x2="${W - right}" y1="${mid3}" y2="${mid3}" stroke="var(--stroke-2)"/>`;
+    }
     weeks.forEach((w, i) => {
       const cx = left + i * slot + slot / 2, x = cx - bw / 2;
       const total = w.none + w.resolved + w.unresolved, findings = w.fixed + w.ignored + w.suppressed;
@@ -272,7 +306,13 @@
         if (h > 0) { y -= h; svg += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${fill}"/>`; }
       });
       if (findings) svg += `<text class="value" x="${cx}" y="${y - 5}" text-anchor="middle">${findings}</text>`;
-      svg += `<text x="${cx}" y="${top2 + h2 + 16}" text-anchor="middle">${shortDate(Math.max(w.t, start))}</text>`;
+      if (showImpact) {
+        const hu = (w.improved / maxI) * h3, hd = (w.declined / maxI) * h3;
+        if (hu > 0) svg += `<rect x="${x}" y="${mid3 - hu}" width="${bw}" height="${hu}" fill="var(--healthy-ink)"/><text class="value" x="${cx}" y="${mid3 - hu - 4}" text-anchor="middle">${w.improved}</text>`;
+        if (hd > 0) svg += `<rect x="${x}" y="${mid3}" width="${bw}" height="${hd}" fill="var(--unhealthy-ink)"/><text class="value" x="${cx}" y="${mid3 + hd + 12}" text-anchor="middle">${w.declined}</text>`;
+        if (w.measured && !hu && !hd) svg += `<text x="${cx}" y="${mid3 - 5}" text-anchor="middle">all maintained</text>`;
+      }
+      svg += `<text x="${cx}" y="${axis + 16}" text-anchor="middle">${shortDate(Math.max(w.t, start))}</text>`;
       svg += `</g>`;
     });
     weeklyData = weeks.map((w) => ({ ...w, from: Math.max(w.t, start), to: Math.min(w.t + 6 * 86400000, end) }));
@@ -296,7 +336,11 @@
       ${row("Detected", int(w.detected))}
       ${row("Fixed", int(w.fixed), w.fixed ? "var(--healthy-ink)" : "")}
       ${row("Ignored", int(w.ignored), w.ignored ? "var(--unhealthy-ink)" : "")}
-      ${row("Suppressed", int(w.suppressed))}`;
+      ${row("Suppressed", int(w.suppressed))}
+      ${w.measured ? `<div class="sub" style="margin:6px 0 2px">Code Health</div>
+      ${row("Maintained", int(w.maintained))}
+      ${row("Improved", int(w.improved), w.improved ? "var(--healthy-ink)" : "")}
+      ${row("Declined", int(w.declined), w.declined ? "var(--unhealthy-ink)" : "")}` : ""}`;
   }
   function wireWeeklyTooltip() {
     const chart = document.getElementById("weekly"), tip = chart?.querySelector(".tooltip");
@@ -342,7 +386,9 @@
   const botPrs = new Map();
   prs.forEach((p) => p.authors.forEach((a) => {
     const target = bots.has(a) ? botPrs : people;
-    const r = target.get(a) || { name: a, prs: 0, withFindings: 0, detected: 0, fixed: 0, ignored: 0, suppressed: 0, unresolved: 0 };
+    const r = target.get(a) || { name: a, prs: 0, withFindings: 0, detected: 0, fixed: 0, ignored: 0, suppressed: 0, unresolved: 0, improved: 0, declined: 0 };
+    const i = impact(p);
+    if (i === "improved" || i === "declined") r[i]++;
     r.prs++; if (p.detected > 0) r.withFindings++; if (p.status === "unresolved") r.unresolved++;
     r.detected += p.detected; r.fixed += p.fixed; r.ignored += p.ignored; r.suppressed += p.suppressed;
     target.set(a, r);
@@ -356,6 +402,9 @@
     { key: "ignored", label: "Ignored", num: true, cell: (r) => numCell(r.ignored, "bad") },
     { key: "suppressed", label: "Suppressed", num: true, cell: (r) => numCell(r.suppressed) },
     { key: "unresolved", label: "Unresolved PRs", num: true, cell: (r) => numCell(r.unresolved, "bad") },
+    ...(cur.measured ? [
+      { key: "improved", label: "Improved PRs", num: true, cell: (r) => numCell(r.improved, "good") },
+      { key: "declined", label: "Declined PRs", num: true, cell: (r) => numCell(r.declined, "bad") }] : []),
   ];
   function developersSection() {
     if (!people.size) return `<p class="secondary">No pull requests by developers in this range.</p>`;
@@ -368,7 +417,6 @@
   }
 
   const multiRepo = new Set(prs.map((p) => p.repository)).size > 1;
-  const statusLabel = { "no-issues": "No issues", resolved: "Resolved", unresolved: "Unresolved" };
   const prColumns = [
     { key: "id", label: "Pull request", sort: (r) => Number(r.id) || 0, cell: (r) => `<td class="name">#${escapeHtml(r.id)}</td>` },
     ...(multiRepo ? [{ key: "repository", label: "Repository", cell: (r) => `<td>${escapeHtml(r.repository)}</td>` }] : []),
@@ -378,11 +426,22 @@
     { key: "fixed", label: "Fixed", num: true, cell: (r) => numCell(r.fixed, "good") },
     { key: "ignored", label: "Ignored", num: true, cell: (r) => numCell(r.ignored, "bad") },
     { key: "suppressed", label: "Suppressed", num: true, cell: (r) => numCell(r.suppressed) },
-    { key: "status", label: "Status", sort: (r) => (r.status === "unresolved" ? 1000 : 0) + r.detected, cell: (r) => `<td><span class="status ${r.status}">${statusLabel[r.status]}</span></td>` },
+    { key: "status", label: "Findings", sort: (r) => (r.status === "unresolved" ? 1000 : 0) + r.ignored * 10 + r.suppressed, cell: (r) => { const s = r.status === "unresolved" ? "unresolved" : "suppressed";
+        return `<td><span class="status ${s}">${s === "unresolved" ? "Unresolved" : "Suppressed"}</span></td>`; } },
+    ...(cur.measured ? [
+      { key: "files", label: "Files", num: true, sort: (r) => r.files ?? -1, cell: (r) => `<td class="num${r.files == null ? " zero" : ""}">${int(r.files)}</td>` },
+      { key: "reviews", label: "Reviews", num: true, sort: (r) => r.reviews ?? -1, cell: (r) => `<td class="num${r.reviews == null ? " zero" : ""}">${int(r.reviews)}</td>` },
+      { key: "impact", label: "Code Health", sort: (r) => ({ declined: 3, maintained: 1, improved: 0 })[impact(r)] ?? 2,
+        cell: (r) => { const i = impact(r); return `<td>${i ? `<span class="status ${i}">${impactLabel[i]}</span>` : `<span class="tertiary small">not measured</span>`}</td>`; } },
+      { key: "lowest", label: "Lowest file touched", sort: (r) => r.codeHealth?.lowest?.score ?? 11,
+        cell: (r) => { const l = r.codeHealth?.lowest; if (!l) return `<td class="zero">–</td>`;
+          const name = l.file.split("/").pop();
+          return `<td style="white-space:nowrap" title="${escapeHtml(l.file)}"><strong style="color:${l.score < 9 ? "var(--unhealthy-ink)" : l.score < 9.5 ? "var(--problematic-ink)" : "var(--healthy-ink)"}">${score(l.score)}</strong> ${escapeHtml(name)}</td>`; } }] : []),
   ];
-  const flagged = prs.filter((p) => p.detected > 0 || p.status !== "no-issues");
+  // Only pull requests that merged with a finding left in the code: ignored (unresolved) or suppressed.
+  const flagged = prs.filter((p) => p.status === "unresolved" || p.suppressed > 0);
   function pullRequestsSection() {
-    if (!flagged.length) return `<p class="empty">No pull request had a Code Health finding in this range.</p>`;
+    if (!flagged.length) return `<p class="empty">No pull request merged with an ignored or suppressed finding in this range.</p>`;
     return sortableTable("pull-requests", prColumns, flagged, "status");
   }
 
@@ -409,8 +468,8 @@
       <h1>Code Health safeguards on pull requests in ${escapeHtml(report.project.name)}</h1>
       <div class="intro"><strong>The idea</strong>CodeScene reviews the Code Health of every pull request before it merges. When the review finds
         a problem, the author can fix it, ignore it and merge anyway, or suppress it as accepted. Each fixed finding is a Code Health problem that
-        never reached the main branch. This report shows how often the review catches something, what authors do about it, and where findings
-        are left unresolved.</div>
+        never reached the main branch. This report shows how often the review catches something, what authors do about it, where findings
+        are left unresolved, and whether each pull request kept Code Health stable.</div>
     </section>
 
     <section>
@@ -421,7 +480,8 @@
 
     <section>
       <h2>Week by week</h2>
-      <p class="small secondary">Pull requests reviewed each week by outcome, and what happened to their findings. Hover a week for its numbers.</p>
+      <p class="small secondary">Pull requests reviewed each week by outcome, and what happened to their findings.${cur.measured ? ` Below, the pull requests that
+        improved Code Health or lowered it; the rest maintained it.` : ""} Hover a week for its numbers.</p>
       <div class="legend">
         <span><span class="swatch" style="background:var(--stroke-2)"></span>No issues</span>
         <span><span class="swatch" style="background:var(--healthy-ink)"></span>Resolved pull request, fixed finding</span>
@@ -438,8 +498,9 @@
     </section>
 
     <section>
-      <h2>Pull requests with findings</h2>
-      <p class="small secondary">Unresolved ones first, then the most findings. Click a column to sort.</p>
+      <h2>Pull requests to look at</h2>
+      <p class="small secondary">Pull requests that merged with findings left in the code: unresolved ones, with ignored findings, first, then those with
+        suppressed findings. Click a column to sort.</p>
       ${pullRequestsSection()}
     </section>
 
@@ -450,6 +511,9 @@
       <p class="small secondary"><strong>Detected</strong>: findings that would lower Code Health. <strong>Fixed</strong>: resolved in the pull request
         before it merged. <strong>Ignored</strong>: left in the code when it merged. <strong>Suppressed</strong>: marked as accepted.
         A pull request is <strong>resolved</strong> when it had findings and none were ignored, and <strong>unresolved</strong> when any were.</p>
+      ${cur.measured ? `<p class="small secondary"><strong>Maintained</strong>: the pull request's Code Health change, weighted by lines of code, was smaller than ${band}
+        in either direction. <strong>Improved</strong> and <strong>declined</strong>: larger changes. <strong>Files</strong>: added, modified or deleted.
+        <strong>Reviews</strong>: how many times CodeScene analysed the pull request. <strong>Lowest file touched</strong>: its score now, which may predate the pull request.</p>` : ""}
       <p class="small secondary">The figures come from the latest analysis, so pull requests after it are missing. Developers are shown by name only.</p>
       ${(report.notes || []).map((n) => `<p class="small secondary"><strong>Note</strong>: ${escapeHtml(n)}</p>`).join("")}
       <p class="small tertiary">Source: ${escapeHtml(report.project.source)}${report.generatedAt ? `, ${escapeHtml(report.generatedAt)}` : ""}.</p>

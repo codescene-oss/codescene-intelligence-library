@@ -36,6 +36,12 @@
     "range": {
       "$ref": "#/$defs/Range"
     },
+    "stableBand": {
+      "type": "number",
+      "minimum": 0,
+      "default": 0.05,
+      "description": "Code Health change per pull request, in either direction, that still counts as maintained. Larger changes are called out as improved or declined."
+    },
     "pullRequests": {
       "type": "array",
       "description": "Every pull request in the range, one entry each.",
@@ -150,6 +156,74 @@
             "resolved",
             "unresolved"
           ]
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Files the pull request added, modified or deleted, each counted once. Leave it out when the tool doesn't report it."
+        },
+        "reviews": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "How many times CodeScene analysed the pull request."
+        },
+        "codeHealth": {
+          "$ref": "#/$defs/Impact"
+        }
+      }
+    },
+    "Impact": {
+      "type": "object",
+      "description": "The pull request's effect on Code Health. Leave it out when the tool doesn't report it.",
+      "required": [
+        "change"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "before": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Lines-of-code weighted Code Health of the modified files before the pull request. Absent when no modified file had a score."
+        },
+        "change": {
+          "type": "number",
+          "description": "Lines-of-code weighted mean change in Code Health of the files the pull request leaves, with new files measured from 10.0."
+        },
+        "lowest": {
+          "type": "object",
+          "required": [
+            "score",
+            "file"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "score": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 10
+            },
+            "file": {
+              "type": "string"
+            }
+          },
+          "description": "The lowest-scoring file the pull request touched."
+        },
+        "degradedFiles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "improvedFiles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "newLowHealthFiles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "degradationsLaterFixed": {
+          "type": "integer",
+          "minimum": 0
         }
       }
     }

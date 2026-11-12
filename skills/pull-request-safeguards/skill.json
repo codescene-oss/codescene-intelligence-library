@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "min_server_version": "1.0.0",
   "title": "Pull request safeguards report",
-  "summary": "How Code Health safeguards work on a project's pull requests: how often the review catches an issue, how many findings authors fix rather than ignore or suppress, the trend week by week, and the same per developer and per pull request.",
+  "summary": "How Code Health safeguards work on a project's pull requests: how often the review catches an issue, how many findings authors fix rather than ignore or suppress, whether each pull request maintained Code Health, the trend week by week, and the same per developer and per pull request.",
   "audience": [
     "engineering-manager",
     "tech-lead"
@@ -26,6 +26,14 @@
       "minimum": 7,
       "maximum": 365,
       "default": 30
+    },
+    {
+      "name": "stable_band",
+      "description": "Code Health change per pull request, in either direction, that still counts as maintained.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.05
     }
   ],
   "skill": "SKILL.md",

@@ -9,6 +9,7 @@ Keep this file in your own workspace (for example `codescene/projects/{{project-
 | Project id | {{project-id}} |
 | Display name | {{display-name}} |
 | Days | {{days}} |
+| Stable band | {{stable-band}} |
 
 ## Author names
 
