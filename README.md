@@ -14,7 +14,7 @@ Everything here is generic: no project names, people or analysis numbers. Projec
 | [change-coupling](skills/change-coupling/SKILL.md) | The cost of change for software architects: logical dependencies between components mined from change coupling, the coordination they force between people, and how hard each is to break given the Code Health of the coupled code. [Details](#architecture-change-coupling) |
 | [portfolio-overview](skills/portfolio-overview/SKILL.md) | A one-page summary of every project you can access, for technical leaders and managers: what works well, where attention is needed, and how much of the code is AI-optimal, by hotspot Code Health. [Details](#portfolio-overview) |
 | [mcp-safeguard-insights](skills/mcp-safeguard-insights/SKILL.md) | How a project's developers use the local Code Health MCP: safeguard checks, degradations prevented before commit, uplifts, the trend over a year, the most active users and out-of-date installations. [Details](#mcp-safeguard-insights) |
-| [pull-request-safeguards](skills/pull-request-safeguards/SKILL.md) | How Code Health safeguards work on pull requests: how often the review catches an issue, how many findings authors fix rather than ignore or suppress, week by week, per developer and per pull request. [Details](#pull-request-safeguards) |
+| [pull-request-safeguards](skills/pull-request-safeguards/SKILL.md) | How Code Health safeguards work on pull requests: how often the review catches an issue, how many findings authors fix rather than ignore or suppress, whether each pull request maintained Code Health, week by week, per developer and per pull request. [Details](#pull-request-safeguards) |
 | [new-code-insights](skills/new-code-insights/SKILL.md) | Whether the code added over the last month is healthy and AI-ready: new code per module and package, its median and lowest Code Health, an alert for new technical debt, the share that is AI-optimal, and who to involve. [Details](#new-code-insights) |
 
 ## Adding a skill
@@ -167,10 +167,12 @@ Shows whether CodeScene's Code Health review of pull requests keeps problems out
 
 Every pull request gets a Code Health review before it merges. When the review finds a problem, the author can fix it, ignore it and merge anyway, or suppress it as accepted. The report is built from `get_pull_request_safeguard_outcomes`, one row per pull request. It contains:
 
-- **A summary:** pull requests reviewed, how many had findings, the share of findings fixed, and pull requests merged with ignored findings, each compared with the period before.
-- **Week by week:** pull requests by outcome, and what happened to their findings.
-- **Developers:** a sortable table of each person's pull requests and their findings detected, fixed, ignored and suppressed. Aliases of one person are merged, and bots are listed apart.
-- **Pull requests with findings:** unresolved ones first, then by findings detected, plus a table per repository when there are several.
+- **A summary:** pull requests reviewed, how many had findings, the share of findings fixed, pull requests merged with ignored findings, and the share that maintained Code Health, each compared with the period before.
+- **Week by week:** pull requests by outcome, what happened to their findings, and the pull requests that improved or lowered Code Health.
+- **Developers:** a sortable table of each person's pull requests, their findings detected, fixed, ignored and suppressed, and their pull requests that improved or lowered Code Health. Aliases of one person are merged, and bots are listed apart.
+- **Pull requests to look at:** only those merged with findings left in the code, ignored or suppressed, with the files changed, reviews, Code Health impact and lowest file touched. Plus a table per repository when there are several.
+
+A pull request **maintained** Code Health when its change is inside a small stable band, 0.05 by default; only larger changes are called out as **improved** or **declined**. The report never shows the change as a decimal trend.
 
 ### New code insights
 
