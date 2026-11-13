@@ -72,6 +72,15 @@
       "renderers": [
         "html"
       ]
+    },
+    {
+      "id": "contributor-spotlight",
+      "version": "1.0.0",
+      "path": "skills/contributor-spotlight",
+      "summary": "What one contributor built over the past year: how healthy, AI-optimal and well-tested it is, how it compares with the team on Code Health, coverage and volume, their recent pull requests and Code Health MCP use, and the knowledge they hold or leave behind.",
+      "renderers": [
+        "html"
+      ]
     }
   ]
 }

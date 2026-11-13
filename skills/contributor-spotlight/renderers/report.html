@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contributor spotlight</title>
+<style>
+  /* CodeScene theme colours. The pastel fills match the app's Code Health bubbles; the -ink variants keep
+     numbers and labels readable on white, and fall back to the pastels on dark backgrounds. */
+  :root {
+    --unhealthy: #ef8290;
+    --problematic: #f6d991;
+    --healthy: #8ddec8;
+    --unhealthy-ink: #c8475a;
+    --problematic-ink: #9a7213;
+    --healthy-ink: #1f8569;
+    --primary: #2f7b7a;
+    --navy: #0f2d57;
+    --address-tint: #ef829026;
+    --plan-tint: #8ddec826;
+    --brand-tint: #2f7b7a14;
+    --page: #eef2f8;
+    --bg: #ffffff;
+    --text: #323a4e;
+    --text-2: #4f5866;
+    --text-3: #7d8694;
+    --stroke-2: #d5dbe3;
+    --stroke-3: #eceff4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --unhealthy-ink: #ef8290;
+      --problematic-ink: #f6d991;
+      --healthy-ink: #8ddec8;
+      --primary: #62d5de;
+      --page: #0a1424;
+      --bg: #12223a;
+      --text: #eceef1;
+      --text-2: #b4bac2;
+      --text-3: #848b95;
+      --stroke-2: #2e3d52;
+      --stroke-3: #1d2a3d;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; }
+  section { display: flex; flex-direction: column; gap: 8px; background: var(--bg); border-radius: 10px; padding: 20px 24px;
+    box-shadow: 0 1px 2px rgba(15, 45, 87, 0.06), 0 2px 8px rgba(15, 45, 87, 0.05); }
+  /* The header follows the app's navy-to-teal sidebar. */
+  section.hero { background: linear-gradient(120deg, #0f2d57 0%, #0b3a5e 55%, #075062 100%); color: #ffffff; gap: 12px; padding: 28px 24px; }
+  section.hero .eyebrow { color: #62d5de; }
+  section.hero .intro { background: rgba(255, 255, 255, 0.07); border-left-color: #62d5de; color: #dfe8f2; }
+  section.hero .intro strong { color: #62d5de; }
+  h1 { font-size: 24px; margin: 0; line-height: 1.25; }
+  h2 { font-size: 17px; margin: 0; }
+  p { margin: 0; }
+  .eyebrow { color: var(--primary); font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; }
+  .small { font-size: 12px; }
+  .secondary { color: var(--text-2); }
+  .tertiary { color: var(--text-3); }
+  .intro { background: var(--brand-tint); border-left: 3px solid var(--primary); border-radius: 4px; padding: 12px 16px; }
+  .intro strong { color: var(--primary); display: block; margin-bottom: 4px; }
+  .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+  .kpi { border: 1px solid var(--stroke-2); border-radius: 6px; padding: 12px 14px; }
+  .kpi .value { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--navy); }
+  .kpi .value .of { font-size: 14px; font-weight: 600; color: var(--text-3); }
+  .kpi .label { font-size: 12px; color: var(--text-2); }
+  .kpi .detail { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; font-size: 12px; color: var(--text-2); }
+  .legend span { display: inline-flex; gap: 6px; align-items: center; }
+  .chart { position: relative; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart svg text { font-family: inherit; }
+  .tooltip { position: absolute; pointer-events: none; background: var(--bg); border: 1px solid var(--stroke-2); border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); padding: 8px 12px; min-width: 250px; z-index: 1; font-size: 11px; line-height: 17px; display: none; }
+  .tooltip .name { font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+  .tooltip .sub { color: var(--text-3); margin-bottom: 6px; }
+  .tooltip .row { display: flex; justify-content: space-between; gap: 16px; }
+  .tooltip .row span:first-child { color: var(--text-2); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--stroke-2); border-radius: 6px; overflow: hidden; font-size: 12px; }
+  th { background: var(--brand-tint); color: var(--text-2); font-size: 11px; font-weight: 600; text-align: left; padding: 6px 10px; white-space: nowrap; }
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover { color: var(--primary); }
+  th .arrow { color: var(--primary); }
+  td { padding: 8px 10px; border-top: 1px solid var(--stroke-3); color: var(--text-2); vertical-align: top; }
+  td.name { color: var(--text); font-weight: 600; white-space: nowrap; }
+  td.file { color: var(--text); font-weight: 600; min-width: 160px; overflow-wrap: break-word; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .strong { font-weight: 600; }
+  .flag { color: var(--unhealthy-ink); font-weight: 600; }
+  .empty { text-align: center; padding: 16px; color: var(--healthy-ink); font-weight: 600; }
+  .error { border: 1px solid var(--unhealthy-ink); border-radius: 6px; padding: 12px 16px; color: var(--unhealthy-ink); }
+  @media (max-width: 720px) {
+    .kpis { grid-template-columns: minmax(0, 1fr); }
+    section, section.hero { padding: 16px; }
+  }
+  @media print {
+    main { max-width: none; padding: 0; }
+    section { break-inside: avoid; box-shadow: none; }
+    body { background: #ffffff; }
+  }
+</style>
+<style>
+  .headline { font-size: 15px; line-height: 1.6; }
+  section.hero .subtitle { font-size: 15px; line-height: 1.5; color: #dfe8f2; max-width: 820px; margin-top: 8px; }
+  .kpis { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  .kpis.two-col { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ch { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .ch.healthy { color: var(--healthy-ink); }
+  .ch.problematic { color: var(--problematic-ink); }
+  .ch.unhealthy { color: var(--unhealthy-ink); }
+  .meter { background: var(--stroke-3); height: 10px; border-radius: 5px; min-width: 120px; }
+  .meter span { display: block; height: 10px; border-radius: 5px; background: var(--primary); }
+  .pill { font-size: 11px; font-weight: 600; border-radius: 4px; padding: 1px 6px; }
+  .pill.hot { background: var(--address-tint); color: var(--unhealthy-ink); }
+  .path { font-size: 11px; color: var(--text-3); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  ul.plain { margin: 6px 0 0; padding-left: 18px; line-height: 1.7; font-size: 13px; }
+  .verdict { margin: 14px 0 18px; padding: 12px 16px; border-left: 4px solid var(--healthy-ink); background: var(--plan-tint); border-radius: 6px; font-size: 15px; line-height: 1.5; }
+  .verdict.warn { border-left-color: var(--unhealthy-ink); background: var(--address-tint); }
+  .verdict-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--healthy-ink); margin-bottom: 2px; }
+  .verdict.warn .verdict-label { color: var(--unhealthy-ink); }
+  .delta { font-size: 11px; font-weight: 600; margin-top: 2px; }
+  .delta.good { color: var(--healthy-ink); }
+  .delta.bad { color: var(--unhealthy-ink); }
+  .weeks { display: flex; gap: 10px; align-items: flex-end; height: 110px; }
+  .wk { flex: 1; text-align: center; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+  .wkbar { background: var(--primary); border-radius: 3px 3px 0 0; }
+  .wkv { font-size: 11px; font-weight: 700; }
+  .wkl { font-size: 11px; color: var(--text-3); }
+  .bm { display: grid; grid-template-columns: 220px 1fr; gap: 20px; padding: 14px 0; border-top: 1px solid var(--stroke-3); }
+  .bmtitle { font-weight: 600; }
+  .bmval { font-size: 26px; font-weight: 700; color: var(--navy); }
+  .strip { position: relative; height: 34px; margin: 14px 8px 0; border-bottom: 2px solid var(--stroke-2); }
+  .dot { position: absolute; bottom: 4px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--stroke-2); border: 1px solid var(--bg); }
+  .dot.me { background: var(--primary); width: 16px; height: 16px; margin-left: -8px; bottom: 2px; box-shadow: 0 0 0 3px var(--brand-tint); }
+  .melabel { position: absolute; top: -14px; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: var(--primary); white-space: nowrap; }
+  .tmed { position: absolute; bottom: -6px; width: 2px; height: 14px; margin-left: -1px; background: var(--text-3); }
+  .axis { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3); margin: 4px 8px 6px; }
+  @media (max-width: 720px) { .two, .bm { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main id="report"></main>
+
+<!-- {{REPORT_DATA}}: replace the placeholder object with ReportData JSON that validates against report-data.schema.json.
+     Keep everything outside this block unchanged. -->
+<script type="application/json" id="report-data">
+{
+  "project": { "name": "{{project-name}}", "source": "{{source}}" },
+  "range": { "from": "", "to": "" },
+  "contributor": { "name": "{{contributor-name}}", "active": true },
+  "files": [],
+  "knowledge": { "files": 0, "lines": 0, "mostlyOwned": 0, "solo": 0, "hotspots": [], "others": [] },
+  "team": { "minFiles": 10, "developers": [] }
+}
+</script>
+<!-- {{/REPORT_DATA}} -->
+
+<script>
+// ---------------------------------------------------------------------------
+// Generic layout below: no project-specific values.
+// ---------------------------------------------------------------------------
+(function () {
+  const root = document.getElementById("report");
+  const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+  let report;
+  try {
+    report = JSON.parse(document.getElementById("report-data").textContent);
+  } catch (e) {
+    root.innerHTML = `<p class="error">The report data is not valid JSON: ${esc(e.message)}</p>`;
+    return;
+  }
+  if (!report.range || !report.range.from) {
+    root.innerHTML = `<p class="error">The report has no data. Fill the {{REPORT_DATA}} block with data from CodeScene.</p>`;
+    return;
+  }
+
+  const AI = report.aiOptimal ?? 9.5, BAND = report.stableBand ?? 0.05;
+  const who = report.contributor, first = who.shortName || who.name;
+  const files = report.files || [];
+  const int = (v) => (v == null ? "–" : Math.round(v).toLocaleString("en-US"));
+  const pct = (v) => (v == null ? "–" : `${Math.round(v * 100)}%`);
+  const plural = (n, one, many = one + "s") => `${int(n)} ${n === 1 ? one : many}`;
+  const score = (v) => (v >= 9.995 ? "10" : Number(v).toFixed(2));
+  const chClass = (v) => (v >= AI ? "healthy" : v >= 9 ? "problematic" : "unhealthy");
+  const chCell = (v) => `<td class="num ch ${chClass(v)}">${score(v)}</td>`;
+  const median = (xs) => { const s = [...xs].sort((a, b) => a - b), m = s.length >> 1; return s.length ? (s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2) : null; };
+  const day = (d) => new Date(d + "T00:00:00Z");
+  const shortDate = (d) => day(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+  const monthYear = (d) => day(d).toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+  const fileName = (p) => p.split("/").pop();
+  const folder = (p) => p.split("/").slice(0, -1).join("/");
+
+  function summarise(list) {
+    const lines = list.reduce((s, f) => s + f.lines, 0);
+    const prod = list.filter((f) => !f.test && f.coverage != null);
+    const measured = prod.reduce((s, f) => s + f.lines, 0);
+    return {
+      files: list.length, lines,
+      testShare: lines ? list.filter((f) => f.test).reduce((s, f) => s + f.lines, 0) / lines : 0,
+      testFiles: list.filter((f) => f.test).length,
+      median: median(list.map((f) => f.codeHealth)), min: Math.min(...list.map((f) => f.codeHealth)),
+      ai: lines ? list.filter((f) => f.codeHealth >= AI).reduce((s, f) => s + f.lines, 0) / lines : 0,
+      coverage: measured ? prod.reduce((s, f) => s + f.coverage * f.lines, 0) / measured : null,
+    };
+  }
+
+  if (!files.length) {
+    root.innerHTML = `<section class="hero"><div class="eyebrow">CodeScene · Contributor spotlight · ${esc(report.project.name)}</div>
+      <h1>A year of ${esc(who.name)} in ${esc(report.project.name)}</h1></section>
+      <section><p class="empty">${esc(who.name)} is not the main author of any file added between ${shortDate(report.range.from)} and ${shortDate(report.range.to)}.</p></section>`;
+    return;
+  }
+  const tot = summarise(files);
+  const added = files.reduce((s, f) => s + (f.linesAdded || 0), 0);
+
+  // Areas, largest first. Areas with fewer than four files are folded into one row.
+  const byArea = new Map();
+  files.forEach((f) => byArea.set(f.area, [...(byArea.get(f.area) || []), f]));
+  let areas = [...byArea.entries()].map(([name, list]) => ({ name, ...summarise(list), list })).sort((a, b) => b.lines - a.lines);
+  const top3 = areas.slice(0, 3);
+  const small = areas.filter((a) => a.files < 4);
+  areas = areas.filter((a) => a.files >= 4);
+  if (small.length) areas.push({ name: plural(small.length, "smaller area"), ...summarise(small.flatMap((a) => a.list)) });
+
+  const langs = new Map();
+  files.forEach((f) => langs.set(f.language, (langs.get(f.language) || 0) + 1));
+  const langText = [...langs.entries()].sort((a, b) => b[1] - a[1]).slice(0, 2).map(([l, n]) => `${n} ${esc(l)}`).join(", ");
+  const newHot = files.filter((f) => f.hotspot).length;
+  const quality = tot.ai >= 0.95 ? "exemplary" : tot.min >= 9 ? "healthy" : "mostly healthy";
+
+  function summary() {
+    const k = (value, label, detail, colour = "") => `<div class="kpi"><div class="value"${colour ? ` style="color:${colour}"` : ""}>${value}</div><div class="label">${label}</div><div class="detail">${detail}</div></div>`;
+    const topShare = Math.round((100 * top3.reduce((s, a) => s + a.lines, 0)) / tot.lines);
+    return `<section><h2>The short version</h2>
+      <p class="headline">In the past year ${esc(first)} wrote <strong>${plural(tot.files, "new file")}</strong> with <strong>${int(tot.lines)} lines</strong> of code, and is still their main author.
+      <strong>${topShare}%</strong> of it is in ${top3.map((a) => `<strong>${esc(a.name)}</strong>`).join(", ")}.
+      The code is ${quality}: median Code Health <strong>${score(tot.median)}</strong>, <strong>${pct(tot.ai)}</strong> of the lines are AI-optimal,
+      <strong>${int(tot.testFiles)}</strong> files (${pct(tot.testShare)} of the lines) are tests${tot.coverage != null ? `, and production code is <strong>${pct(tot.coverage)}</strong> covered` : ""}.
+      ${newHot ? `${newHot === 1 ? "One new file is a hotspot." : `${int(newHot)} new files are hotspots.`}` : ""}</p>
+      <div class="kpis">
+        ${k(int(tot.files), "New files", langText)}
+        ${k(int(tot.lines), "Lines of new code", added ? `${int(added)} lines added on the way` : "")}
+        ${k(score(tot.median), "Median Code Health", `lowest ${score(tot.min)}`, `var(--${chClass(tot.median)}-ink, var(--healthy-ink))`)}
+        ${k(pct(tot.ai), "AI-optimal", `lines at ${AI} or above`, "var(--healthy-ink)")}
+        ${k(pct(tot.testShare), "Test code", `${int(files.filter((f) => f.test).reduce((s, f) => s + f.lines, 0))} lines in ${int(tot.testFiles)} files`)}
+        ${tot.coverage != null ? k(pct(tot.coverage), "Line coverage", "production code", "var(--healthy-ink)") : ""}
+      </div></section>`;
+  }
+
+  // Benchmark: the contributor as a highlighted dot among unnamed developers.
+  function benchmark() {
+    const devs = (report.team?.developers || []).filter((d) => d.files >= (report.team.minFiles || 0));
+    const me = devs.find((d) => d.self);
+    if (!me || devs.length < 3) return "";
+    function strip(key, fmt, log = false) {
+      const vals = devs.filter((d) => d[key] != null);
+      if (!vals.length || me[key] == null) return null;
+      const tr = log ? Math.log10 : (x) => x;
+      let lo = Math.min(...vals.map((d) => d[key])), hi = Math.max(...vals.map((d) => d[key]));
+      if (key === "averageCodeHealth") { lo = Math.floor(lo * 20) / 20; hi = 10; }
+      if (key === "coverage") { lo = Math.min(0.8, Math.floor(lo * 10) / 10); hi = 1; }
+      const pos = (x) => (hi === lo ? 50 : (100 * (tr(x) - tr(lo))) / (tr(hi) - tr(lo)));
+      const med = median(vals.map((d) => d[key]));
+      const better = vals.filter((d) => d[key] > me[key]).length, ties = vals.filter((d) => d[key] === me[key]).length - 1;
+      const dots = vals.filter((d) => !d.self).map((d) => `<span class="dot" style="left:${pos(d[key]).toFixed(1)}%" title="${fmt(d[key])}"></span>`).join("");
+      return {
+        html: `<div class="strip"><span class="tmed" style="left:${pos(med).toFixed(1)}%" title="team median"></span>${dots}
+          <span class="dot me" style="left:${pos(me[key]).toFixed(1)}%"></span><span class="melabel" style="left:${pos(me[key]).toFixed(1)}%">${esc(first)}</span></div>
+          <div class="axis"><span>${fmt(lo)}</span><span>${fmt(hi)}</span></div>`,
+        med, rank: `${ties ? "joint " : ""}#${better + 1} of ${vals.length}`,
+      };
+    }
+    const row = (title, value, s, medText, note, lead = "") => s ? `<div class="bm"><div><div class="bmtitle">${title}</div><div class="bmval">${value}</div>
+      <div class="small secondary">${s.rank} · team median ${medText}</div></div><div>${lead}${s.html}<div class="small tertiary">${note}</div></div></div>` : "";
+    const ch = strip("averageCodeHealth", score), cov = strip("coverage", pct), vol = strip("lines", int, true);
+    const allTen = devs.every((d) => d.medianCodeHealth >= 9.995);
+    return `<section><h2>How ${esc(first)} compares</h2>
+      <p class="small secondary">${esc(first)} against the ${devs.length} developers who are main author of at least ${report.team.minFiles} new files in the same year, current and former, the new code only.
+        Each dot is a developer; ${esc(first)} is the highlighted one and the tick marks the team median.</p>
+      ${row("Median Code Health", score(me.medianCodeHealth), ch, ch && score(ch.med),
+        "Below: the line-weighted average Code Health of each developer's new code, which separates developers whose medians are the same.",
+        allTen ? `<div class="small secondary">Every developer's new code has a median Code Health of 10.</div>` : "")}
+      ${row("Line coverage", pct(me.coverage), cov, cov && pct(cov.med), "Production code only, weighted by lines. Developers without coverage data are left out.")}
+      ${row("Lines of new code", int(me.lines), vol, vol && int(vol.med), "Log scale. Volume is not productivity.")}
+    </section>`;
+  }
+
+  function pullRequestSection() {
+    const pr = report.pullRequests, m = report.mcp;
+    if (!pr && !m) return "";
+    const list = pr?.pullRequests || [];
+    const impact = (p) => (p.codeHealthChange == null ? null : p.codeHealthChange <= -BAND ? "declined" : p.codeHealthChange >= BAND ? "improved" : "maintained");
+    const s = { prs: list.length, withFindings: list.filter((p) => p.detected > 0).length, detected: 0, fixed: 0, ignored: 0, measured: 0, kept: 0, declined: 0 };
+    list.forEach((p) => { s.detected += p.detected; s.fixed += p.fixed; s.ignored += p.ignored; const i = impact(p); if (i) { s.measured++; if (i === "declined") s.declined++; else s.kept++; } });
+    const teamShare = pr?.teamPullRequests ? pr.teamWithFindings / pr.teamPullRequests : null;
+    const checks = m?.checks || 0;
+    const parts = [];
+    if (pr) {
+      parts.push(`Between ${shortDate(pr.range.from)} and ${shortDate(pr.range.to)}, ${esc(first)} merged <strong>${plural(s.prs, "pull request")}</strong>`);
+      if (s.prs) {
+        parts[0] += !s.withFindings
+          ? `, and CodeScene's review found <strong>no Code Health issue in any of them</strong>${teamShare != null ? `; across the team, ${pct(teamShare)} of pull requests had one` : ""}.`
+          : `, and CodeScene's review found Code Health issues in <strong>${int(s.withFindings)}</strong> of them (${pct(s.withFindings / s.prs)}${teamShare != null ? `, against ${pct(teamShare)} across the team` : ""})${
+              s.fixed === s.detected ? `, and ${esc(first)} fixed ${s.detected === 1 ? "it" : s.detected === 2 ? "both" : `all ${s.detected}`} before merging.` : `; ${plural(s.ignored, "finding was", "findings were")} merged anyway.`}`;
+        if (s.measured) parts.push(s.declined ? `${s.declined} of ${s.measured} measured pull requests lowered Code Health.` : "Every measured pull request maintained Code Health.");
+      } else parts[0] += ".";
+    }
+    if (m) parts.push(checks ? `${pr ? "Meanwhile " : ""}${esc(first)} ran the Code Health MCP safeguard <strong>${int(checks)} times</strong> in the last 30 days, about ${Math.round(checks / 21.5)} per working day.`
+      : `${esc(first)} isn't among the Code Health MCP users in the last 30 days.`);
+    let verdict = "", warn = false;
+    if (pr && s.prs) {
+      if (s.ignored) { verdict = `Some findings reached the main branch; those ${s.ignored} are worth a follow-up.`; warn = true; }
+      else if (checks && !s.withFindings) verdict = "That is consistent with problems being caught in the editor, before a pull request exists.";
+      else if (checks) verdict = "Findings are rare and get fixed before merge, consistent with the local safeguard catching most problems in the editor.";
+      else if (!s.withFindings) verdict = "Clean pull requests without the local safeguard: the quality comes from habits, not tooling.";
+      else verdict = "The pull request review is doing the catching; the local safeguard could move that earlier.";
+    }
+    const k = (value, label, detail, colour = "", extra = "") => `<div class="kpi"><div class="value"${colour ? ` style="color:${colour}"` : ""}>${value}</div><div class="label">${label}</div><div class="detail">${detail}</div>${extra}</div>`;
+    let prSide = "";
+    if (pr) {
+      const weeks = new Map();
+      list.forEach((p) => { const d = day(p.analysedAt); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7)); const key = d.toISOString().slice(0, 10); weeks.set(key, (weeks.get(key) || 0) + 1); });
+      const wk = [...weeks.entries()].sort(), mx = Math.max(1, ...wk.map(([, v]) => v));
+      const sizes = list.filter((p) => p.files != null).map((p) => p.files);
+      prSide = `<div class="kpis two-col">
+        ${k(int(s.prs), "Pull requests", `${shortDate(pr.range.from)} – ${shortDate(pr.range.to)}`)}
+        ${k(int(s.withFindings), "With Code Health findings", `${s.detected ? `${s.fixed} of ${s.detected} fixed · ` : ""}${teamShare != null ? `team: ${pct(teamShare)} of ${int(pr.teamPullRequests)}` : ""}`, s.ignored ? "var(--unhealthy-ink)" : "var(--healthy-ink)")}
+        ${s.measured ? k(`${s.kept}/${s.measured}`, "Maintained Code Health", `${s.declined} declined`, s.declined ? "var(--unhealthy-ink)" : "var(--healthy-ink)") : ""}
+        ${sizes.length ? k(String(median(sizes)), "Files per pull request", `median; largest ${Math.max(...sizes)}`) : ""}
+      </div>
+      ${wk.length ? `<p class="small secondary" style="margin:14px 0 4px">Pull requests per week</p><div class="weeks">${wk.map(([d, v]) =>
+        `<div class="wk"><div class="wkbar" style="height:${Math.round((60 * v) / mx)}px"></div><div class="wkv">${v}</div><div class="wkl">${shortDate(d)}</div></div>`).join("")}</div>` : ""}`;
+    }
+    let mcpSide = "";
+    if (m) {
+      let d = "";
+      if (m.previousChecks) { const up = Math.round(100 * (checks / m.previousChecks - 1)); d = `<div class="delta ${up >= 0 ? "good" : "bad"}">${up >= 0 ? "+" : ""}${up}% on the 30 days before (${int(m.previousChecks)})</div>`; }
+      else if (checks) d = `<div class="delta good">new: not a user in the 30 days before</div>`;
+      mcpSide = `<div class="kpis">${k(int(checks), "MCP safeguard checks", "last 30 days", "", d)}${k(int(m.teamMedian), "Team median", "checks per active developer")}</div>
+        <p class="small secondary" style="margin-top:12px">Across the ${int(m.activeUsers)} active users in the project, the safeguard ran ${int(m.teamChecks)} checks in the last 30 days,
+          prevented ${int(m.prevented)} Code Health degradations and made ${int(m.uplifts)} uplifts. Those outcomes aren't split per developer, so ${esc(first)}'s share of them isn't known.</p>
+        <p class="small tertiary">MCP figures are live telemetry, not the analysis.</p>`;
+    }
+    return `<section><h2>${pr && m ? "Pull requests and the local safeguard" : pr ? "Pull requests" : "The local safeguard"}</h2>
+      <p class="headline">${parts.join(" ")}</p>
+      ${verdict ? `<div class="verdict${warn ? " warn" : ""}"><span class="verdict-label">Verdict</span><strong>${verdict}</strong></div>` : ""}
+      <div class="${prSide && mcpSide ? "two" : ""}">${prSide ? `<div>${prSide}</div>` : ""}${mcpSide ? `<div>${mcpSide}</div>` : ""}</div></section>`;
+  }
+
+  function areasSection() {
+    const max = Math.max(...areas.map((a) => a.lines));
+    const rows = areas.map((a) => `<tr><td class="name">${esc(a.name)}</td><td class="num">${int(a.files)}</td>
+      <td><div class="meter"><span style="width:${((100 * a.lines) / max).toFixed(1)}%"></span></div></td><td class="num strong">${int(a.lines)}</td>
+      <td class="num">${pct(a.testShare)}</td>${chCell(a.median)}${chCell(a.min)}<td class="num">${pct(a.ai)}</td><td class="num">${pct(a.coverage)}</td></tr>`).join("");
+    return `<section><h2>What ${esc(first)} built</h2><p class="small secondary">The new files by area, largest first. Median and lowest are Code Health; AI-optimal is the share of lines at ${AI} or above.</p>
+      <div class="table-wrap"><table class="data"><thead><tr><th>Area</th><th class="num">Files</th><th></th><th class="num">Lines</th><th class="num">Tests</th>
+      <th class="num">Median</th><th class="num">Lowest</th><th class="num">AI-optimal</th><th class="num">Coverage</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+  }
+
+  const fileCell = (f) => `<td title="${esc(f.path)}"><strong>${esc(fileName(f.path))}</strong><div class="path">${esc(folder(f.path))}</div></td>`;
+  function signatureSection() {
+    const sig = [...files].sort((a, b) => (b.linesAdded ?? b.lines) - (a.linesAdded ?? a.lines)).slice(0, 12);
+    const rows = sig.map((f) => `<tr>${fileCell(f)}<td class="num strong">${int(f.linesAdded)}</td><td class="num">${int(f.lines)}</td><td class="num">${int(f.changes)}</td>
+      ${chCell(f.codeHealth)}<td>${f.hotspot ? `<span class="pill hot">Hotspot</span>` : ""}</td></tr>`).join("");
+    return `<section><h2>Signature files</h2><p class="small secondary">The new files ${esc(first)} put the most lines into. Changes is how often the file has changed, by anyone.</p>
+      <div class="table-wrap"><table class="data"><thead><tr><th>File</th><th class="num">Lines added</th><th class="num">Lines now</th><th class="num">Changes</th><th class="num">Code Health</th><th></th></tr></thead>
+      <tbody>${rows}</tbody></table></div></section>`;
+  }
+
+  function lowAndKnowledge() {
+    const low = files.filter((f) => f.codeHealth < AI).sort((a, b) => a.codeHealth - b.codeHealth), shown = low.slice(0, 12);
+    const below9 = low.filter((f) => f.codeHealth < 9).length;
+    const lowText = !low.length ? "None of the new files." : `${low.length} of ${plural(tot.files, "new file")}.` +
+      (below9 ? ` ${plural(below9, "is", "are")} below 9.0.` : " All of them are still healthy, at 9.0 or above.") +
+      (low.length > shown.length ? ` The ${shown.length} lowest are shown.` : "");
+    const lowBlock = low.length ? `<div class="table-wrap"><table class="data"><thead><tr><th>File</th><th class="num">Code Health</th><th class="num">Lines</th></tr></thead><tbody>${
+      shown.map((f) => `<tr>${fileCell(f)}${chCell(f.codeHealth)}<td class="num">${int(f.lines)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">Every new file is AI-optimal.</p>`;
+    const kn = report.knowledge;
+    const names = new Map(); kn.hotspots.forEach((p) => names.set(fileName(p), (names.get(fileName(p)) || 0) + 1));
+    const hotName = (p) => (names.get(fileName(p)) > 1 ? p.split("/").slice(-2).join("/") : fileName(p));
+    const intro = who.active
+      ? `${esc(first)} is an active contributor. These figures show how much of the code base depends on what ${esc(first)} knows.`
+      : `CodeScene counts ${esc(first)} as a former contributor.${who.lastSoloChange ? ` The last file only ${esc(first)} had touched changed on ${shortDate(who.lastSoloChange)}.` : ""}`;
+    return `<section class="two"><div><h2>New files below AI-optimal</h2><p class="small secondary">${lowText}</p>${lowBlock}</div>
+      <div><h2>The knowledge ${esc(first)} ${who.active ? "holds" : "leaves"}</h2><p class="small secondary">${intro}</p>
+      <ul class="plain"><li>Main author of <strong>${plural(kn.files, "file")}</strong>, ${int(kn.lines)} lines, all ages</li>
+        <li><strong>${int(kn.mostlyOwned)}</strong> of them are at least 90% ${esc(first)}'s code</li>
+        <li><strong>${int(kn.solo)}</strong> have never been changed by anyone else</li>
+        <li>${!kn.hotspots.length ? "None is a hotspot" : `${kn.hotspots.length === 1 ? "1 is a hotspot" : `${kn.hotspots.length} are hotspots`}: ${kn.hotspots.map((p) => esc(hotName(p))).join(", ")}`}</li></ul>
+      ${kn.others.length ? `<p class="small secondary" style="margin-top:10px">Others with the most knowledge of ${esc(first)}'s files:</p>
+        <ul class="plain">${kn.others.slice(0, 6).map((o) => `<li><strong>${esc(o.name)}</strong>: ${plural(o.files, "file")}</li>`).join("")}</ul>` : ""}
+      <p class="small tertiary">${who.active ? `Files only ${esc(first)} has touched are where a second pair of eyes pays off first.`
+        : "Healthy, well-tested code is the best hand-over there is, but the hotspots will need a new owner."}</p></div></section>`;
+  }
+
+  document.title = `Contributor spotlight · ${who.name}`;
+  root.innerHTML = `
+    <section class="hero"><div class="eyebrow">CodeScene · Contributor spotlight · ${esc(report.project.name)}</div>
+      <h1>A year of ${esc(who.name)} in ${esc(report.project.name)}</h1>
+      <p class="subtitle">What ${esc(first)} built between ${monthYear(report.range.from)} and ${monthYear(report.range.to)}, how healthy it is, how it compares with the team, and the knowledge it ${who.active ? "concentrates" : "leaves behind"}.</p></section>
+    ${summary()}
+    ${benchmark()}
+    ${pullRequestSection()}
+    ${areasSection()}
+    ${signatureSection()}
+    ${lowAndKnowledge()}
+    <section><h2>How this was put together</h2>
+      <p class="small secondary">From CodeScene's analysis of ${esc(report.project.name)}. A file counts as written by ${esc(first)} in the past year when ${esc(first)} is its main author and it didn't exist in the analysis a year before.
+        Renamed or moved files count as new. Code Health and coverage are today's values. The analysis has no commit dates per author, so changes to older files aren't counted.
+        ${report.pullRequests ? "Pull request and MCP figures cover only the period shown in their section." : ""} Developers are shown by name only; the benchmark doesn't name anyone.</p>
+      ${(report.notes || []).map((n) => `<p class="small secondary"><strong>Note</strong>: ${esc(n)}</p>`).join("")}
+      <p class="small tertiary">Source: ${esc(report.project.source)}${report.generatedAt ? `, ${esc(report.generatedAt)}` : ""}.</p></section>`;
+})();
+</script>
+</body>
+</html>

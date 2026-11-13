@@ -1,0 +1,434 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "codescene://skills/contributor-spotlight/report-data.schema.json",
+  "title": "ReportData",
+  "type": "object",
+  "required": [
+    "project",
+    "range",
+    "contributor",
+    "files",
+    "knowledge",
+    "team"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "project": {
+      "type": "object",
+      "required": [
+        "name",
+        "source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "generatedAt": {
+      "type": "string",
+      "description": "YYYY-MM-DD"
+    },
+    "range": {
+      "type": "object",
+      "required": [
+        "from",
+        "to"
+      ],
+      "additionalProperties": false,
+      "description": "The year the new files cover: the year-ago snapshot to the latest analysis.",
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "YYYY-MM-DD"
+        },
+        "to": {
+          "type": "string",
+          "description": "YYYY-MM-DD"
+        }
+      }
+    },
+    "contributor": {
+      "type": "object",
+      "required": [
+        "name",
+        "active"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name, with aliases merged. Never an email address."
+        },
+        "shortName": {
+          "type": "string",
+          "description": "How the text refers to the person, usually the first name. Defaults to name."
+        },
+        "active": {
+          "type": "boolean",
+          "description": "false when CodeScene counts the person as a former contributor."
+        },
+        "lastSoloChange": {
+          "type": "string",
+          "description": "For a former contributor: the latest change to a file only they have touched."
+        }
+      }
+    },
+    "aiOptimal": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 10,
+      "default": 9.5
+    },
+    "stableBand": {
+      "type": "number",
+      "minimum": 0,
+      "default": 0.05,
+      "description": "Code Health change per pull request, either way, that counts as maintained."
+    },
+    "files": {
+      "type": "array",
+      "description": "Files the contributor is main author of that are new within the range.",
+      "items": {
+        "$ref": "#/$defs/File"
+      }
+    },
+    "knowledge": {
+      "type": "object",
+      "required": [
+        "files",
+        "lines",
+        "mostlyOwned",
+        "solo",
+        "hotspots",
+        "others"
+      ],
+      "additionalProperties": false,
+      "description": "Every file the contributor is main author of, of any age.",
+      "properties": {
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lines": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mostlyOwned": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Files where the contributor's ownership is at least 0.9."
+        },
+        "solo": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Files with the contributor as the only author."
+        },
+        "hotspots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Paths of those files that are hotspots."
+        },
+        "others": {
+          "type": "array",
+          "description": "Other people among those files' top contributors, most files first.",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "files"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "files": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "team": {
+      "type": "object",
+      "required": [
+        "minFiles",
+        "developers"
+      ],
+      "additionalProperties": false,
+      "description": "Every developer who is main author of at least minFiles new files in the range, the contributor included. No names: the benchmark shows them as unnamed dots.",
+      "properties": {
+        "minFiles": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 10
+        },
+        "developers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "self",
+              "files",
+              "lines",
+              "medianCodeHealth",
+              "averageCodeHealth",
+              "coverage"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "self": {
+                "type": "boolean"
+              },
+              "files": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "lines": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "medianCodeHealth": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 10
+              },
+              "averageCodeHealth": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 10,
+                "description": "Weighted by lines of code."
+              },
+              "coverage": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Line coverage of production code, weighted by lines; null without coverage data."
+              }
+            }
+          }
+        }
+      }
+    },
+    "pullRequests": {
+      "type": "object",
+      "required": [
+        "range",
+        "pullRequests",
+        "teamPullRequests",
+        "teamWithFindings"
+      ],
+      "additionalProperties": false,
+      "description": "Optional. The contributor's pull requests from get_pull_request_safeguard_outcomes, and team totals for the same range.",
+      "properties": {
+        "range": {
+          "type": "object",
+          "required": [
+            "from",
+            "to"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "from": {
+              "type": "string",
+              "description": "YYYY-MM-DD"
+            },
+            "to": {
+              "type": "string",
+              "description": "YYYY-MM-DD"
+            }
+          }
+        },
+        "pullRequests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PullRequest"
+          }
+        },
+        "teamPullRequests": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Pull requests by people, bots left out."
+        },
+        "teamWithFindings": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "mcp": {
+      "type": "object",
+      "required": [
+        "checks",
+        "teamMedian",
+        "activeUsers",
+        "teamChecks",
+        "prevented",
+        "uplifts"
+      ],
+      "additionalProperties": false,
+      "description": "Optional. Code Health MCP usage over the last 30 days, from get_mcp_safeguard_insights.",
+      "properties": {
+        "checks": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The contributor's safeguard checks; 0 when not listed."
+        },
+        "previousChecks": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "The 30 days before; null when not listed."
+        },
+        "teamMedian": {
+          "type": "number",
+          "minimum": 0
+        },
+        "activeUsers": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "teamChecks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "prevented": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "uplifts": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "File": {
+      "type": "object",
+      "required": [
+        "path",
+        "area",
+        "language",
+        "lines",
+        "codeHealth",
+        "coverage",
+        "test"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "area": {
+          "type": "string",
+          "description": "The folder that holds the feature, from the path."
+        },
+        "language": {
+          "type": "string"
+        },
+        "lines": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "linesAdded": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Lines the contributor added, over the file's history."
+        },
+        "codeHealth": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "coverage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "test": {
+          "type": "boolean"
+        },
+        "changes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Change frequency, by anyone."
+        },
+        "hotspot": {
+          "type": "boolean"
+        }
+      }
+    },
+    "PullRequest": {
+      "type": "object",
+      "required": [
+        "id",
+        "analysedAt",
+        "detected",
+        "fixed",
+        "ignored",
+        "suppressed"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "analysedAt": {
+          "type": "string",
+          "description": "YYYY-MM-DD"
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "detected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fixed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ignored": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "suppressed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "codeHealthChange": {
+          "type": "number",
+          "description": "codeHealth.change; leave it out when the tool doesn't report it."
+        }
+      }
+    }
+  }
+}

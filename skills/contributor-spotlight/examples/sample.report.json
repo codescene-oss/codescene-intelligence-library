@@ -1,0 +1,1139 @@
+{
+  "project": {
+    "name": "Example system",
+    "source": "CodeScene",
+    "id": 1
+  },
+  "generatedAt": "2026-03-31",
+  "range": {
+    "from": "2025-03-31",
+    "to": "2026-03-31"
+  },
+  "contributor": {
+    "name": "Developer C",
+    "active": true
+  },
+  "aiOptimal": 9.5,
+  "stableBand": 0.05,
+  "files": [
+    {
+      "path": "api/src/billing/invoices/InvoiceService.java",
+      "area": "api/billing/invoices",
+      "language": "Java",
+      "lines": 205,
+      "linesAdded": 269,
+      "codeHealth": 10.0,
+      "coverage": 0.83,
+      "test": false,
+      "changes": 35,
+      "hotspot": false
+    },
+    {
+      "path": "api/src/billing/invoices/InvoiceRepository.java",
+      "area": "api/billing/invoices",
+      "language": "Java",
+      "lines": 338,
+      "linesAdded": 348,
+      "codeHealth": 9.39,
+      "coverage": 0.9,
+      "test": false,
+      "changes": 5,
+      "hotspot": false
+    },
+    {
+      "path": "api/test/billing/invoices/InvoiceRepositoryTest.java",
+      "area": "api/billing/invoices",
+      "language": "Java",
+      "lines": 342,
+      "linesAdded": 458,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 37,
+      "hotspot": false
+    },
+    {
+      "path": "api/src/billing/invoices/InvoiceMapper.java",
+      "area": "api/billing/invoices",
+      "language": "Java",
+      "lines": 103,
+      "linesAdded": 154,
+      "codeHealth": 10.0,
+      "coverage": 0.92,
+      "test": false,
+      "changes": 4,
+      "hotspot": false
+    },
+    {
+      "path": "api/test/billing/invoices/InvoiceMapperTest.java",
+      "area": "api/billing/invoices",
+      "language": "Java",
+      "lines": 263,
+      "linesAdded": 273,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 15,
+      "hotspot": false
+    },
+    {
+      "path": "api/src/billing/invoices/LineItemCalculator.java",
+      "area": "api/billing/invoices",
+      "language": "Java",
+      "lines": 63,
+      "linesAdded": 69,
+      "codeHealth": 10.0,
+      "coverage": 0.9,
+      "test": false,
+      "changes": 35,
+      "hotspot": false
+    },
+    {
+      "path": "api/src/billing/invoices/InvoicePdfRenderer.java",
+      "area": "api/billing/invoices",
+      "language": "Java",
+      "lines": 197,
+      "linesAdded": 304,
+      "codeHealth": 10.0,
+      "coverage": 0.84,
+      "test": false,
+      "changes": 37,
+      "hotspot": false
+    },
+    {
+      "path": "api/test/billing/invoices/InvoicePdfRendererTest.java",
+      "area": "api/billing/invoices",
+      "language": "Java",
+      "lines": 250,
+      "linesAdded": 269,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 5,
+      "hotspot": false
+    },
+    {
+      "path": "api/src/billing/invoices/DueDatePolicy.java",
+      "area": "api/billing/invoices",
+      "language": "Java",
+      "lines": 328,
+      "linesAdded": 458,
+      "codeHealth": 9.39,
+      "coverage": 0.92,
+      "test": false,
+      "changes": 21,
+      "hotspot": false
+    },
+    {
+      "path": "api/test/billing/invoices/DueDatePolicyTest.java",
+      "area": "api/billing/invoices",
+      "language": "Java",
+      "lines": 292,
+      "linesAdded": 376,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 16,
+      "hotspot": false
+    },
+    {
+      "path": "api/src/billing/invoices/InvoiceEvents.java",
+      "area": "api/billing/invoices",
+      "language": "Java",
+      "lines": 132,
+      "linesAdded": 157,
+      "codeHealth": 10.0,
+      "coverage": 0.92,
+      "test": false,
+      "changes": 34,
+      "hotspot": false
+    },
+    {
+      "path": "api/test/billing/invoices/InvoiceEventsTest.java",
+      "area": "api/billing/invoices",
+      "language": "Java",
+      "lines": 235,
+      "linesAdded": 372,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 19,
+      "hotspot": false
+    },
+    {
+      "path": "api/src/billing/payments/PaymentGateway.java",
+      "area": "api/billing/payments",
+      "language": "Java",
+      "lines": 351,
+      "linesAdded": 384,
+      "codeHealth": 10.0,
+      "coverage": 0.9,
+      "test": false,
+      "changes": 22,
+      "hotspot": false
+    },
+    {
+      "path": "api/test/billing/payments/PaymentGatewayTest.java",
+      "area": "api/billing/payments",
+      "language": "Java",
+      "lines": 310,
+      "linesAdded": 414,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 5,
+      "hotspot": false
+    },
+    {
+      "path": "api/src/billing/payments/RefundService.java",
+      "area": "api/billing/payments",
+      "language": "Java",
+      "lines": 325,
+      "linesAdded": 552,
+      "codeHealth": 10.0,
+      "coverage": 0.88,
+      "test": false,
+      "changes": 23,
+      "hotspot": false
+    },
+    {
+      "path": "api/test/billing/payments/RefundServiceTest.java",
+      "area": "api/billing/payments",
+      "language": "Java",
+      "lines": 356,
+      "linesAdded": 582,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 5,
+      "hotspot": false
+    },
+    {
+      "path": "api/src/billing/payments/PaymentRetryPolicy.java",
+      "area": "api/billing/payments",
+      "language": "Java",
+      "lines": 87,
+      "linesAdded": 119,
+      "codeHealth": 10.0,
+      "coverage": 0.94,
+      "test": false,
+      "changes": 4,
+      "hotspot": false
+    },
+    {
+      "path": "api/test/billing/payments/PaymentRetryPolicyTest.java",
+      "area": "api/billing/payments",
+      "language": "Java",
+      "lines": 218,
+      "linesAdded": 330,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 29,
+      "hotspot": false
+    },
+    {
+      "path": "api/src/billing/payments/CardTokenStore.java",
+      "area": "api/billing/payments",
+      "language": "Java",
+      "lines": 185,
+      "linesAdded": 316,
+      "codeHealth": 10.0,
+      "coverage": 0.88,
+      "test": false,
+      "changes": 30,
+      "hotspot": false
+    },
+    {
+      "path": "api/test/billing/payments/CardTokenStoreTest.java",
+      "area": "api/billing/payments",
+      "language": "Java",
+      "lines": 372,
+      "linesAdded": 406,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 4,
+      "hotspot": false
+    },
+    {
+      "path": "api/src/billing/payments/PaymentWebhookHandler.java",
+      "area": "api/billing/payments",
+      "language": "Java",
+      "lines": 151,
+      "linesAdded": 166,
+      "codeHealth": 10.0,
+      "coverage": 0.86,
+      "test": false,
+      "changes": 26,
+      "hotspot": false
+    },
+    {
+      "path": "api/test/billing/payments/PaymentWebhookHandlerTest.java",
+      "area": "api/billing/payments",
+      "language": "Java",
+      "lines": 314,
+      "linesAdded": 334,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 29,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/reports/report-list.tsx",
+      "area": "web/routes/reports",
+      "language": "TypeScript",
+      "lines": 245,
+      "linesAdded": 418,
+      "codeHealth": 10.0,
+      "coverage": 0.97,
+      "test": false,
+      "changes": 36,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/reports/__test__/report-list.test.tsx",
+      "area": "web/routes/reports",
+      "language": "TypeScript",
+      "lines": 272,
+      "linesAdded": 486,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 25,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/reports/report-detail.tsx",
+      "area": "web/routes/reports",
+      "language": "TypeScript",
+      "lines": 158,
+      "linesAdded": 180,
+      "codeHealth": 10.0,
+      "coverage": 0.86,
+      "test": false,
+      "changes": 15,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/reports/report-filters.tsx",
+      "area": "web/routes/reports",
+      "language": "TypeScript",
+      "lines": 341,
+      "linesAdded": 417,
+      "codeHealth": 10.0,
+      "coverage": 0.85,
+      "test": false,
+      "changes": 35,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/reports/__test__/report-filters.test.tsx",
+      "area": "web/routes/reports",
+      "language": "TypeScript",
+      "lines": 349,
+      "linesAdded": 437,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 9,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/reports/export-dialog.tsx",
+      "area": "web/routes/reports",
+      "language": "TypeScript",
+      "lines": 393,
+      "linesAdded": 691,
+      "codeHealth": 10.0,
+      "coverage": 0.94,
+      "test": false,
+      "changes": 4,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/reports/__test__/export-dialog.test.tsx",
+      "area": "web/routes/reports",
+      "language": "TypeScript",
+      "lines": 346,
+      "linesAdded": 454,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 26,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/reports/report-chart.tsx",
+      "area": "web/routes/reports",
+      "language": "TypeScript",
+      "lines": 241,
+      "linesAdded": 363,
+      "codeHealth": 10.0,
+      "coverage": 0.83,
+      "test": false,
+      "changes": 5,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/reports/__test__/report-chart.test.tsx",
+      "area": "web/routes/reports",
+      "language": "TypeScript",
+      "lines": 285,
+      "linesAdded": 322,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 22,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/reports/use-report-query.tsx",
+      "area": "web/routes/reports",
+      "language": "TypeScript",
+      "lines": 347,
+      "linesAdded": 504,
+      "codeHealth": 9.69,
+      "coverage": 0.92,
+      "test": false,
+      "changes": 24,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/reports/__test__/use-report-query.test.tsx",
+      "area": "web/routes/reports",
+      "language": "TypeScript",
+      "lines": 96,
+      "linesAdded": 163,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 40,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/components/tables/data-table.tsx",
+      "area": "web/components/tables",
+      "language": "TypeScript",
+      "lines": 232,
+      "linesAdded": 278,
+      "codeHealth": 10.0,
+      "coverage": 0.88,
+      "test": false,
+      "changes": 24,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/components/tables/__test__/data-table.test.tsx",
+      "area": "web/components/tables",
+      "language": "TypeScript",
+      "lines": 119,
+      "linesAdded": 199,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 30,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/components/tables/column-picker.tsx",
+      "area": "web/components/tables",
+      "language": "TypeScript",
+      "lines": 285,
+      "linesAdded": 304,
+      "codeHealth": 10.0,
+      "coverage": 0.84,
+      "test": false,
+      "changes": 22,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/components/tables/__test__/column-picker.test.tsx",
+      "area": "web/components/tables",
+      "language": "TypeScript",
+      "lines": 305,
+      "linesAdded": 507,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 11,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/components/tables/table-pagination.tsx",
+      "area": "web/components/tables",
+      "language": "TypeScript",
+      "lines": 304,
+      "linesAdded": 339,
+      "codeHealth": 9.24,
+      "coverage": 0.92,
+      "test": false,
+      "changes": 2,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/components/tables/__test__/table-pagination.test.tsx",
+      "area": "web/components/tables",
+      "language": "TypeScript",
+      "lines": 212,
+      "linesAdded": 377,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 6,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/components/tables/sort-header.tsx",
+      "area": "web/components/tables",
+      "language": "TypeScript",
+      "lines": 396,
+      "linesAdded": 560,
+      "codeHealth": 10.0,
+      "coverage": 0.98,
+      "test": false,
+      "changes": 23,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/components/tables/__test__/sort-header.test.tsx",
+      "area": "web/components/tables",
+      "language": "TypeScript",
+      "lines": 332,
+      "linesAdded": 475,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 33,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/components/tables/row-selection.tsx",
+      "area": "web/components/tables",
+      "language": "TypeScript",
+      "lines": 208,
+      "linesAdded": 310,
+      "codeHealth": 10.0,
+      "coverage": 0.96,
+      "test": false,
+      "changes": 13,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/components/tables/__test__/row-selection.test.tsx",
+      "area": "web/components/tables",
+      "language": "TypeScript",
+      "lines": 265,
+      "linesAdded": 421,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 15,
+      "hotspot": false
+    },
+    {
+      "path": "worker/src/jobs/scheduling/JobScheduler.java",
+      "area": "worker/jobs/scheduling",
+      "language": "Java",
+      "lines": 142,
+      "linesAdded": 182,
+      "codeHealth": 10.0,
+      "coverage": 0.83,
+      "test": false,
+      "changes": 2,
+      "hotspot": false
+    },
+    {
+      "path": "worker/test/jobs/scheduling/JobSchedulerTest.java",
+      "area": "worker/jobs/scheduling",
+      "language": "Java",
+      "lines": 301,
+      "linesAdded": 363,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 39,
+      "hotspot": false
+    },
+    {
+      "path": "worker/src/jobs/scheduling/CronParser.java",
+      "area": "worker/jobs/scheduling",
+      "language": "Java",
+      "lines": 216,
+      "linesAdded": 377,
+      "codeHealth": 10.0,
+      "coverage": 1.0,
+      "test": false,
+      "changes": 24,
+      "hotspot": false
+    },
+    {
+      "path": "worker/src/jobs/scheduling/RetryBackoff.java",
+      "area": "worker/jobs/scheduling",
+      "language": "Java",
+      "lines": 92,
+      "linesAdded": 106,
+      "codeHealth": 10.0,
+      "coverage": 0.86,
+      "test": false,
+      "changes": 46,
+      "hotspot": true
+    },
+    {
+      "path": "worker/test/jobs/scheduling/RetryBackoffTest.java",
+      "area": "worker/jobs/scheduling",
+      "language": "Java",
+      "lines": 372,
+      "linesAdded": 622,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 31,
+      "hotspot": false
+    },
+    {
+      "path": "worker/src/jobs/scheduling/JobLeaseStore.java",
+      "area": "worker/jobs/scheduling",
+      "language": "Java",
+      "lines": 374,
+      "linesAdded": 566,
+      "codeHealth": 10.0,
+      "coverage": 0.97,
+      "test": false,
+      "changes": 8,
+      "hotspot": false
+    },
+    {
+      "path": "worker/test/jobs/scheduling/JobLeaseStoreTest.java",
+      "area": "worker/jobs/scheduling",
+      "language": "Java",
+      "lines": 162,
+      "linesAdded": 223,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 12,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/settings/profile-form.tsx",
+      "area": "web/routes/settings",
+      "language": "TypeScript",
+      "lines": 262,
+      "linesAdded": 331,
+      "codeHealth": 10.0,
+      "coverage": 0.96,
+      "test": false,
+      "changes": 26,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/settings/__test__/profile-form.test.tsx",
+      "area": "web/routes/settings",
+      "language": "TypeScript",
+      "lines": 103,
+      "linesAdded": 162,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 11,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/settings/team-settings.tsx",
+      "area": "web/routes/settings",
+      "language": "TypeScript",
+      "lines": 105,
+      "linesAdded": 172,
+      "codeHealth": 8.82,
+      "coverage": 0.85,
+      "test": false,
+      "changes": 39,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/settings/__test__/team-settings.test.tsx",
+      "area": "web/routes/settings",
+      "language": "TypeScript",
+      "lines": 239,
+      "linesAdded": 268,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 36,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/settings/notification-prefs.tsx",
+      "area": "web/routes/settings",
+      "language": "TypeScript",
+      "lines": 107,
+      "linesAdded": 152,
+      "codeHealth": 9.69,
+      "coverage": 0.99,
+      "test": false,
+      "changes": 28,
+      "hotspot": false
+    },
+    {
+      "path": "web/src/routes/settings/__test__/notification-prefs.test.tsx",
+      "area": "web/routes/settings",
+      "language": "TypeScript",
+      "lines": 159,
+      "linesAdded": 264,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 14,
+      "hotspot": false
+    },
+    {
+      "path": "api/src/auth/sessions/SessionStore.java",
+      "area": "api/auth/sessions",
+      "language": "Java",
+      "lines": 54,
+      "linesAdded": 66,
+      "codeHealth": 10.0,
+      "coverage": 0.86,
+      "test": false,
+      "changes": 38,
+      "hotspot": false
+    },
+    {
+      "path": "api/test/auth/sessions/SessionStoreTest.java",
+      "area": "api/auth/sessions",
+      "language": "Java",
+      "lines": 338,
+      "linesAdded": 451,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 9,
+      "hotspot": false
+    },
+    {
+      "path": "api/src/auth/sessions/TokenRefresher.java",
+      "area": "api/auth/sessions",
+      "language": "Java",
+      "lines": 71,
+      "linesAdded": 91,
+      "codeHealth": 10.0,
+      "coverage": 0.9,
+      "test": false,
+      "changes": 38,
+      "hotspot": false
+    },
+    {
+      "path": "api/test/auth/sessions/TokenRefresherTest.java",
+      "area": "api/auth/sessions",
+      "language": "Java",
+      "lines": 324,
+      "linesAdded": 433,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 33,
+      "hotspot": false
+    },
+    {
+      "path": "worker/src/jobs/exports/CsvExporter.java",
+      "area": "worker/jobs/exports",
+      "language": "Java",
+      "lines": 106,
+      "linesAdded": 150,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": false,
+      "changes": 2,
+      "hotspot": false
+    },
+    {
+      "path": "worker/test/jobs/exports/CsvExporterTest.java",
+      "area": "worker/jobs/exports",
+      "language": "Java",
+      "lines": 153,
+      "linesAdded": 227,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 10,
+      "hotspot": false
+    },
+    {
+      "path": "worker/src/jobs/exports/ExportQueue.java",
+      "area": "worker/jobs/exports",
+      "language": "Java",
+      "lines": 128,
+      "linesAdded": 191,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": false,
+      "changes": 8,
+      "hotspot": false
+    },
+    {
+      "path": "worker/test/jobs/exports/ExportQueueTest.java",
+      "area": "worker/jobs/exports",
+      "language": "Java",
+      "lines": 226,
+      "linesAdded": 349,
+      "codeHealth": 10.0,
+      "coverage": null,
+      "test": true,
+      "changes": 34,
+      "hotspot": false
+    }
+  ],
+  "knowledge": {
+    "files": 212,
+    "lines": 31840,
+    "mostlyOwned": 131,
+    "solo": 84,
+    "hotspots": [
+      "worker/src/jobs/scheduling/RetryBackoff.java",
+      "api/src/billing/core/LedgerPosting.java"
+    ],
+    "others": [
+      {
+        "name": "Developer A",
+        "files": 38
+      },
+      {
+        "name": "Developer F",
+        "files": 22
+      },
+      {
+        "name": "Developer B",
+        "files": 9
+      }
+    ]
+  },
+  "team": {
+    "minFiles": 10,
+    "developers": [
+      {
+        "self": true,
+        "files": 64,
+        "lines": 15182,
+        "medianCodeHealth": 10,
+        "averageCodeHealth": 9.941,
+        "coverage": 0.907
+      },
+      {
+        "self": false,
+        "files": 890,
+        "lines": 98000,
+        "medianCodeHealth": 10,
+        "averageCodeHealth": 9.992,
+        "coverage": 0.91
+      },
+      {
+        "self": false,
+        "files": 372,
+        "lines": 41000,
+        "medianCodeHealth": 10,
+        "averageCodeHealth": 9.981,
+        "coverage": 0.96
+      },
+      {
+        "self": false,
+        "files": 240,
+        "lines": 26500,
+        "medianCodeHealth": 10,
+        "averageCodeHealth": 9.998,
+        "coverage": 0.97
+      },
+      {
+        "self": false,
+        "files": 180,
+        "lines": 19800,
+        "medianCodeHealth": 10,
+        "averageCodeHealth": 9.95,
+        "coverage": 0.88
+      },
+      {
+        "self": false,
+        "files": 138,
+        "lines": 15200,
+        "medianCodeHealth": 10,
+        "averageCodeHealth": 10,
+        "coverage": 0.99
+      },
+      {
+        "self": false,
+        "files": 110,
+        "lines": 12100,
+        "medianCodeHealth": 10,
+        "averageCodeHealth": 9.97,
+        "coverage": null
+      },
+      {
+        "self": false,
+        "files": 80,
+        "lines": 8800,
+        "medianCodeHealth": 10,
+        "averageCodeHealth": 9.99,
+        "coverage": 0.93
+      },
+      {
+        "self": false,
+        "files": 55,
+        "lines": 6100,
+        "medianCodeHealth": 10,
+        "averageCodeHealth": 9.93,
+        "coverage": 0.85
+      },
+      {
+        "self": false,
+        "files": 35,
+        "lines": 3900,
+        "medianCodeHealth": 10,
+        "averageCodeHealth": 10,
+        "coverage": 0.95
+      }
+    ]
+  },
+  "pullRequests": {
+    "range": {
+      "from": "2026-03-02",
+      "to": "2026-03-31"
+    },
+    "pullRequests": [
+      {
+        "id": "2100",
+        "analysedAt": "2026-03-03",
+        "files": 19,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2103",
+        "analysedAt": "2026-03-04",
+        "files": 17,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2106",
+        "analysedAt": "2026-03-05",
+        "files": 27,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2109",
+        "analysedAt": "2026-03-06",
+        "files": 26,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2112",
+        "analysedAt": "2026-03-07",
+        "files": 5,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2115",
+        "analysedAt": "2026-03-08",
+        "files": 30,
+        "detected": 1,
+        "fixed": 1,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2118",
+        "analysedAt": "2026-03-09",
+        "files": 19,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2121",
+        "analysedAt": "2026-03-10",
+        "files": 3,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2124",
+        "analysedAt": "2026-03-11",
+        "files": 9,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2127",
+        "analysedAt": "2026-03-12",
+        "files": 8,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0.08
+      },
+      {
+        "id": "2130",
+        "analysedAt": "2026-03-13",
+        "files": 10,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2133",
+        "analysedAt": "2026-03-14",
+        "files": 3,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2136",
+        "analysedAt": "2026-03-15",
+        "files": 26,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2139",
+        "analysedAt": "2026-03-16",
+        "files": 5,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2142",
+        "analysedAt": "2026-03-17",
+        "files": 18,
+        "detected": 1,
+        "fixed": 1,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2145",
+        "analysedAt": "2026-03-18",
+        "files": 16,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2148",
+        "analysedAt": "2026-03-19",
+        "files": 19,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2151",
+        "analysedAt": "2026-03-20",
+        "files": 2,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2154",
+        "analysedAt": "2026-03-21",
+        "files": 26,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2157",
+        "analysedAt": "2026-03-22",
+        "files": 30,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2160",
+        "analysedAt": "2026-03-23",
+        "files": 4,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      },
+      {
+        "id": "2163",
+        "analysedAt": "2026-03-24",
+        "files": 16,
+        "detected": 0,
+        "fixed": 0,
+        "ignored": 0,
+        "suppressed": 0,
+        "codeHealthChange": 0
+      }
+    ],
+    "teamPullRequests": 190,
+    "teamWithFindings": 33
+  },
+  "mcp": {
+    "checks": 118,
+    "previousChecks": 74,
+    "teamMedian": 96,
+    "activeUsers": 8,
+    "teamChecks": 1240,
+    "prevented": 61,
+    "uplifts": 37
+  },
+  "notes": [
+    "Developer C appears under two author names, a display name and a login; they are merged here."
+  ]
+}
