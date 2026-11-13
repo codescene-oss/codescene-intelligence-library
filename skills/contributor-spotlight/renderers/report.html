@@ -341,9 +341,13 @@
       let d = "";
       if (m.previousChecks) { const up = Math.round(100 * (checks / m.previousChecks - 1)); d = `<div class="delta ${up >= 0 ? "good" : "bad"}">${up >= 0 ? "+" : ""}${up}% on the 30 days before (${int(m.previousChecks)})</div>`; }
       else if (checks) d = `<div class="delta good">new: not a user in the 30 days before</div>`;
-      mcpSide = `<div class="kpis">${k(int(checks), "MCP safeguard checks", "last 30 days", "", d)}${k(int(m.teamMedian), "Team median", "checks per active developer")}</div>
-        <p class="small secondary" style="margin-top:12px">Across the ${int(m.activeUsers)} active users in the project, the safeguard ran ${int(m.teamChecks)} checks in the last 30 days,
-          prevented ${int(m.prevented)} Code Health degradations and made ${int(m.uplifts)} uplifts. Those outcomes aren't split per developer, so ${esc(first)}'s share of them isn't known.</p>
+      const solo = m.activeUsers <= 1 && checks > 0;
+      mcpSide = `<div class="kpis">${k(int(checks), "MCP safeguard checks", "last 30 days", "", d)}${solo
+          ? k(int(m.prevented), "Degradations prevented", `and ${plural(m.uplifts, "uplift")}`, "var(--healthy-ink)")
+          : k(int(m.teamMedian), "Team median", "checks per active developer")}</div>
+        <p class="small secondary" style="margin-top:12px">${solo
+          ? `${esc(first)} is the only active Code Health MCP user in the project, so its outcomes are ${esc(first)}'s: ${plural(m.prevented, "Code Health degradation")} prevented before commit and ${plural(m.uplifts, "uplift")} in the last 30 days.`
+          : `Across the ${plural(m.activeUsers, "active user")} in the project, the safeguard ran ${int(m.teamChecks)} checks in the last 30 days, prevented ${plural(m.prevented, "Code Health degradation")} and made ${plural(m.uplifts, "uplift")}. Those outcomes aren't split per developer, so ${esc(first)}'s share of them isn't known.`}</p>
         <p class="small tertiary">MCP figures are live telemetry, not the analysis.</p>`;
     }
     return `<section><h2>${pr && m ? "Pull requests and the local safeguard" : pr ? "Pull requests" : "The local safeguard"}</h2>
