@@ -16,6 +16,7 @@ Everything here is generic: no project names, people or analysis numbers. Projec
 | [mcp-safeguard-insights](skills/mcp-safeguard-insights/SKILL.md) | How a project's developers use the local Code Health MCP: safeguard checks, degradations prevented before commit, uplifts, the trend over a year, the most active users and out-of-date installations. [Details](#mcp-safeguard-insights) |
 | [pull-request-safeguards](skills/pull-request-safeguards/SKILL.md) | How Code Health safeguards work on pull requests: how often the review catches an issue, how many findings authors fix rather than ignore or suppress, whether each pull request maintained Code Health, week by week, per developer and per pull request. [Details](#pull-request-safeguards) |
 | [new-code-insights](skills/new-code-insights/SKILL.md) | Whether the code added over the last month is healthy and AI-ready: new code per module and package, its median and lowest Code Health, an alert for new technical debt, the share that is AI-optimal, and who to involve. [Details](#new-code-insights) |
+| [contributor-spotlight](skills/contributor-spotlight/SKILL.md) | What one contributor built over the past year: how healthy, AI-optimal and well-tested it is, how it compares with the team on Code Health, coverage and volume, their recent pull requests and Code Health MCP use, and the knowledge they hold. [Details](#contributor-spotlight) |
 
 ## Adding a skill
 
@@ -189,6 +190,22 @@ A file counts as new when it has a Code Health score in the latest analysis but 
 - **Lowest Code Health:** the new files below 10, lowest first.
 
 The row limits, the alert threshold, the AI-optimal level and the coverage target are inputs of the skill.
+
+### Contributor spotlight
+
+A year in review for one person: what they built, how healthy it is, and how it compares with the rest of the team. It celebrates and explains a contribution; it is not a performance review.
+
+![Contributor spotlight report](docs/images/contributor-spotlight.png)
+
+A file counts as the contributor's when they are its main author and it has no Code Health score in CodeScene's snapshot a year before the latest analysis. The report is built from `explore_project_files`, plus `get_pull_request_safeguard_outcomes` and `get_mcp_safeguard_insights` when they have data. It contains:
+
+- **A summary:** new files and lines, median and lowest Code Health, the share that is AI-optimal, test code and line coverage.
+- **How they compare:** median Code Health, coverage and lines of new code against every developer with at least 10 new files, as a strip of unnamed dots with the contributor highlighted.
+- **Pull requests and the local safeguard:** recent pull requests and what the review found, Code Health MCP safeguard checks, and a one-line verdict.
+- **What they built:** new code by area, and the signature files they put the most lines into.
+- **The knowledge they hold:** every file they are main author of, how much only they have touched, and who else knows it; for a former contributor, the knowledge they leave.
+
+The benchmark minimum, the AI-optimal level and the stable band for pull requests are inputs of the skill.
 
 ## License
 
