@@ -305,13 +305,13 @@
       if (s.prs) {
         parts[0] += !s.withFindings
           ? `, and CodeScene's review found <strong>no Code Health issue in any of them</strong>${teamShare != null ? `; across the team, ${pct(teamShare)} of pull requests had one` : ""}.`
-          : `, and CodeScene's review found Code Health issues in <strong>${int(s.withFindings)}</strong> of them (${pct(s.withFindings / s.prs)}${teamShare != null ? `, against ${pct(teamShare)} across the team` : ""})${
-              s.fixed === s.detected ? `, and ${esc(first)} fixed ${s.detected === 1 ? "it" : s.detected === 2 ? "both" : `all ${s.detected}`} before merging.` : `; ${plural(s.ignored, "finding was", "findings were")} merged anyway.`}`;
+          : `, and CodeScene's review found ${plural(s.detected, "Code Health issue")} in <strong>${plural(s.withFindings, "of them", "of them")}</strong> (${pct(s.withFindings / s.prs)} of the pull requests${teamShare != null ? `, against ${pct(teamShare)} across the team` : ""})${
+              s.fixed === s.detected ? `. ${esc(first)} fixed ${s.detected === 1 ? "it" : s.detected === 2 ? "both" : `all ${s.detected}`} before merging.` : `; ${plural(s.ignored, "finding was", "findings were")} merged anyway.`}`;
         if (s.measured) parts.push(s.declined ? `${s.declined} of ${s.measured} measured pull requests lowered Code Health.` : "Every measured pull request maintained Code Health.");
       } else parts[0] += ".";
     }
     if (m) parts.push(checks ? `${pr ? "Meanwhile " : ""}${esc(first)} ran the Code Health MCP safeguard <strong>${int(checks)} times</strong> in the last 30 days, about ${Math.round(checks / 21.5)} per working day.`
-      : `${esc(first)} isn't among the Code Health MCP users in the last 30 days.`);
+      : `${esc(first)} hasn't used the Code Health MCP safeguard in this project in the last 30 days.`);
     let verdict = "", warn = false;
     if (pr && s.prs) {
       if (s.ignored) { verdict = `Some findings reached the main branch; those ${s.ignored} are worth a follow-up.`; warn = true; }
@@ -337,7 +337,11 @@
         `<div class="wk"><div class="wkbar" style="height:${Math.round((60 * v) / mx)}px"></div><div class="wkv">${v}</div><div class="wkl">${shortDate(d)}</div></div>`).join("")}</div>` : ""}`;
     }
     let mcpSide = "";
-    if (m) {
+    if (m && !checks) {
+      mcpSide = `<p class="small secondary">${m.activeUsers
+        ? `${plural(m.activeUsers, "developer uses", "developers use")} the Code Health MCP in this project: ${int(m.teamChecks)} safeguard checks in the last 30 days, ${plural(m.prevented, "Code Health degradation")} prevented before commit.`
+        : "Nobody in this project used the Code Health MCP in the last 30 days."}</p><p class="small tertiary">MCP figures are live telemetry, not the analysis.</p>`;
+    } else if (m) {
       let d = "";
       if (m.previousChecks) { const up = Math.round(100 * (checks / m.previousChecks - 1)); d = `<div class="delta ${up >= 0 ? "good" : "bad"}">${up >= 0 ? "+" : ""}${up}% on the 30 days before (${int(m.previousChecks)})</div>`; }
       else if (checks) d = `<div class="delta good">new: not a user in the 30 days before</div>`;
