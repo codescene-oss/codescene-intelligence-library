@@ -1,6 +1,6 @@
 # CodeScene intelligence library
 
-Reusable skills and report templates that turn CodeScene's analysis into reports, through the CodeScene MCP server. Clients fetch them as they are, or copy and adapt them into their own.
+Reusable skills and report templates that turn CodeScene's analysis into reports, through the [CodeScene MCP server](https://codescene.io/docs/ai-assistant/connect.html). Clients fetch them as they are, or copy and adapt them into their own.
 
 Everything here is generic: no project names, people or analysis numbers. Project-specific inputs and decisions live in the client's own workspace, created from each skill's `templates/`.
 
