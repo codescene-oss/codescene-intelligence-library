@@ -1,0 +1,26 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "codescene-intelligence",
+  "version": "0.1.0",
+  "description": "Ask CodeScene about your projects: Code Health, hotspots, technical debt, what to refactor first, key person risk, change coupling and engineering outcomes, from CodeScene's analysis of your committed history. Turns it into ready-made reports for engineering managers, architects and tech leads.",
+  "author": {
+    "name": "CodeScene",
+    "url": "https://codescene.com"
+  },
+  "homepage": "https://github.com/codescene-oss/codescene-intelligence-library/tree/main/kiro/codescene-intelligence",
+  "repository": "https://github.com/codescene-oss/codescene-intelligence-library",
+  "license": "Apache-2.0",
+  "keywords": [
+    "codescene",
+    "code health",
+    "technical debt",
+    "hotspots",
+    "refactoring",
+    "code quality",
+    "key person risk",
+    "truck factor",
+    "change coupling",
+    "pull request safeguards",
+    "engineering metrics"
+  ]
+}
