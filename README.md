@@ -18,6 +18,10 @@ Everything here is generic: no project names, people or analysis numbers. Projec
 | [new-code-insights](skills/new-code-insights/SKILL.md) | Whether the code added over the last month is healthy and AI-ready: new code per module and package, its median and lowest Code Health, an alert for new technical debt, the share that is AI-optimal, and who to involve. [Details](#new-code-insights) |
 | [contributor-spotlight](skills/contributor-spotlight/SKILL.md) | What one contributor built over the past year: how healthy, AI-optimal and well-tested it is, how it compares with the team on Code Health, coverage and volume, their recent pull requests and Code Health MCP use, and the knowledge they hold. [Details](#contributor-spotlight) |
 
+## Use it in Kiro
+
+The [CodeScene intelligence power for Kiro](kiro/codescene-intelligence/README.md) connects Kiro to the CodeScene MCP server and runs these reports. In Kiro's Powers panel, choose **Add Custom Power**, then **Import power from GitHub**, and paste `https://github.com/codescene-oss/codescene-intelligence-library/tree/main/kiro/codescene-intelligence`.
+
 ## Adding a skill
 
 Each skill is a folder with the same layout:
