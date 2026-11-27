@@ -385,7 +385,7 @@
       `1. Get a fresh view from the CodeScene MCP server: \`list_prioritized_refactorings\` and \`review_analyzed_file\` for \`${t.path}\`${project.id ? ` in project ${project.id}` : ""}. Compare it with this spec; the analysis may have moved on.`,
       "2. Read the functions above and propose a step-by-step plan: which refactoring, in which function, in which order. Wait for approval before changing code.",
       "3. Add the tests from *Before you change anything* first, if any are needed.",
-      "4. After each step, run the tests and check the file's Code Health with CodeScene's local Code Health tool (the IDE extension or CLI), which sees uncommitted changes.",
+      "4. After each step, run the tests and check the file's Code Health with CodeScene's local Code Health tools (the CodeHealth MCP, IDE extensions or CLI), which sees uncommitted changes.",
       `5. Stop when the file reaches Code Health ${targetHealth.toFixed(1)}, or when the next step would change behaviour. Report what you changed, the new Code Health, and what is left.`, "");
 
     push("## Done when", "",
